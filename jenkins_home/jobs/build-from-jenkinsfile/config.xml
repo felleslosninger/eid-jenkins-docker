@@ -44,7 +44,7 @@
             <jenkins.branch.BranchSource>
                 <source class="jenkins.plugins.git.GitSCMSource" plugin="git@2.4.4">
                     <id>692aa3fb-06df-4e06-891f-8f3d854b6604</id>
-                    <remote>git@git.difi.local:eid</remote>
+                    <remote>GIT_URL</remote>
                     <credentialsId>0001a127-5670-4067-9e66-67309ee12421</credentialsId>
                     <includes>*</includes>
                     <excludes></excludes>
