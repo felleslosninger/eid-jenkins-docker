@@ -1,4 +1,4 @@
-FROM jenkins:2.0
+FROM jenkins:2.3
 
 ENV MAVEN_VERSION 3.3.9
 COPY plugins.txt .
