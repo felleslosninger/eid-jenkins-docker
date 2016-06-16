@@ -1,15 +1,16 @@
 FROM java:openjdk-8-jdk-alpine
 
+ARG JENKINS_VERSION=2.9
+ARG JENKINS_SHA=1fd02a942cca991577ee9727dd3d67470e45c031
+ARG MAVEN_VERSION=3.3.9
+ARG user=jenkins
+ARG group=jenkins
+ARG uid=1000
+ARG gid=1000
+
 RUN apk add --no-cache git openssh-client curl zip unzip bash ttf-dejavu
 
 ENV JENKINS_HOME /var/jenkins_home
-
-# Jenkins home directory is a volume, so configuration and build history
-# can be persisted and survive image upgrades
-#VOLUME /var/jenkins_home
-
-ENV JENKINS_VERSION 2.7
-ENV JENKINS_SHA 69e3ab0cc44acc3d711efb7436505e967174d628
 
 RUN mkdir -p /usr/share/jenkins/
 
@@ -28,17 +29,12 @@ COPY plugins.sh /usr/local/bin/plugins.sh
 COPY plugins.txt .
 RUN /usr/local/bin/plugins.sh plugins.txt
 
-ARG user=jenkins
-ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
 RUN addgroup -g ${gid} ${group} && adduser -h "$JENKINS_HOME" -u ${uid} -G ${group} -s /bin/bash -D ${user}
 
 RUN chown -R jenkins:jenkins $JENKINS_HOME
 
 VOLUME /maven-repo
 
-ENV MAVEN_VERSION 3.3.9
 RUN cd /usr/local && \
     wget -O - http://mirrors.ibiblio.org/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xvzf - && \
     ln -sv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven
