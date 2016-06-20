@@ -4,7 +4,7 @@ Dette er en prekonfigurert Jenkins-instans som benytter pipeline-as-code-konsept
 
 Startes på følgende måte:
 
-``
+```
 $ docker run -d \
   -p 80:8080 \
   -v /home/jenkins/.docker/key.pem:/tmp/docker_key \
@@ -13,4 +13,4 @@ $ docker run -d \
   --restart=unless-stopped \
   --name jenkins \
   docker-registry.dmz.local/eid-jenkins
-``
+```
