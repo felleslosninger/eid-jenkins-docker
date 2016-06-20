@@ -25,9 +25,10 @@ ENV JENKINS_UC https://updates.jenkins.io
 EXPOSE 8080
 
 ADD jenkins_home /var/jenkins_home
-COPY plugins.sh /usr/local/bin/plugins.sh
+COPY init.sh /usr/local/bin/
+COPY plugins.sh /usr/local/bin/
 COPY plugins.txt .
-RUN /usr/local/bin/plugins.sh plugins.txt
+RUN plugins.sh plugins.txt
 
 RUN addgroup -g ${gid} ${group} && adduser -h "$JENKINS_HOME" -u ${uid} -G ${group} -s /bin/bash -D ${user}
 
@@ -40,5 +41,7 @@ RUN cd /usr/local && \
     ln -sv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven
 
 ENV PATH=/usr/local/maven/bin:$PATH
+ENV DOCKER_HOST tcp://eid-jenkins01.dmz.local:2376
+ENV DOCKER_TLS_VERIFY 1
 
-ENTRYPOINT cp /tmp/git_key $JENKINS_HOME/git_key && chown jenkins $JENKINS_HOME/git_key && su jenkins -c "java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins"
+ENTRYPOINT init.sh && su jenkins -c "java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins"
