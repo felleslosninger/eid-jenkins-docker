@@ -1,12 +1,12 @@
 FROM java:openjdk-8-jdk-alpine
 
-ARG JENKINS_VERSION=2.9
-ARG JENKINS_SHA=1fd02a942cca991577ee9727dd3d67470e45c031
+ARG JENKINS_VERSION=2.10
+ARG JENKINS_SHA=e5238e09c8a6dbd96daeb0f1bf2baf20501def28
 ARG MAVEN_VERSION=3.3.9
 ARG user=jenkins
 ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
+ENV uid 1000
+ENV gid 1000
 
 RUN apk add --no-cache git openssh-client curl zip unzip bash ttf-dejavu
 
@@ -29,10 +29,6 @@ COPY init.sh /usr/local/bin/
 COPY plugins.sh /usr/local/bin/
 COPY plugins.txt .
 RUN plugins.sh plugins.txt
-
-RUN addgroup -g ${gid} ${group} && adduser -h "$JENKINS_HOME" -u ${uid} -G ${group} -s /bin/bash -D ${user}
-
-RUN chown -R jenkins:jenkins $JENKINS_HOME
 
 VOLUME /maven-repo
 
