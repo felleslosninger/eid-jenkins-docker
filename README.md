@@ -4,6 +4,8 @@ Dette er en prekonfigurert Jenkins-instans som benytter pipeline-as-code-konsept
 
 ## Hvordan kjøre konteineren
 
+Her forutsettes det at verten har en bruker `jenkins` med en nøkkel for å aksessere Docker-motoren på tcp://eid-jenkins01.dmz.local:2376 med TLS. Brukeren har også en SHH-nøkkel for å aksessere Git-verten til eid-prosjektet, og den har et lokalt Maven-depot.
+
 ```
 $ docker run -d \
   -p 80:8080 \
