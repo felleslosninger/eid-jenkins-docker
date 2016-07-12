@@ -4,16 +4,17 @@ Dette er en prekonfigurert Jenkins-instans som benytter pipeline-as-code-konsept
 
 ## Hvordan kjøre konteineren
 
-Her forutsettes det at verten har en bruker `jenkins` med en nøkkel for å aksessere Docker-motoren på tcp://eid-jenkins01.dmz.local:2376 med TLS. Brukeren har også en SHH-nøkkel for å aksessere Git-verten til eid-prosjektet, og den har et lokalt Maven-depot.
+Her forutsettes det at verten har en bruker (`jenkins`) med en nøkkel for å aksessere Docker-motoren på https://eid-jenkins01.dmz.local:2376. Brukeren har også en SHH-nøkkel for å aksessere Git-verten til eid-prosjektet, og den har et lokalt Maven-depot.
 
 ```
+$ USER=jenkins
 $ docker run -d \
   -p 80:8080 \
-  -v ~jenkins/.docker/key.pem:/tmp/docker_key \
-  -v ~jenkins/.ssh/id_rsa:/tmp/git_key \
-  -v ~jenkins/.m2/repository:/maven-repo \
-  -e uid=`id -u jenkins` \
-  -e gid=`id -g jenkins` \
+  -v ~$USER/.docker/key.pem:/tmp/docker_key \
+  -v ~$USER/.ssh/id_rsa:/tmp/git_key \
+  -v ~$USER/.m2/repository:/maven-repo \
+  -e uid=`id -u $USER` \
+  -e gid=`id -g $USER` \
   --restart=unless-stopped \
   --name jenkins \
   docker-registry.dmz.local/eid-jenkins
