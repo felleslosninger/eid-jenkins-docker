@@ -26,6 +26,7 @@ ENV JENKINS_UC https://updates.jenkins.io
 # for main web interface:
 EXPOSE 8080
 
+USER root
 ADD jenkins_home /var/jenkins_home
 COPY init.sh /usr/local/bin/
 COPY plugins.sh /usr/local/bin/
