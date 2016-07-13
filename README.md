@@ -32,3 +32,7 @@ ARG JENKINS_SHA=3eb1a8e9bf396a56595b75449ba245012287f4dd
 ```
 
 På http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/[versjon]/jenkins-war-[versjon].war finner du siste versjon, og SHA1-sum for denne finner du i http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/[versjon]/jenkins-war-[versjon].war.sha1. Erstatt argumentene over med disse for å bygge bilder med denne versjonen.
+
+### Oppgradere tillegg
+
+Fila `plugins.txt` inneholder en liste over de tilleggene som er i bruk. Her kan versjoner oppdateres, og nye tillegg kan også eventuelt legges til.
