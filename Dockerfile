@@ -50,7 +50,7 @@ RUN set -x \
 	&& docker -v
 
 ENV PATH=/usr/local/maven/bin:$PATH
-ENV DOCKER_HOST https://eid-jenkins01.dmz.local:2376
+ENV DOCKER_HOST tcp://eid-jenkins01.dmz.local:2376
 ENV DOCKER_TLS_VERIFY 1
 
 ENTRYPOINT init.sh && su jenkins -c "java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins"
