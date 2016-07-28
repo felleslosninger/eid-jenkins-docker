@@ -36,3 +36,15 @@ På http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/[versjon]/
 ### Oppgradere tillegg
 
 Fila `plugins.txt` inneholder en liste over de tilleggene som er i bruk. Her kan versjoner oppdateres, og nye tillegg kan også eventuelt legges til.
+
+### Bygge bildet
+
+```
+$ docker build -t docker-registry.dmz.local/eid-jenkins .
+```
+
+### Publisere bildet
+
+```
+$ docker push docker-registry.dmz.local/eid-jenkins
+```
