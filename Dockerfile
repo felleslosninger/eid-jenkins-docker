@@ -1,7 +1,7 @@
 FROM java:openjdk-8-jdk-alpine
 
-ARG JENKINS_VERSION=2.13
-ARG JENKINS_SHA=3eb1a8e9bf396a56595b75449ba245012287f4dd
+ARG JENKINS_VERSION=2.15
+ARG JENKINS_SHA=9d9c237c4a573f415679f36421de7c0b57fc2d3e
 ARG MAVEN_VERSION=3.3.9
 ARG DOCKER_VERSION=1.11.2
 ARG DOCKER_SHA=8c2e0c35e3cda11706f54b2d46c2521a6e9026a7b13c7d4b8ae1f3a706fc55e1
@@ -53,5 +53,6 @@ RUN set -x \
 ENV PATH=/usr/local/maven/bin:$PATH
 ENV DOCKER_HOST tcp://eid-jenkins01.dmz.local:2376
 ENV DOCKER_TLS_VERIFY 1
+ENV DOCKER_CERT_PATH $JENKINS_HOME/.docker
 
 ENTRYPOINT init.sh && su jenkins -c "java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins"
