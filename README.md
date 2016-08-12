@@ -12,6 +12,7 @@ $ docker run -d \
   -p 80:8080 \
   -v ~$USER/.docker/key.pem:/tmp/docker_key \
   -v ~$USER/.ssh/id_rsa:/tmp/git_key \
+  -v ~$USER/.ssh/id_rsa_metadata_validator:/tmp/id_rsa_metadata_validator \
   -v ~$USER/.m2/repository:/maven-repo \
   -e uid=`id -u $USER` \
   -e gid=`id -g $USER` \
