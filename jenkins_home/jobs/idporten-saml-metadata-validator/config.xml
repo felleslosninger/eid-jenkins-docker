@@ -44,8 +44,8 @@
             <jenkins.branch.BranchSource>
                 <source class="jenkins.plugins.git.GitSCMSource" plugin="git@2.4.4">
                     <id>692aa3fb-06df-4e06-891f-8f3d854b6605</id>
-                    <remote>https://github.com/difi/idporten-saml-metadata-validator</remote>
-                    <credentialsId></credentialsId>
+                    <remote>scm:git:git@github.com:difi/idporten-saml-metadata-validator.git</remote>
+                    <credentialsId>f73d7473-a3f2-48fe-86a3-802829df3fca</credentialsId>
                     <includes>*</includes>
                     <excludes></excludes>
                     <ignoreOnPushNotifications>false</ignoreOnPushNotifications>
