@@ -9,7 +9,7 @@ credentials:2.1.4
 durable-task:1.12
 email-ext:2.47
 external-monitor-job:1.6
-github-branch-source-plugin:1.8.1
+github-branch-source:1.8.1
 git-client:1.19.7
 git-server:1.7
 git:2.5.3
