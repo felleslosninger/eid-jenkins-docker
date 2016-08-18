@@ -9,7 +9,6 @@ credentials:2.1.4
 durable-task:1.12
 email-ext:2.47
 external-monitor-job:1.6
-github-branch-source:1.8.1
 git-client:1.19.7
 git-server:1.7
 git:2.5.3
@@ -25,7 +24,7 @@ matrix-project:1.7.1
 momentjs:1.1.1
 pipeline-build-step:2.2
 pipeline-input-step:2.0
-pipeline-rest-api:1.6
+pipeline-rest-api:1.7
 pipeline-stage-step:2.1
 pipeline-stage-view:1.7
 plain-credentials:1.2
