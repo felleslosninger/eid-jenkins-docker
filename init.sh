@@ -6,7 +6,3 @@ cp /tmp/key_saml_metadata_validator $JENKINS_HOME/github-buildkey
 
 addgroup -g ${gid} jenkins && adduser -h "$JENKINS_HOME" -u ${uid} -G jenkins -s /bin/bash -D jenkins
 chown -R jenkins:jenkins $JENKINS_HOME
-
-su - jenkins
-git config --global user.email "eid-jenkins@difi.no"
-git config --global user.name "eid-jenkins"
