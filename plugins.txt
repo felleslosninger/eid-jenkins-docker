@@ -4,12 +4,12 @@ antisamy-markup-formatter:1.5
 branch-api:1.10
 build-timeout:1.17.1
 cloudbees-folder:5.12
-credentials-binding:1.8
+credentials-binding:1.9
 credentials:2.1.4
 durable-task:1.12
 email-ext:2.47
 external-monitor-job:1.6
-git-client:1.19.7
+git-client:1.21.0
 git-server:1.7
 git:2.5.3
 handlebars:1.1.1
