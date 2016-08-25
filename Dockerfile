@@ -26,8 +26,6 @@ ENV JENKINS_UC https://updates.jenkins.io
 # for main web interface:
 EXPOSE 8080
 
-VOLUME /maven-repo
-
 # Install Maven
 RUN cd /usr/local && \
     wget -O - http://mirrors.ibiblio.org/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xvzf - && \
@@ -48,7 +46,7 @@ ENV DOCKER_HOST tcp://eid-jenkins01.dmz.local:2376
 ENV DOCKER_TLS_VERIFY 1
 ENV DOCKER_CERT_PATH $JENKINS_HOME/.docker
 
-ADD jenkins_home /var/jenkins_home
+COPY jenkins_home /var/jenkins_home
 COPY init.sh /usr/local/bin/
 COPY plugins.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/init.sh /usr/local/bin/plugins.sh
