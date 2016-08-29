@@ -1,7 +1,7 @@
 FROM java:openjdk-8-jdk-alpine
 
-ARG JENKINS_VERSION=2.17
-ARG JENKINS_SHA=6d73901eb963244ea170a9cfee26a87b9cbdbfa1
+ARG JENKINS_VERSION=2.19
+ARG JENKINS_SHA=565d02d6f14549b84cf27b2a5d6dc44429b87951
 ARG MAVEN_VERSION=3.3.9
 ARG DOCKER_VERSION=1.11.2
 ARG DOCKER_SHA=8c2e0c35e3cda11706f54b2d46c2521a6e9026a7b13c7d4b8ae1f3a706fc55e1
@@ -26,15 +26,6 @@ ENV JENKINS_UC https://updates.jenkins.io
 # for main web interface:
 EXPOSE 8080
 
-ADD jenkins_home /var/jenkins_home
-COPY init.sh /usr/local/bin/
-COPY plugins.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/init.sh /usr/local/bin/plugins.sh
-COPY plugins.txt .
-RUN plugins.sh plugins.txt
-
-VOLUME /maven-repo
-
 # Install Maven
 RUN cd /usr/local && \
     wget -O - http://mirrors.ibiblio.org/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xvzf - && \
@@ -54,5 +45,12 @@ ENV PATH=/usr/local/maven/bin:$PATH
 ENV DOCKER_HOST tcp://eid-jenkins01.dmz.local:2376
 ENV DOCKER_TLS_VERIFY 1
 ENV DOCKER_CERT_PATH $JENKINS_HOME/.docker
+
+COPY jenkins_home /var/jenkins_home
+COPY init.sh /usr/local/bin/
+COPY plugins.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/init.sh /usr/local/bin/plugins.sh
+COPY plugins.txt .
+RUN plugins.sh plugins.txt
 
 ENTRYPOINT init.sh && su jenkins -c "java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins"
