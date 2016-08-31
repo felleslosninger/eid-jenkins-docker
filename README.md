@@ -9,16 +9,16 @@ Her forutsettes det at verten har en bruker (`jenkins`) med en nøkkel for å ak
 ```
 $ USER=jenkins
 $ docker run -d \
-    -p 80:8080 \
-    -v $(eval echo ~$USER)/.docker/key.pem:/tmp/docker_key \
-    -v $(eval echo ~$USER)/.ssh/id_rsa:/tmp/git_key \
-    -v $(eval echo ~$USER)/.ssh/key_saml_metadata_validator:/tmp/key_saml_metadata_validator \
-    -v $(eval echo ~$USER)/.m2:/var/jenkins_home/.m2 \
-    -e uid=`id -u $USER` \
-    -e gid=`id -g $USER` \
-    --restart=unless-stopped \
-    --name jenkins \
-    docker-registry.dmz.local/eid-jenkins
+  -p 80:8080 \
+  -v ~$USER/.docker/key.pem:/tmp/docker_key \
+  -v ~$USER/.ssh/id_rsa:/tmp/git_key \
+  -v ~$USER/.ssh/github-buildkey:/tmp/github-buildkey \
+  -v ~$USER/.m2/repository:/maven-repo \
+  -e uid=`id -u $USER` \
+  -e gid=`id -g $USER` \
+  --restart=unless-stopped \
+  --name jenkins \
+  docker-registry.dmz.local/eid-jenkins
 ```
 
 ## Hvordan vedlikeholde bildet

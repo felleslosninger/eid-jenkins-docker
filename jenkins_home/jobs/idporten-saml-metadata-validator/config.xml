@@ -25,24 +25,24 @@
     </views>
     <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
     <healthMetrics>
-        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric plugin="cloudbees-folder@5.9"/>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric plugin="cloudbees-folder@5.12"/>
     </healthMetrics>
-    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon" plugin="cloudbees-folder@5.9"/>
-    <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy" plugin="cloudbees-folder@5.9">
+    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon" plugin="cloudbees-folder@5.12"/>
+    <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy" plugin="cloudbees-folder@5.12">
         <pruneDeadBranches>true</pruneDeadBranches>
         <daysToKeep>0</daysToKeep>
         <numToKeep>0</numToKeep>
     </orphanedItemStrategy>
     <triggers>
-        <com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger plugin="cloudbees-folder@5.9">
+        <com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger plugin="cloudbees-folder@5.12">
             <spec>* * * * *</spec>
             <interval>60000</interval>
         </com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger>
     </triggers>
-    <sources class="jenkins.branch.MultiBranchProject$BranchSourceList" plugin="branch-api@1.7">
+    <sources class="jenkins.branch.MultiBranchProject$BranchSourceList" plugin="branch-api@1.10">
         <data>
             <jenkins.branch.BranchSource>
-                <source class="jenkins.plugins.git.GitSCMSource" plugin="git@2.4.4">
+                <source class="jenkins.plugins.git.GitSCMSource" plugin="git@2.5.3">
                     <id>692aa3fb-06df-4e06-891f-8f3d854b6605</id>
                     <remote>https://github.com/difi/idporten-saml-metadata-validator</remote>
                     <credentialsId></credentialsId>
