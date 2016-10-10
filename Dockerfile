@@ -10,7 +10,7 @@ ARG group=jenkins
 ENV uid 1000
 ENV gid 1000
 
-RUN apk add --no-cache git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl
+RUN apk add --no-cache git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip
 
 ENV JENKINS_HOME /var/jenkins_home
 
@@ -40,6 +40,9 @@ RUN set -x \
 	&& rmdir docker \
 	&& rm docker.tgz \
 	&& docker -v
+
+# Install AWS CLI
+RUN pip install awscli && apk --purge -v del py-pip
 
 ENV PATH=/usr/local/maven/bin:$PATH
 ENV DOCKER_HOST tcp://localhost:2376

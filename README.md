@@ -6,13 +6,22 @@ Dette er en prekonfigurert Jenkins-instans som benytter pipeline-as-code-konsept
 
 Følgende krav stilles til vertsmaskinen:
 * Docker Engine (1.12.1 eller nyere) er installert.
-* Docker Engine er konfigurert for [toveis TLS-aksess](https://docs.docker.com/engine/security/https/).
 * Det finnes en bruker `jenkins`.
-* Brukeren har en `.docker`-katalog med nødvendige PEM-filer for å aksessere lokal Docker Engine via TLS.
-* Brukeren har en fil `.ssh/known_hosts` med fingeravtrykkene til de verter Jenkins vil kontakte med SSH.
+
+For byggejobber som trenger Docker:
+* En Docker Engine, enten den samme som Jenkins kjører i, eller en fjern, som er konfigurert for [toveis TLS-aksess](https://docs.docker.com/engine/security/https/).
+* Brukeren `jenkins` har en `.docker`-katalog med nødvendige PEM-filer for å aksessere en Docker Engine via TLS.
+
+For byggejobber som trenger SSH-aksess til tjenere:
+* Brukeren `jenkins` har en fil `.ssh/known_hosts` med fingeravtrykkene til de tjenerne Jenkins vil kontakte med SSH.
 * Miljøvariabelen `SSH_AUTH_SOCK` inneholder stien til en Unix-socket for en kjørende
-  [ssh-agent](https://wiki.archlinux.org/index.php/SSH_keys#SSH_agents) som holder autentiseringsnøkler for de vertene
+  [ssh-agent](https://wiki.archlinux.org/index.php/SSH_keys#SSH_agents) som holder autentiseringsnøkler for de tjenerne
   Jenkins vil kontakte med SSH.
+  
+For byggejobber som trenger AWS:
+* Brukeren `jenkins` har en `.aws`-katalog med nødvendig legitimasjon og innstillinger. Legitimasjonen må peke til
+  en AWS-bruker som har nødvendige rettigheter til å utføre det byggejobbene trenger
+  (f.eks. en IAM-bruker med sikkerhetspolicien `AmazonEC2FullAccess`).
 
 Konteineren kan da startes på følgende måte:
 ```
@@ -22,6 +31,7 @@ $ docker run -d \
   -v $SSH_AUTH_SOCK:/ssh_auth_sock \
   -v $(eval echo ~$USER)/.ssh/known_hosts:/var/jenkins_home/.ssh/known_hosts \
   -v $(eval echo ~$USER)/.docker:/var/jenkins_home/.docker \
+  -v $(eval echo ~$USER)/.aws:/var/jenkins_home/.aws \
   -v $(eval echo ~$USER)/.m2:/var/jenkins_home/.m2 \
   -e uid=`id -u $USER` \
   -e gid=`id -g $USER` \
