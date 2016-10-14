@@ -5,6 +5,7 @@ ARG JENKINS_SHA=1c4a750b7d7102c5fc9b78550fd3dcc93d7374da
 ARG MAVEN_VERSION=3.3.9
 ARG DOCKER_VERSION=1.12.1
 ARG DOCKER_SHA=05ceec7fd937e1416e5dce12b0b6e1c655907d349d52574319a1e875077ccb79
+ARG DOCKER_MACHINE_VERSION=0.8.2
 ARG user=jenkins
 ARG group=jenkins
 ENV uid 1000
@@ -32,14 +33,17 @@ RUN cd /usr/local && \
     ln -sv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven
 
 # Install Docker (client)
-RUN set -x \
-	&& curl -fSL "https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION.tgz" -o docker.tgz \
+RUN curl -fSL "https://get.docker.com/builds/$(uname -s)/$(uname -m)/docker-$DOCKER_VERSION.tgz" -o docker.tgz \
 	&& echo "${DOCKER_SHA} *docker.tgz" | sha256sum -c - \
 	&& tar -xzvf docker.tgz \
 	&& mv docker/* /usr/local/bin/ \
 	&& rmdir docker \
 	&& rm docker.tgz \
 	&& docker -v
+
+# Install Docker Machine
+RUN curl -fSL https://github.com/docker/machine/releases/download/v${DOCKER_MACHINE_VERSION}/docker-machine-$(uname -s)-$(uname -m) >/usr/local/bin/docker-machine \
+    && chmod +x /usr/local/bin/docker-machine
 
 # Install AWS CLI
 RUN pip install awscli && apk --purge -v del py-pip
