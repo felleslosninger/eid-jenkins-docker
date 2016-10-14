@@ -1,7 +1,7 @@
 FROM openjdk:8u92-jdk-alpine
 
-ARG JENKINS_VERSION=2.23
-ARG JENKINS_SHA=6c47f8f6019b9a2be17662033444ce7eec03f4fa
+ARG JENKINS_VERSION=2.25
+ARG JENKINS_SHA=1c4a750b7d7102c5fc9b78550fd3dcc93d7374da
 ARG MAVEN_VERSION=3.3.9
 ARG DOCKER_VERSION=1.12.1
 ARG DOCKER_SHA=05ceec7fd937e1416e5dce12b0b6e1c655907d349d52574319a1e875077ccb79
@@ -10,7 +10,7 @@ ARG group=jenkins
 ENV uid 1000
 ENV gid 1000
 
-RUN apk add --no-cache git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip
+RUN apk add --no-cache git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python
 
 ENV JENKINS_HOME /var/jenkins_home
 
@@ -62,7 +62,7 @@ RUN install-plugin.sh branch-api 1.11
 RUN install-plugin.sh build-timeout 1.17.1
 RUN install-plugin.sh cloudbees-folder 5.13
 RUN install-plugin.sh credentials-binding 1.9
-RUN install-plugin.sh credentials 2.1.5
+RUN install-plugin.sh credentials 2.1.6
 RUN install-plugin.sh display-url-api 0.5
 RUN install-plugin.sh durable-task 1.12
 RUN install-plugin.sh email-ext 2.51
@@ -81,26 +81,26 @@ RUN install-plugin.sh matrix-auth 1.4
 RUN install-plugin.sh matrix-project 1.7.1
 RUN install-plugin.sh momentjs 1.1.1
 RUN install-plugin.sh pipeline-build-step 2.3
-RUN install-plugin.sh pipeline-graph-analysis 1.1
+RUN install-plugin.sh pipeline-graph-analysis 1.2
 RUN install-plugin.sh pipeline-input-step 2.1
-RUN install-plugin.sh pipeline-milestone-step 1.0
-RUN install-plugin.sh pipeline-rest-api 2.0
+RUN install-plugin.sh pipeline-milestone-step 1.1
+RUN install-plugin.sh pipeline-rest-api 2.1
 RUN install-plugin.sh pipeline-stage-step 2.2
-RUN install-plugin.sh pipeline-stage-view 2.0
+RUN install-plugin.sh pipeline-stage-view 2.1
 RUN install-plugin.sh plain-credentials 1.3
 RUN install-plugin.sh scm-api 1.3
 RUN install-plugin.sh script-security 1.23
 RUN install-plugin.sh ssh-credentials 1.12
 RUN install-plugin.sh ssh-slaves 1.11
 RUN install-plugin.sh structs 1.5
-RUN install-plugin.sh timestamper 1.8.6
+RUN install-plugin.sh timestamper 1.8.7
 RUN install-plugin.sh token-macro 2.0
 RUN install-plugin.sh windows-slaves 1.2
 RUN install-plugin.sh workflow-aggregator 2.4
 RUN install-plugin.sh workflow-api 2.4
 RUN install-plugin.sh workflow-basic-steps 2.2
-RUN install-plugin.sh workflow-cps-global-lib 2.3
-RUN install-plugin.sh workflow-cps 2.18
+RUN install-plugin.sh workflow-cps-global-lib 2.4
+RUN install-plugin.sh workflow-cps 2.19
 RUN install-plugin.sh workflow-durable-task-step 2.5
 RUN install-plugin.sh workflow-job 2.7
 RUN install-plugin.sh workflow-multibranch 2.9
