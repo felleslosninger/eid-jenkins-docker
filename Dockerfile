@@ -11,7 +11,7 @@ ARG group=jenkins
 ENV uid 1000
 ENV gid 1000
 
-RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python
+RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python jq
 
 ENV JENKINS_HOME /var/jenkins_home
 
