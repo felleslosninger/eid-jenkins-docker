@@ -43,8 +43,8 @@
         <data>
             <jenkins.branch.BranchSource>
                 <source class="jenkins.plugins.git.GitSCMSource" plugin="git@2.4.4">
-                    <id>692aa3fb-06df-4e06-891f-8f3d854b6607</id>
-                    <remote>https://github.com/difi/jenkins-docker</remote>
+                    <id>692aa3fb-06df-4e06-891f-8f3d854b6606</id>
+                    <remote>REPO</remote>
                     <credentialsId></credentialsId>
                     <includes>*</includes>
                     <excludes></excludes>

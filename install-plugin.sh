@@ -1,15 +1,14 @@
 #! /bin/bash
 
-REF=/var/jenkins_home/plugins
-mkdir -p $REF
-
 name=$1
 version=$2
 
-echo "Downloading $name:$version"
+installDir=/files/plugins
+downloadBaseUrl=https://updates.jenkins.io/download/plugins
 
-if [ -z "$JENKINS_UC_DOWNLOAD" ]; then
-  JENKINS_UC_DOWNLOAD=$JENKINS_UC/download
-fi
-curl -sSL -f ${JENKINS_UC_DOWNLOAD}/plugins/$name/$version/$name.hpi -o $REF/$name.jpi
-unzip -qqt $REF/$name.jpi
+mkdir -p ${installDir}
+
+echo "Downloading plugin ${name}:${version}..."
+
+curl -sSL -f ${downloadBaseUrl}/${name}/${version}/${name}.hpi -o ${installDir}/${name}.jpi
+unzip -qqt ${installDir}/${name}.jpi

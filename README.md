@@ -11,7 +11,7 @@ Følgende verktøy er tilgjengelig for byggejobber direkte fra `PATH`:
 * Docker Machine 0.8 (`docker-machine`)
 * AWS CLI (`aws`)
 
-## Hvordan kjøre konteineren
+## Hvordan kjøre applikasjonen
 
 Følgende krav stilles til vertsmaskinen:
 * Docker Engine (1.12.1 eller nyere) er installert.
@@ -32,7 +32,9 @@ For byggejobber som trenger AWS:
   en AWS-bruker som har nødvendige rettigheter til å utføre det byggejobbene trenger
   (f.eks. en IAM-bruker med sikkerhetspolicien `AmazonEC2FullAccess`).
 
-Konteineren kan da startes på følgende måte:
+Applikasjonen kan kjøres som en tjeneste på en Docker-sverm. `pipeline/application.sh create` gjør dette for deg.
+
+Alternativt kan en enkelt konteiner startes på følgende måte:
 ```
 $ USER=jenkins
 $ docker run -d \
