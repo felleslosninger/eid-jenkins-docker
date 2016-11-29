@@ -48,7 +48,7 @@ createService() {
     echo -n "Creating service ${service} of version ${version}... "
     image=$(image ${service} ${version})
     case ${service} in
-    elasticsearch_gossip)
+    jenkins)
         output=$(sudo docker service create \
             --network ${network} \
             --constraint 'node.role == manager' \
