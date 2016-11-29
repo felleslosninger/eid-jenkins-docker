@@ -40,6 +40,7 @@ $ USER=jenkins
 $ docker run -d \
   -p 80:8080 \
   -v $SSH_AUTH_SOCK:/ssh_auth_sock \
+  -v $(eval echo ~$USER)/data:/var/jenkins_home/ \
   -v $(eval echo ~$USER)/.ssh/known_hosts:/var/jenkins_home/.ssh/known_hosts \
   -v $(eval echo ~$USER)/.docker:/var/jenkins_home/.docker \
   -v $(eval echo ~$USER)/.aws:/var/jenkins_home/.aws \
