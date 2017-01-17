@@ -21,6 +21,6 @@ createJob eid git@git.difi.local:eid
 createJob jenkins-docker https://github.com/difi/jenkins-docker
 createJob kontaktregister-statistikk https://github.com/difi/kontaktregister-statistikk
 createJob poc-statistics https://github.com/difi/poc-statistics
-createJob idporten-oidc-provider git@git.difi.local:idporten-oidc-provider
+createJob eid-oidc-provider git@git.difi.local:eid-oidc-provider
 
 chown -R jenkins:jenkins ${JENKINS_HOME}
