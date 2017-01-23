@@ -1,10 +1,10 @@
-FROM openjdk:8u92-jdk-alpine
+FROM openjdk:8u111-jdk-alpine
 
-ARG JENKINS_VERSION=2.33
-ARG JENKINS_SHA=50cd157a3bd2d98d55417f658ed29b0a27694c27
+ARG JENKINS_VERSION=2.42
+ARG JENKINS_SHA=9efdbd5f278c9dccdd88d222905eaad98055ceef
 ARG MAVEN_VERSION=3.3.9
-ARG DOCKER_VERSION=1.12.3
-ARG DOCKER_SHA=626601deb41d9706ac98da23f673af6c0d4631c4d194a677a9a1a07d7219fa0f
+ARG DOCKER_VERSION=1.13.0
+ARG DOCKER_SHA=fc194bb95640b1396283e5b23b5ff9d1b69a5e418b5b3d774f303a7642162ad6
 ARG DOCKER_MACHINE_VERSION=0.8.2
 ARG user=jenkins
 ARG group=jenkins
@@ -57,19 +57,19 @@ RUN install-plugin.sh ant 1.4
 RUN install-plugin.sh antisamy-markup-formatter 1.5
 RUN install-plugin.sh branch-api 1.11.1
 RUN install-plugin.sh build-timeout 1.18
-RUN install-plugin.sh cloudbees-folder 5.13
+RUN install-plugin.sh cloudbees-folder 5.16
 RUN install-plugin.sh credentials-binding 1.10
-RUN install-plugin.sh credentials 2.1.9
+RUN install-plugin.sh credentials 2.1.10
 RUN install-plugin.sh display-url-api 0.5
-RUN install-plugin.sh durable-task 1.12
-RUN install-plugin.sh email-ext 2.52
-RUN install-plugin.sh external-monitor-job 1.6
-RUN install-plugin.sh git-client 2.1.0
+RUN install-plugin.sh durable-task 1.13
+RUN install-plugin.sh email-ext 2.54
+RUN install-plugin.sh external-monitor-job 1.7
+RUN install-plugin.sh git-client 2.2.1
 RUN install-plugin.sh git-server 1.7
 RUN install-plugin.sh git 3.0.1
-RUN install-plugin.sh github 1.23.1
-RUN install-plugin.sh github-api 1.80
-RUN install-plugin.sh github-branch-source 1.10
+RUN install-plugin.sh github 1.25.1
+RUN install-plugin.sh github-api 1.84
+RUN install-plugin.sh github-branch-source 1.10.1
 RUN install-plugin.sh github-organization-folder 1.5
 RUN install-plugin.sh handlebars 1.1.1
 RUN install-plugin.sh icon-shim 2.0.3
@@ -79,36 +79,36 @@ RUN install-plugin.sh junit 1.19
 RUN install-plugin.sh mailer 1.18
 RUN install-plugin.sh mapdb-api 1.0.9.0
 RUN install-plugin.sh matrix-auth 1.4
-RUN install-plugin.sh matrix-project 1.7.1
+RUN install-plugin.sh matrix-project 1.8
 RUN install-plugin.sh momentjs 1.1.1
 RUN install-plugin.sh pipeline-build-step 2.4
-RUN install-plugin.sh pipeline-graph-analysis 1.2
+RUN install-plugin.sh pipeline-graph-analysis 1.3
 RUN install-plugin.sh pipeline-input-step 2.5
-RUN install-plugin.sh pipeline-milestone-step 1.2
-RUN install-plugin.sh pipeline-rest-api 2.3
+RUN install-plugin.sh pipeline-milestone-step 1.3
+RUN install-plugin.sh pipeline-rest-api 2.4
 RUN install-plugin.sh pipeline-stage-step 2.2
-RUN install-plugin.sh pipeline-stage-view 2.3
+RUN install-plugin.sh pipeline-stage-view 2.4
 RUN install-plugin.sh plain-credentials 1.3
-RUN install-plugin.sh resource-disposer 0.3
+RUN install-plugin.sh resource-disposer 0.6
 RUN install-plugin.sh scm-api 1.3
-RUN install-plugin.sh script-security 1.24
+RUN install-plugin.sh script-security 1.25
 RUN install-plugin.sh ssh-credentials 1.12
-RUN install-plugin.sh ssh-slaves 1.11
+RUN install-plugin.sh ssh-slaves 1.12
 RUN install-plugin.sh structs 1.5
-RUN install-plugin.sh timestamper 1.8.7
+RUN install-plugin.sh timestamper 1.8.8
 RUN install-plugin.sh token-macro 2.0
 RUN install-plugin.sh windows-slaves 1.2
 RUN install-plugin.sh workflow-aggregator 2.4
-RUN install-plugin.sh workflow-api 2.6
+RUN install-plugin.sh workflow-api 2.8
 RUN install-plugin.sh workflow-basic-steps 2.3
 RUN install-plugin.sh workflow-cps-global-lib 2.5
-RUN install-plugin.sh workflow-cps 2.23
-RUN install-plugin.sh workflow-durable-task-step 2.5
+RUN install-plugin.sh workflow-cps 2.24
+RUN install-plugin.sh workflow-durable-task-step 2.8
 RUN install-plugin.sh workflow-job 2.9
 RUN install-plugin.sh workflow-multibranch 2.9.2
 RUN install-plugin.sh workflow-scm-step 2.3
-RUN install-plugin.sh workflow-step-api 2.5
-RUN install-plugin.sh workflow-support 2.11
+RUN install-plugin.sh workflow-step-api 2.7
+RUN install-plugin.sh workflow-support 2.12
 RUN install-plugin.sh ws-cleanup 0.32
 
 EXPOSE 8080
