@@ -1,7 +1,7 @@
 FROM openjdk:8u111-jdk-alpine
 
-ARG JENKINS_VERSION=2.42
-ARG JENKINS_SHA=9efdbd5f278c9dccdd88d222905eaad98055ceef
+ARG JENKINS_VERSION=2.44
+ARG JENKINS_SHA=8476e3e1b0555c8cc2ee06bcc888c6ffb3a19fa6
 ARG MAVEN_VERSION=3.3.9
 ARG DOCKER_VERSION=1.13.0
 ARG DOCKER_SHA=fc194bb95640b1396283e5b23b5ff9d1b69a5e418b5b3d774f303a7642162ad6
@@ -61,6 +61,8 @@ RUN install-plugin.sh cloudbees-folder 5.16
 RUN install-plugin.sh credentials-binding 1.10
 RUN install-plugin.sh credentials 2.1.10
 RUN install-plugin.sh display-url-api 0.5
+RUN install-plugin.sh docker-commons 1.6
+RUN install-plugin.sh docker-workflow 1.9.1
 RUN install-plugin.sh durable-task 1.13
 RUN install-plugin.sh email-ext 2.54
 RUN install-plugin.sh external-monitor-job 1.7
