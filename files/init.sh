@@ -7,6 +7,8 @@ cd ${JENKINS_HOME}
 cp -r /files/plugins ${JENKINS_HOME}
 
 cp /files/scriptApproval.xml .
+cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml .
+cp /files/jenkins.model.JenkinsLocationConfiguration.xml .
 
 createJob() {
     name=$1
