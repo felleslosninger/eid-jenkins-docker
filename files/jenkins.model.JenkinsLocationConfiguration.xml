@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <jenkins.model.JenkinsLocationConfiguration>
-    <adminAddress>jenkins02@difi.no</adminAddress>
+    <adminAddress>Jenkins Daemon &lt;utvtest@difi.no&gt;</adminAddress>
     <jenkinsUrl>http://eid-jenkins02.dmz.local/</jenkinsUrl>
 </jenkins.model.JenkinsLocationConfiguration>
