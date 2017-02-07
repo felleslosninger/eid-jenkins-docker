@@ -1,4 +1,4 @@
-master: Sette opp e-post med emailext for bruk i prosjektene slik at man får e-post når bygg feiler
+feature/PBLEID-13426: Sette opp e-post med emailext for bruk i prosjektene slik at man får e-post når bygg feiler
 feature/PBLEID-13457: Oppdatere med plugins for at Jenkins skal kunne kjøre opp bygg i docker-containere fra Jenkinsfile
 feature/PBLEID-13376: Legge til minid-on-the-fly
 feature/PBLEID-13404: Docker 1.13-klient
