@@ -1,3 +1,4 @@
+feature/PBLEID-13717: Legge til authlevel jobb og cucumber/slack plugins
 feature/PBLEID-13696: Legge til bygg av Resilience
 feature/PBLEID-13426: Sette opp e-post med emailext for bruk i prosjektene slik at man får e-post når bygg feiler
 feature/PBLEID-13457: Oppdatere med plugins for at Jenkins skal kunne kjøre opp bygg i docker-containere fra Jenkinsfile

@@ -60,6 +60,8 @@ RUN install-plugin.sh build-timeout 1.18
 RUN install-plugin.sh cloudbees-folder 6.0.2
 RUN install-plugin.sh credentials-binding 1.10
 RUN install-plugin.sh credentials 2.1.13
+RUN install-plugin.sh cucumber-reports 3.5.1
+RUN install-plugin.sh cucumber-testresult-plugin 0.9.7
 RUN install-plugin.sh display-url-api 1.1.1
 RUN install-plugin.sh docker-commons 1.6
 RUN install-plugin.sh docker-workflow 1.10
@@ -87,13 +89,14 @@ RUN install-plugin.sh pipeline-build-step 2.4
 RUN install-plugin.sh pipeline-graph-analysis 1.3
 RUN install-plugin.sh pipeline-input-step 2.5
 RUN install-plugin.sh pipeline-milestone-step 1.3
-RUN install-plugin.sh pipeline-rest-api 2.4
+RUN install-plugin.sh pipeline-rest-api 2.6
 RUN install-plugin.sh pipeline-stage-step 2.2
 RUN install-plugin.sh pipeline-stage-view 2.6
 RUN install-plugin.sh plain-credentials 1.4
 RUN install-plugin.sh resource-disposer 0.6
 RUN install-plugin.sh scm-api 2.1.0
 RUN install-plugin.sh script-security 1.27
+RUN install-plugin.sh slack 2.2
 RUN install-plugin.sh ssh-credentials 1.13
 RUN install-plugin.sh ssh-slaves 1.13
 RUN install-plugin.sh structs 1.6

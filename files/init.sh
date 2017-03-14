@@ -26,5 +26,6 @@ createJob poc-statistics https://github.com/difi/poc-statistics
 createJob eid-oidc-provider git@git.difi.local:eid-oidc-provider
 createJob minid-on-the-fly git@git.difi.local:minid-on-the-fly
 createJob resilience git@git.difi.local:eid-common-resilience.git
+createJob idporten-authlevel git@git.difi.local:idporten-authlevel.git
 
 chown -R jenkins:jenkins ${JENKINS_HOME}
