@@ -19,11 +19,6 @@ createJob() {
     sed -i "s|REPO|${repo}|g" ${jobDir}/config.xml
 }
 
-createFolder() {
-    folder=$1
-    mkdir -p ${folder}
-}
-
 createJob eid git@git.difi.local:eid
 createJob jenkins-docker https://github.com/difi/jenkins-docker
 createJob kontaktregister-statistikk https://github.com/difi/kontaktregister-statistikk
@@ -32,8 +27,7 @@ createJob eid-oidc-provider git@git.difi.local:eid-oidc-provider
 createJob minid-on-the-fly git@git.difi.local:minid-on-the-fly
 createJob resilience git@git.difi.local:eid-common-resilience.git
 createJob idporten-authlevel git@git.difi.local:idporten-authlevel.git
-createFolder puppet-config
-createJob puppet-config/hiera git@eid-gitlab.dmz.local:puppet/puppet_hiera.git
-createJob puppet-config/control git@eid-gitlab.dmz.local:puppet/puppet_control.git
+createJob puppet-hiera git@eid-gitlab.dmz.local:puppet/puppet_hiera.git
+createJob puppet-control git@eid-gitlab.dmz.local:puppet/puppet_control.git
 
 chown -R jenkins:jenkins ${JENKINS_HOME}
