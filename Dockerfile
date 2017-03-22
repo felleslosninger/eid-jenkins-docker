@@ -64,7 +64,7 @@ RUN install-plugin.sh cucumber-reports 3.5.1
 RUN install-plugin.sh cucumber-testresult-plugin 0.9.7
 RUN install-plugin.sh display-url-api 1.1.1
 RUN install-plugin.sh docker-commons 1.6
-RUN install-plugin.sh docker-workflow 1.10
+RUN install-plugin.sh docker-workflow 1.9.1
 RUN install-plugin.sh durable-task 1.13
 RUN install-plugin.sh email-ext 2.57
 RUN install-plugin.sh external-monitor-job 1.7
