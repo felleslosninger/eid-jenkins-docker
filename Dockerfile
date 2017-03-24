@@ -107,7 +107,7 @@ RUN install-plugin.sh pipeline-github-lib 1.0
 RUN install-plugin.sh workflow-cps 2.29
 RUN install-plugin.sh branch-api 2.0.8
 RUN install-plugin.sh workflow-api 2.12
-RUN install-plugin.sh docker-workflow 1.10
+RUN install-plugin.sh docker-workflow 1.9.1
 RUN install-plugin.sh workflow-multibranch 2.14
 RUN install-plugin.sh email-ext 2.57.1
 RUN install-plugin.sh durable-task 1.13
