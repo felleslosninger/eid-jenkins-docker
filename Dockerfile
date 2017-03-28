@@ -54,28 +54,29 @@ RUN chmod +x /files/init.sh /usr/local/bin/install-plugin.sh
 
 
 
-RUN install-plugin.sh display-url-api 1.1.1
-RUN install-plugin.sh antisamy-markup-formatter 1.5
-RUN install-plugin.sh docker-commons 1.6
-RUN install-plugin.sh timestamper 1.8.8
-RUN install-plugin.sh pipeline-rest-api 2.6
-RUN install-plugin.sh github-branch-source 2.0.4
-RUN install-plugin.sh pipeline-stage-view 2.6
-RUN install-plugin.sh github-organization-folder 1.6
-RUN install-plugin.sh plain-credentials 1.4
-RUN install-plugin.sh subversion 2.7.2
-RUN install-plugin.sh external-monitor-job 1.7
-RUN install-plugin.sh cucumber-testresult-plugin 0.9.7
-RUN install-plugin.sh scm-sync-configuration 0.0.10
-RUN install-plugin.sh pipeline-model-definition 1.1.1
-RUN install-plugin.sh envinject 1.93.1
-RUN install-plugin.sh ssh-credentials 1.13
-RUN install-plugin.sh resource-disposer 0.6
 RUN install-plugin.sh ace-editor 1.1
+RUN install-plugin.sh antisamy-markup-formatter 1.5
 RUN install-plugin.sh cloudbees-folder 6.0.3
-RUN install-plugin.sh pipeline-model-api 1.1.1
+RUN install-plugin.sh cucumber-testresult-plugin 0.9.7
+RUN install-plugin.sh display-url-api 1.1.1
+RUN install-plugin.sh docker-commons 1.6
+RUN install-plugin.sh envinject 1.93.1
+RUN install-plugin.sh external-monitor-job 1.7
 RUN install-plugin.sh git 3.1.0
+RUN install-plugin.sh github-branch-source 2.0.4
+RUN install-plugin.sh github-organization-folder 1.6
 RUN install-plugin.sh matrix-auth 1.4
+RUN install-plugin.sh parameterized-remote-trigger 2.2.2
+RUN install-plugin.sh pipeline-model-api 1.1.1
+RUN install-plugin.sh pipeline-model-definition 1.1.1
+RUN install-plugin.sh pipeline-rest-api 2.6
+RUN install-plugin.sh pipeline-stage-view 2.6
+RUN install-plugin.sh plain-credentials 1.4
+RUN install-plugin.sh resource-disposer 0.6
+RUN install-plugin.sh scm-sync-configuration 0.0.10
+RUN install-plugin.sh ssh-credentials 1.13
+RUN install-plugin.sh subversion 2.7.2
+RUN install-plugin.sh timestamper 1.8.8
 RUN install-plugin.sh workflow-job 2.10
 RUN install-plugin.sh script-security 1.27
 RUN install-plugin.sh pipeline-milestone-step 1.3
