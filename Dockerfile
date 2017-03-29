@@ -66,7 +66,7 @@ RUN install-plugin.sh git 3.1.0
 RUN install-plugin.sh github-branch-source 2.0.4
 RUN install-plugin.sh github-organization-folder 1.6
 RUN install-plugin.sh matrix-auth 1.4
-RUN install-plugin.sh parameterized-remote-trigger 2.2.2
+RUN install-plugin.sh Parameterized-Remote-Trigger 2.2.2
 RUN install-plugin.sh pipeline-model-api 1.1.1
 RUN install-plugin.sh pipeline-model-definition 1.1.1
 RUN install-plugin.sh pipeline-rest-api 2.6
