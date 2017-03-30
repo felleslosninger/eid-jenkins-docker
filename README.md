@@ -52,6 +52,7 @@ $ docker run -d \
   --name jenkins \
   docker-registry.dmz.local/eid-jenkins
 ```
+*NB! Containere som ikke startes som service, kan ikke kjøre fullstendige deploy-bygg.*
 
 ## Hvordan vedlikeholde bildet
 

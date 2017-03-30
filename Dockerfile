@@ -53,7 +53,6 @@ COPY install-plugin.sh /usr/local/bin/
 RUN chmod +x /files/init.sh /usr/local/bin/install-plugin.sh
 
 
-
 RUN install-plugin.sh ace-editor 1.1
 RUN install-plugin.sh antisamy-markup-formatter 1.5
 RUN install-plugin.sh cloudbees-folder 6.0.3
