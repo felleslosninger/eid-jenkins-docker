@@ -25,7 +25,6 @@ stage('Build') {
             sh "pipeline/build.sh verify"
         }
     }
-
 }
 
 boolean isDeployBuild() {

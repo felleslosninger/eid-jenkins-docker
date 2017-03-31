@@ -53,12 +53,14 @@ createService() {
             --network ${network} \
             --constraint 'node.role == manager' \
             --mount type=bind,src=$SSH_AUTH_SOCK,target=/ssh_auth_sock \
-            --mount type=bind,src=$(eval echo ~$USER)/data,target=/var/jenkins/home \
+            --mount type=bind,src=$(eval echo ~$USER)/data,target=/var/jenkins_home \
             --mount type=bind,src=$(eval echo ~$USER)/.ssh/known_hosts,target=/var/jenkins_home/.ssh/known_hosts \
             --mount type=bind,src=$(eval echo ~$USER)/.docker,target=/var/jenkins_home/.docker \
             --mount type=bind,src=$(eval echo ~$USER)/.m2,target=/var/jenkins_home/.m2 \
             --mount type=bind,src=$(eval echo ~$USER)/.aws,target=/var/jenkins_home/.aws \
+            --secret minidonthefly-shenzi \
             -e DOCKER_HOST=tcp://$(hostname -f):2376 \
+            -e JENKINS01_APIKEY=minidonthefly-shenzi \
             -e uid=`id -u $USER` \
             -e gid=`id -g $USER` \
             --name ${service} \
