@@ -60,7 +60,6 @@ createService() {
             --mount type=bind,src=$(eval echo ~$USER)/.aws,target=/var/jenkins_home/.aws \
             --secret minidonthefly-shenzi \
             -e DOCKER_HOST=tcp://$(hostname -f):2376 \
-            -e JENKINS01_APIKEY=minidonthefly-shenzi \
             -e uid=`id -u $USER` \
             -e gid=`id -g $USER` \
             --name ${service} \
