@@ -11,12 +11,28 @@ cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml .
 cp /files/jenkins.model.JenkinsLocationConfiguration.xml .
 
 createJob() {
-    name=$1
-    repo=$2
-    jobDir=jobs/${name}
+    local name=$1
+    local repo=$2
+    local jobDir=$(jobDir ${name})
     [ ! -e ${jobDir} ] && mkdir -p ${jobDir}
     cp /files/template-config.xml ${jobDir}/config.xml
     sed -i "s|REPO|${repo}|g" ${jobDir}/config.xml
+}
+
+createJobNotTriggered() {
+    local name=$1
+    local repo=$2
+    createJob ${name} ${repo}
+    # Comment out configuration of PeriodicFolderTrigger
+    local jobDir=$(jobDir ${name})
+    sed -i "s|<!-- PeriodicFolderTrigger START -->|<!--|g" ${jobDir}/config.xml
+    sed -i "s|<!-- PeriodicFolderTrigger END -->|-->|g" ${jobDir}/config.xml
+}
+
+jobDir() {
+    name=$1
+    local jobDir="jobs/${name}"
+    echo -n ${jobDir}
 }
 
 createJob eid git@git.difi.local:eid
@@ -27,7 +43,7 @@ createJob eid-oidc-provider git@git.difi.local:eid-oidc-provider
 createJob minid-on-the-fly git@git.difi.local:minid-on-the-fly
 createJob resilience git@git.difi.local:eid-common-resilience.git
 createJob idporten-authlevel git@git.difi.local:idporten-authlevel.git
-createJob puppet-hiera git@eid-gitlab.dmz.local:puppet/puppet_hiera.git
-createJob puppet-control git@eid-gitlab.dmz.local:puppet/puppet_control.git
+createJobNotTriggered puppet-hiera git@eid-gitlab.dmz.local:puppet/puppet_hiera.git
+createJobNotTriggered puppet-control git@eid-gitlab.dmz.local:puppet/puppet_control.git
 
 chown -R jenkins:jenkins ${JENKINS_HOME}
