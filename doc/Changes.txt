@@ -1,3 +1,4 @@
+feature/PBLEID-13994: Opprette byggejobb på jenkins02 for eid-common
 feature/PBLEID-13993: Lage bygg som ikke trigges ved push
 feature/PBLEID-13717: Legge til authlevel jobb og cucumber/slack plugins
 feature/PBLEID-13696: Legge til bygg av Resilience
