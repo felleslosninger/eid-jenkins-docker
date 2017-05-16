@@ -43,6 +43,7 @@ createJob eid-oidc-provider git@git.difi.local:eid-oidc-provider
 createJob minid-on-the-fly git@git.difi.local:minid-on-the-fly
 createJob eid-resilience git@git.difi.local:eid-common-resilience.git
 createJob eid-common git@git.difi.local:eid-common.git
+createJob idporten git@git.difi.local:idporten.git
 createJob idporten-authlevel git@git.difi.local:idporten-authlevel.git
 createJobNotTriggered puppet-hiera git@eid-gitlab.dmz.local:puppet/puppet_hiera.git
 createJobNotTriggered puppet-control git@eid-gitlab.dmz.local:puppet/puppet_control.git
