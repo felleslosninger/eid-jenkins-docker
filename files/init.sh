@@ -44,6 +44,7 @@ createJob minid-on-the-fly git@git.difi.local:minid-on-the-fly
 createJob eid-resilience git@git.difi.local:eid-common-resilience.git
 createJob eid-common git@git.difi.local:eid-common.git
 createJob idporten git@git.difi.local:idporten.git
+createJob idporten-admin git@git.difi.local:idporten-admin.git
 createJob idporten-authlevel git@git.difi.local:idporten-authlevel.git
 createJob idporten-app-dpi-reklame git@git.difi.local:idporten-app-dpi-reklame.git
 createJob idporten-minid-updater git@git.difi.local:idporten-minid-updater.git

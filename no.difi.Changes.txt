@@ -1,3 +1,4 @@
+feature/PBLEID-14097: Automatisk bygg av idporten-admin på Jenkins-02
 feature/PBLEID-14101: Automatisk bygg av DSF-gateway på Jenkins-02
 feature/PBLEID-14081: Fjerne pipeline/branch.sh fra repository
 feature/PBLEID-14064: Legge inn repo for idporten-app-dpi-reklame
