@@ -43,6 +43,7 @@ createJob eid-oidc-provider git@git.difi.local:eid-oidc-provider
 createJob minid-on-the-fly git@git.difi.local:minid-on-the-fly
 createJob eid-resilience git@git.difi.local:eid-common-resilience.git
 createJob eid-common git@git.difi.local:eid-common.git
+createJob krr git@git.difi.local:krr.git
 createJob idporten git@git.difi.local:idporten.git
 createJob idporten-admin git@git.difi.local:idporten-admin.git
 createJob idporten-authlevel git@git.difi.local:idporten-authlevel.git
