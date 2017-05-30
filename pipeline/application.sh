@@ -34,6 +34,9 @@ image() {
         "jenkins")
             image="docker-registry.dmz.local/eid-jenkins:${version}"
             ;;
+        "selenium")
+            image="selenium/standalone-firefox:${version}"
+            ;;
         *)
             fail "Unknown service ${service}"
     esac
@@ -58,12 +61,22 @@ createService() {
             --mount type=bind,src=$(eval echo ~$USER)/.docker,target=/var/jenkins_home/.docker \
             --mount type=bind,src=$(eval echo ~$USER)/.m2,target=/var/jenkins_home/.m2 \
             --mount type=bind,src=$(eval echo ~$USER)/.aws,target=/var/jenkins_home/.aws \
+            --detach=false \
             --secret minidonthefly-shenzi \
             -e DOCKER_HOST=tcp://$(hostname -f):2376 \
             -e uid=`id -u $USER` \
             -e gid=`id -g $USER` \
             --name ${service} \
             -p 80:8080 \
+            ${image}) \
+            || fail "Failed to create service ${service}"
+        ;;
+    selenium)
+        output=$(sudo docker service create \
+            --network ${network} \
+            --detach=false \
+            --name selenium_host \
+            -p 4444:4444 \
             ${image}) \
             || fail "Failed to create service ${service}"
         ;;
@@ -157,6 +170,7 @@ create() {
     echo "Creating application with version ${version}..."
     createNetwork 'pipeline' || return $?
     createService 'jenkins' ${version} || return $?
+    createService 'selenium' 2.53.0 || return $?
     echo "Application created"
 }
 
@@ -164,12 +178,14 @@ update() {
     version=${1-'latest'}
     echo "Updating application to version ${version}..."
     updateService 'jenkins' ${version} || return $?
+    updateService 'selenium' 2.53.0 || return $?
     echo "Application updated"
 }
 
 delete() {
     echo "Deleting application..."
     deleteService "jenkins"
+    deleteService "selenium"
     deleteNetwork "pipeline"
     echo "Application deleted"
 }
