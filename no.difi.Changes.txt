@@ -1,3 +1,4 @@
+feature/PBLEID-14070: Ny plugin og scriptapproval i jenkins
 feature/PBLEID-14056: Utrulling til systest/atest integrert i pipeline-jobbene
 feature/PBLEID-14100: Automatisk bygg av kontakt- og reservasjonsregisteret på Jenkins-02
 feature/PBLEID-14097: Automatisk bygg av idporten-admin på Jenkins-02

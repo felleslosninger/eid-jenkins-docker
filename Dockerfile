@@ -127,6 +127,7 @@ RUN install-plugin.sh cucumber-reports 3.6.1
 RUN install-plugin.sh ws-cleanup 0.32
 RUN install-plugin.sh pipeline-stage-step 2.2
 RUN install-plugin.sh windows-slaves 1.3.1
+RUN install-plugin.sh http_request 1.8.19
 
 EXPOSE 8080
 
