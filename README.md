@@ -6,8 +6,8 @@ Dette er en prekonfigurert Jenkins-instans som benytter pipeline-as-code-konsept
 
 Følgende verktøy er tilgjengelig for byggejobber direkte fra `PATH`:
 * Java Development Kit 8 (`java`)
-* Maven 3.3 (`mvn`)
-* Docker klient 1.12 (`docker`)
+* Maven 3.5 (`mvn`)
+* Docker klient 17.05.0-ce (`docker`)
 * Docker Machine 0.8 (`docker-machine`)
 * AWS CLI (`aws`)
 

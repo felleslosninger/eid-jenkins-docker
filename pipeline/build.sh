@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
 verify() {
-    docker build -t docker-registry.dmz.local/eid-jenkins:DEV-SNAPSHOT .
+    docker build -t $(__registry)/eid-jenkins:DEV-SNAPSHOT .
 }
 
 deliver() {
     version=$1
-    docker build -t docker-registry.dmz.local/eid-jenkins:${version} .
-    docker push docker-registry.dmz.local/eid-jenkins:${version}
+    docker build -t $(__registry)/eid-jenkins:${version} . || { echo "Build failed"; return 1; }
+    docker push $(__registry)/eid-jenkins:${version} || { echo "Delivery failed"; return 1; }
+}
+
+__registry() {
+    echo -n 'docker-registry.dmz.local'
 }
 
 case $1 in
