@@ -123,7 +123,7 @@ createNetwork() {
     network=$1
     requireArgument 'network'
     echo -n "Creating network ${network}... "
-    output=$(sudo docker network create -d overlay --subnet 10.0.1.0/24 ${network}) \
+    output=$(sudo docker network create -d overlay --attachable --subnet 10.0.1.0/24 ${network}) \
         && ok || fail
 }
 
