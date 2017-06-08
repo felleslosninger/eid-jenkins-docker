@@ -104,7 +104,7 @@ RUN install-plugin.sh ws-cleanup 0.33
 
 ### END PLUGINS
 
-FROM openjdk:8u131-jdk-alpine
+FROM openjdk:8u111-jdk-alpine
 
 ARG JENKINS_VERSION=2.64
 ARG JENKINS_SHA=2f5a58606373586fe46c0f5192ab6468917713bc
