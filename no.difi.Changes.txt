@@ -1,3 +1,4 @@
+feature/PBLEID-14206: Jenkinsbygg av pinkoder
 bugfix/PBLEID-14216: Konteinere i byggejobber når ikke Selenium-verten
 feature/PBLEID-14211: Oppdatert programvare
 feature/PBLEID-14070: Ny plugin og scriptapproval i jenkins

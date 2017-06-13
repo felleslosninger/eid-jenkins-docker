@@ -49,6 +49,7 @@ createJob idporten-admin git@git.difi.local:idporten-admin.git
 createJob idporten-authlevel git@git.difi.local:idporten-authlevel.git
 createJob idporten-app-dpi-reklame git@git.difi.local:idporten-app-dpi-reklame.git
 createJob idporten-minid-updater git@git.difi.local:idporten-minid-updater.git
+createJob idporten-pinkoder git@git.difi.local:idporten-pinkoder.git
 createJob dsf-gateway git@git.difi.local:dsf-gateway.git
 createJob eid-level1-poc git@git.difi.local:eid-level1-poc.git
 createJobNotTriggered puppet-hiera git@eid-gitlab.dmz.local:puppet/puppet_hiera.git
