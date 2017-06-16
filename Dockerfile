@@ -81,6 +81,7 @@ RUN install-plugin.sh scm-sync-configuration 0.0.10
 RUN install-plugin.sh script-security 1.28
 RUN install-plugin.sh slack 2.2
 RUN install-plugin.sh sse-gateway 1.15
+RUN install-plugin.sh ssh-agent 1.15
 RUN install-plugin.sh ssh-credentials 1.13
 RUN install-plugin.sh ssh-slaves 1.17
 RUN install-plugin.sh structs 1.7
