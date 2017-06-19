@@ -42,6 +42,7 @@ idporten-authlevel;git@git.difi.local:idporten-authlevel.git;git_difi;
 idporten-app-dpi-reklame;git@git.difi.local:idporten-app-dpi-reklame.git;git_difi;
 idporten-minid-updater;git@git.difi.local:idporten-minid-updater.git;git_difi;
 idporten-pinkoder;git@git.difi.local:idporten-pinkoder.git;git_difi;
+dine-kontaktopplysninger;git@git.difi.local:dine-kontaktopplysninger.git;git_difi;
 dsf-gateway;git@git.difi.local:dsf-gateway.git;git_difi;
 eid-level1-poc;git@git.difi.local:eid-level1-poc.git;git_difi;
 eid-system-tests;git@git.difi.local:eid-system-tests.git;git_difi;

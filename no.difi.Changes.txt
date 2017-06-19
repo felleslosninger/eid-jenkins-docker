@@ -1,3 +1,4 @@
+feature/PBLEID-14112: Legger til dine-kontaktopplysninger til jenkins
 feature/PBLEID-14287: Utrullingsløp for eid-pipeline-branch
 feature/PBLEID-14293: Kontinuerlig utrulling av automatiske systemtester
 feature/PBLEID-14293: Kontinuerlig utrulling av automatiske systemtester
