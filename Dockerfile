@@ -5,6 +5,7 @@ COPY install-plugin.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-plugin.sh
 
 RUN install-plugin.sh ace-editor 1.1
+RUN install-plugin.sh ansicolor 0.5.0
 RUN install-plugin.sh ant 1.5
 RUN install-plugin.sh antisamy-markup-formatter 1.5
 RUN install-plugin.sh authentication-tokens 1.3

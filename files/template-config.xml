@@ -46,7 +46,7 @@
                 <source class="jenkins.plugins.git.GitSCMSource" plugin="git@3.3.0">
                     <id>692aa3fb-06df-4e06-891f-8f3d854b6606</id>
                     <remote>REPO</remote>
-                    <credentialsId></credentialsId>
+                    <credentialsId>CREDENTIAL_ID</credentialsId>
                     <remoteName>origin</remoteName>
                     <rawRefSpecs>+refs/heads/*:refs/remotes/origin/*</rawRefSpecs>
                     <includes>*</includes>
@@ -54,6 +54,13 @@
                     <ignoreOnPushNotifications>false</ignoreOnPushNotifications>
                     <extensions>
                         <hudson.plugins.git.extensions.impl.LocalBranch/>
+                        <hudson.plugins.git.extensions.impl.SubmoduleOption>
+                            <disableSubmodules>false</disableSubmodules>
+                            <recursiveSubmodules>true</recursiveSubmodules>
+                            <trackingSubmodules>false</trackingSubmodules>
+                            <reference></reference>
+                            <parentCredentials>false</parentCredentials>
+                        </hudson.plugins.git.extensions.impl.SubmoduleOption>
                     </extensions>
                 </source>
                 <strategy class="jenkins.branch.DefaultBranchPropertyStrategy">
