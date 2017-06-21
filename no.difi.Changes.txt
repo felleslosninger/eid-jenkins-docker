@@ -1,3 +1,4 @@
+bugfix/PBLEID-14321: Jenkins forutsetter at Docker-hemmeligheten 'git_difi' eksisterer
 feature/PBLEID-14315: Automatisk populering av Git-submoduler
 bugfix/PBLEID-14310: Jenkins mangler vertsnøkler for SSH
 feature/PBLEID-14112: Legger til dine-kontaktopplysninger til jenkins
