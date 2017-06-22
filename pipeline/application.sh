@@ -61,8 +61,10 @@ createService() {
             --mount type=bind,src=$(eval echo ~$USER)/.m2,target=/var/jenkins_home/.m2 \
             --mount type=bind,src=$(eval echo ~$USER)/.aws,target=/var/jenkins_home/.aws \
             --detach=false \
-	    --secret git_difi \
+	        --secret git_difi \
             --secret artifactory-cleaner \
+            --secret crucible_username \
+            --secret crucible_password \
             -e DOCKER_HOST=tcp://$(hostname -f):2376 \
             -e uid=`id -u $USER` \
             -e gid=`id -g $USER` \

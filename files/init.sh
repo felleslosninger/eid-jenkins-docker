@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins -s /bin/bash -D jenkins
 
@@ -65,14 +65,20 @@ for repository in ${REPOSITORIES}; do
     [ ! -z "${credentialId}" ] && credentialIds["${credentialId}"]=1
 done
 
-cat /files/credentials-header.xml > credentials.xml
-echo "Credentials: ${!credentialIds[@]}"
+cat /files/credentials-header.xml > credentials.xml || exit 1
 for credentialId in "${!credentialIds[@]}"; do
-    echo "Adding credential ${credentialId}"
-    cat /files/template-credentials-entry.xml >> credentials.xml
-    sed -i "s|CREDENTIAL_ID|${credentialId}|g" credentials.xml
+    echo "Adding credentials id ${credentialId}"
+    cat /files/template-credentials-sshkey-entry.xml >> credentials.xml || exit 1
+    sed -i "s|CREDENTIAL_ID|${credentialId}|g" credentials.xml || exit 1
 done
-cat /files/credentials-footer.xml >> credentials.xml
+echo "Adding credentials id crucible"
+cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
+sed -i "s|CREDENTIAL_ID|crucible|g" credentials.xml || exit 1
+crucible_username=$(cat /run/secrets/crucible_username) || exit 1
+crucible_password=$(cat /run/secrets/crucible_password) || exit 1
+sed -i "s|USERNAME|${crucible_username}|g" credentials.xml || exit 1
+sed -i "s|PASSWORD|${crucible_password}|g" credentials.xml || exit 1
+cat /files/credentials-footer.xml >> credentials.xml || exit 1
 
 mkdir ${JENKINS_HOME}/.ssh
 echo "${KNOWN_HOSTS}" > ${JENKINS_HOME}/.ssh/known_hosts
