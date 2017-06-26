@@ -47,6 +47,7 @@ dsf-gateway;git@git.difi.local:dsf-gateway.git;git_difi;
 eid-level1-poc;git@git.difi.local:eid-level1-poc.git;git_difi;
 eid-system-tests;git@git.difi.local:eid-system-tests.git;git_difi;
 eid-pipeline-branch;git@git.difi.local:eid-pipeline-branch.git;git_difi;
+eid-pipeline;git@git.difi.local:eid-pipeline.git;git_difi;
 EOF
 
 read -r -d '' KNOWN_HOSTS << EOF
