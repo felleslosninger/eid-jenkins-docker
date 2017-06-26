@@ -28,7 +28,7 @@ jobDir() {
 
 read -r -d '' REPOSITORIES << EOF
 eid;git@git.difi.local:eid;git_difi;
-jenkins-docker;https://github.com/difi/jenkins-docker;;
+jenkins-docker;git@github.com:difi/jenkins-docker;;
 kontaktregister-statistikk;https://github.com/difi/kontaktregister-statistikk;;
 poc-statistics;https://github.com/difi/poc-statistics;;
 eid-oidc-provider;git@git.difi.local:eid-oidc-provider;git_difi;
