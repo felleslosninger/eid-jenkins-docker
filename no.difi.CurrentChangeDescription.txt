@@ -1,1 +1,0 @@
-bugfix/PBLEID-14353: Byggejobben feiler fordi pipeline-submodulen ikke kan initialiseres
