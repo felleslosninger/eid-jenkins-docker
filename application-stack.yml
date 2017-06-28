@@ -9,7 +9,7 @@ services:
       DOCKER_HOST:
       REPOSITORIES: >
         eid;git@git.difi.local:eid;git_difi;
-        jenkins-docker;git@github.com:difi/jenkins-docker;github;
+        jenkins-docker;git@github.com:difi/jenkins-docker;git_difi;
         kontaktregister-statistikk;https://github.com/difi/kontaktregister-statistikk;;
         poc-statistics;https://github.com/difi/poc-statistics;;
         eid-oidc-provider;git@git.difi.local:eid-oidc-provider;git_difi;
@@ -85,9 +85,9 @@ services:
     networks:
       - pipeline
   nexus:
-    image: sonatype/nexus3:3.3.1
+    image: sonatype/nexus3:3.3.2
     ports:
-      - "8080:80"
+      - "8080:8081"
     networks:
       - pipeline
   selenium_host:
