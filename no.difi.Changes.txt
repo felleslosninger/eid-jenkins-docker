@@ -1,3 +1,4 @@
+feature/PBLEID-14340: Docker-bilderegister
 bugfix/PBLEID-14353: Byggejobben feiler fordi pipeline-submodulen ikke kan initialiseres
 feature/PBLEID-14340: Inkludering av et Docker-bilderegister i byggemiljøet
 feature/PBLEID-14308: Opprettelse av Crucible-review fra pipeline

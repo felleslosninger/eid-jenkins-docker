@@ -26,20 +26,19 @@ jobDir() {
     echo -n ${jobDir}
 }
 
-declare -A credentialIds
 for repository in ${REPOSITORIES}; do
     name=$(echo ${repository} | cut -d';' -f1)
     url=$(echo ${repository} | cut -d';' -f2)
     credentialId=$(echo ${repository} | cut -d';' -f3)
     createJob "${name}" "${url}" "${credentialId}"
-    [ ! -z "${credentialId}" ] && credentialIds["${credentialId}"]=1
 done
 
 cat /files/credentials-header.xml > credentials.xml || exit 1
-for credentialId in "${!credentialIds[@]}"; do
-    echo "Adding credentials id ${credentialId}"
+for sshKeyFile in $(find /run/secrets -type f -name ssh.*); do
+    echo "Adding SSH key from $sshKeyFile to credentials store"
     cat /files/template-credentials-sshkey-entry.xml >> credentials.xml || exit 1
-    sed -i "s|CREDENTIAL_ID|${credentialId}|g" credentials.xml || exit 1
+    sed -i "s|CREDENTIAL_ID|${sshKeyFile##*/}|g" credentials.xml || exit 1
+    sed -i "s|CREDENTIAL_FILE|${sshKeyFile}|g" credentials.xml || exit 1
 done
 echo "Adding credentials id crucible"
 cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1

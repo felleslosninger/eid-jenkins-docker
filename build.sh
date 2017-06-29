@@ -11,7 +11,7 @@ deliver() {
 }
 
 __registry() {
-    echo -n 'docker-registry.dmz.local'
+    echo -n 'eid-jenkins02.dmz.local:8081'
 }
 
 case $1 in

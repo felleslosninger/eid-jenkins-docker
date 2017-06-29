@@ -2,33 +2,33 @@ version: '3.2'
 
 services:
   jenkins:
-    image: docker-registry.dmz.local/eid-jenkins:${VERSION}
+    image: eid-jenkins02.dmz.local:8081/eid-jenkins:${VERSION}
     ports:
       - "80:8080"
     environment:
-      DOCKER_HOST:
+      DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
       REPOSITORIES: >
-        eid;git@git.difi.local:eid;git_difi;
-        jenkins-docker;git@github.com:difi/jenkins-docker;git_difi;
+        eid;git@git.difi.local:eid;ssh.git.difi.local;
+        jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
         kontaktregister-statistikk;https://github.com/difi/kontaktregister-statistikk;;
         poc-statistics;https://github.com/difi/poc-statistics;;
-        eid-oidc-provider;git@git.difi.local:eid-oidc-provider;git_difi;
-        minid-on-the-fly;git@git.difi.local:minid-on-the-fly;git_difi;
-        eid-resilience;git@git.difi.local:eid-common-resilience.git;git_difi;
-        eid-common;git@git.difi.local:eid-common.git;git_difi;
-        krr;git@git.difi.local:krr.git;git_difi;
-        idporten;git@git.difi.local:idporten.git;git_difi;
-        idporten-admin;git@git.difi.local:idporten-admin.git;git_difi;
-        idporten-authlevel;git@git.difi.local:idporten-authlevel.git;git_difi;
-        idporten-app-dpi-reklame;git@git.difi.local:idporten-app-dpi-reklame.git;git_difi;
-        idporten-minid-updater;git@git.difi.local:idporten-minid-updater.git;git_difi;
-        idporten-pinkoder;git@git.difi.local:idporten-pinkoder.git;git_difi;
-        dine-kontaktopplysninger;git@git.difi.local:dine-kontaktopplysninger.git;git_difi;
-        dsf-gateway;git@git.difi.local:dsf-gateway.git;git_difi;
-        eid-level1-poc;git@git.difi.local:eid-level1-poc.git;git_difi;
-        eid-system-tests;git@git.difi.local:eid-system-tests.git;git_difi;
-        eid-pipeline-branch;git@git.difi.local:eid-pipeline-branch.git;git_difi;
-        eid-pipeline;git@git.difi.local:eid-pipeline.git;git_difi;
+        eid-oidc-provider;git@git.difi.local:eid-oidc-provider;ssh.git.difi.local;
+        minid-on-the-fly;git@git.difi.local:minid-on-the-fly;ssh.git.difi.local;
+        eid-resilience;git@git.difi.local:eid-common-resilience.git;ssh.git.difi.local;
+        eid-common;git@git.difi.local:eid-common.git;ssh.git.difi.local;
+        krr;git@git.difi.local:krr.git;ssh.git.difi.local;
+        idporten;git@git.difi.local:idporten.git;ssh.git.difi.local;
+        idporten-admin;git@git.difi.local:idporten-admin.git;ssh.git.difi.local;
+        idporten-authlevel;git@git.difi.local:idporten-authlevel.git;ssh.git.difi.local;
+        idporten-app-dpi-reklame;git@git.difi.local:idporten-app-dpi-reklame.git;ssh.git.difi.local;
+        idporten-minid-updater;git@git.difi.local:idporten-minid-updater.git;ssh.git.difi.local;
+        idporten-pinkoder;git@git.difi.local:idporten-pinkoder.git;ssh.git.difi.local;
+        dine-kontaktopplysninger;git@git.difi.local:dine-kontaktopplysninger.git;ssh.git.difi.local;
+        dsf-gateway;git@git.difi.local:dsf-gateway.git;ssh.git.difi.local;
+        eid-level1-poc;git@git.difi.local:eid-level1-poc.git;ssh.git.difi.local;
+        eid-system-tests;git@git.difi.local:eid-system-tests.git;ssh.git.difi.local;
+        eid-pipeline-branch;git@git.difi.local:eid-pipeline-branch.git;ssh.git.difi.local;
+        eid-pipeline;git@git.difi.local:eid-pipeline.git;ssh.git.difi.local;
       KNOWN_HOSTS: |
         github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
         git.difi.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG4VYlrX7IlRq+O1lokYTp1oYe7vsIPAmm9uhDec2TVvCkPnSeNhJq9iCyRYCaaCxZLRfUjQdCNc6NvNyXdZb6k=
@@ -41,13 +41,13 @@ services:
         constraints:
           - node.role == manager
     secrets:
-      - source: git_difi
-        target: git_difi
+      - source: ssh.git.difi.local
+        target: ssh.git.difi.local
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: github
-        target: github
+      - source: ssh.github.com
+        target: ssh.github.com
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
@@ -88,8 +88,13 @@ services:
     image: sonatype/nexus3:3.3.2
     ports:
       - "8080:8081"
+      - "8081:8082"
     networks:
       - pipeline
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
   selenium_host:
     image: selenium/standalone-firefox:2.53.0
     ports:
@@ -97,15 +102,19 @@ services:
     networks:
       - pipeline
 
+volumes:
+  nexus-data:
+    external: true
+
 networks:
   pipeline:
     driver: overlay
     attachable: true
 
 secrets:
-  git_difi:
+  ssh.git.difi.local:
     external: true
-  github:
+  ssh.github.com:
     external: true
   artifactory-cleaner:
     external: true

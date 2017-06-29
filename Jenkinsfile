@@ -1,3 +1,8 @@
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+import static java.time.ZonedDateTime.now
+
 pipeline {
     agent none
     options {
@@ -10,9 +15,10 @@ pipeline {
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
             steps {
                 script {
+                    env.version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC')))
                     env.commitId = readCommitId().take(7)
                     currentBuild.description = "Building: ${env.commitId}"
-                    sh './build.sh verify'
+                    sh "./build.sh verify"
                 }
             }
         }
@@ -22,7 +28,7 @@ pipeline {
             steps {
                 script {
                     if (readCommitMessage() != "ready!") error("Developer has not signalled that work is ready")
-                    sshagent(['github']) {
+                    sshagent(['ssh.github.com']) {
                         env.verifyRevision = sh(returnStdout: true, script: "pipeline/create-verification-revision")
                     }
                 }
@@ -51,7 +57,6 @@ pipeline {
             agent any
             steps {
                 script {
-                    env.version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC'))) + "-" + env.commitId.take(6)
                     ansiColor('xterm') { sh "./build.sh deliver ${env.version}" }
                 }
             }
@@ -61,9 +66,11 @@ pipeline {
             agent any
             steps {
                 script {
-                    sh "scp application-stack.yml jenkins@eid-jenkins02.dmz.local:"
-                    sh "ssh jenkins@eid-jenkins02.dmz.local VERSION=${env.version} uid=\$(id -u jenkins) gid=\$(id -g jenkins) docker stack deploy -c application-stack.yml pipeline"
-                    sh "ssh jenkins@eid-jenkins02.dmz.local rm application-stack.yml"
+                    sshagent(['ssh.git.difi.local']) {
+                        sh "scp application-stack.yml jenkins@eid-jenkins02.dmz.local:"
+                        sh "ssh jenkins@eid-jenkins02.dmz.local VERSION=${env.version} uid=\$(id -u jenkins) gid=\$(id -g jenkins) docker stack deploy -c application-stack.yml pipeline"
+                        sh "ssh jenkins@eid-jenkins02.dmz.local rm application-stack.yml"
+                    }
                 }
             }
         }
@@ -72,7 +79,11 @@ pipeline {
             agent any
             steps {
                 script {
-                    ansiColor('xterm') { sh 'pipeline/integrate-branch' }
+                    ansiColor('xterm') {
+                        sshagent(['ssh.github.com']) {
+                            sh 'pipeline/integrate-branch'
+                        }
+                    }
                 }
             }
         }
