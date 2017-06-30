@@ -36,6 +36,7 @@ services:
         git.difi.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG4VYlrX7IlRq+O1lokYTp1oYe7vsIPAmm9uhDec2TVvCkPnSeNhJq9iCyRYCaaCxZLRfUjQdCNc6NvNyXdZb6k=
         eid-gitlab.dmz.local ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApaqpEGnJ/z4Ur+bgHhnpYCBCdyPuDMVxUplgVPaUTjCLEiEioU+LgZsr04pX6s9sqHbH+0+ggAizxpXQZJ4AOgyeSCwtZNpqX3jXdXMCXqjQgDY/Pxu1vi91PucNK8B4lwkrhed9Ze8iCzdKY5w1NZDpB6Auc+UL2I0HJNDIlrxenYXdqtK6udLyEv1eViGCOIPY1YJ1SjVxMWv2G4itdJDQrOqe6U3p5Ph3P810rtIh/q4Z1PbdS98Jvh3VewdMpQjqPSTskn+EsnlEGJf8vvJmsVsRol1X5bmU/mxIXsaySzPmKdH34hQFzdejdjp83FYRffV0OYhL8Ur9ZU+Apw==
         eid-jenkins02.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBC1UgDT1mm3EJ2w90x2zeEVzxdFPxcqkp+a0N6+0WLgNgTLVFRt2/hSM48VfCaFQaOzVw8PfxVSIHtuunFry1qo=
+        eid-test-oidc-provider.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMzEIRiGtC0hPPq9mDXqw+TCye5gzFGI8mouaeIMRaRwHhI5rh1PZ39SbzzOgpAT2hW8YRkwBYMN5qCZnfJ0KCI=
       uid: '${uid}'
       gid: '${gid}'
     deploy:
