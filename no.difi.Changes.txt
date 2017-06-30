@@ -1,3 +1,4 @@
+feature/PBLEID-14225: Legge til jobb for krr oidc resource server og idporten oidc client
 feature/PBLEID-14340: Docker-bilderegister
 bugfix/PBLEID-14353: Byggejobben feiler fordi pipeline-submodulen ikke kan initialiseres
 feature/PBLEID-14340: Inkludering av et Docker-bilderegister i byggemiljøet

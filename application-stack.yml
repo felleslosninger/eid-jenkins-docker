@@ -11,6 +11,8 @@ services:
         eid;git@git.difi.local:eid;ssh.git.difi.local;
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
         kontaktregister-statistikk;https://github.com/difi/kontaktregister-statistikk;;
+        idporten-oidc-client;git@github.com:difi/idporten-klient-oidc.git;ssh.git.difi.local;
+        krr-oauth2-server;git@git.difi.local:krr-oauth2-server;ssh.git.difi.local;
         poc-statistics;https://github.com/difi/poc-statistics;;
         eid-oidc-provider;git@git.difi.local:eid-oidc-provider;ssh.git.difi.local;
         minid-on-the-fly;git@git.difi.local:minid-on-the-fly;ssh.git.difi.local;
