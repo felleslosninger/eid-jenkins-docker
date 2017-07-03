@@ -1,3 +1,4 @@
+bugfix/PBLEID-14371: Integrate-stadiet får ikke ryddet opp i Git og feiler
 bugfix/PBLEID-14387: Legge til public key for oidc docker test og produksjons hosts
 bugfix/PBLEID-14385: Legge til public key for eid-test-oidc-provider.dmz.local i known hosts
 feature/PBLEID-14225: Legge til jobb for krr oidc resource server og idporten oidc client

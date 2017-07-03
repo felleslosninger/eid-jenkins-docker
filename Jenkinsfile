@@ -61,19 +61,6 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
-            agent any
-            steps {
-                script {
-                    sshagent(['ssh.git.difi.local']) {
-                        sh "scp application-stack.yml jenkins@eid-jenkins02.dmz.local:"
-                        sh "ssh jenkins@eid-jenkins02.dmz.local VERSION=${env.version} uid=\$(id -u jenkins) gid=\$(id -g jenkins) docker stack deploy -c application-stack.yml pipeline"
-                        sh "ssh jenkins@eid-jenkins02.dmz.local rm application-stack.yml"
-                    }
-                }
-            }
-        }
         stage('Integrate') {
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
             agent any
@@ -83,6 +70,19 @@ pipeline {
                         sshagent(['ssh.github.com']) {
                             sh 'pipeline/integrate-branch'
                         }
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+            agent any
+            steps {
+                script {
+                    sshagent(['ssh.git.difi.local']) {
+                        sh "scp application-stack.yml jenkins@eid-jenkins02.dmz.local:"
+                        sh "ssh jenkins@eid-jenkins02.dmz.local VERSION=${env.version} uid=\$(id -u jenkins) gid=\$(id -g jenkins) docker stack deploy -c application-stack.yml pipeline"
+                        sh "ssh jenkins@eid-jenkins02.dmz.local rm application-stack.yml"
                     }
                 }
             }
