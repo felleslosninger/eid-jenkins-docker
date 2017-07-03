@@ -37,6 +37,8 @@ services:
         eid-gitlab.dmz.local ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApaqpEGnJ/z4Ur+bgHhnpYCBCdyPuDMVxUplgVPaUTjCLEiEioU+LgZsr04pX6s9sqHbH+0+ggAizxpXQZJ4AOgyeSCwtZNpqX3jXdXMCXqjQgDY/Pxu1vi91PucNK8B4lwkrhed9Ze8iCzdKY5w1NZDpB6Auc+UL2I0HJNDIlrxenYXdqtK6udLyEv1eViGCOIPY1YJ1SjVxMWv2G4itdJDQrOqe6U3p5Ph3P810rtIh/q4Z1PbdS98Jvh3VewdMpQjqPSTskn+EsnlEGJf8vvJmsVsRol1X5bmU/mxIXsaySzPmKdH34hQFzdejdjp83FYRffV0OYhL8Ur9ZU+Apw==
         eid-jenkins02.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBC1UgDT1mm3EJ2w90x2zeEVzxdFPxcqkp+a0N6+0WLgNgTLVFRt2/hSM48VfCaFQaOzVw8PfxVSIHtuunFry1qo=
         eid-test-oidc-provider.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMzEIRiGtC0hPPq9mDXqw+TCye5gzFGI8mouaeIMRaRwHhI5rh1PZ39SbzzOgpAT2hW8YRkwBYMN5qCZnfJ0KCI=
+        eid-test-oidc-klient.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBhqhkaSU8DLfbTzM1nVZFIciooTYIluNkRdTznEqZGUP3I6YYW9OTQDP/8cgWhv22l3lVmFLSrsxgf0IsBXI1I=
+        eid-oidc-provider.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLtZOtk+k07ET+seli2lXbKYSaCae0wnP/OyA+o84epOGuGU+zT69Jqo0Bugll/It1xJ8C+IJthd9XfnlAx4tOA=
       uid: '${uid}'
       gid: '${gid}'
     deploy:
