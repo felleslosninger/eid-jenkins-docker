@@ -1,3 +1,4 @@
+feature/PBLEID-14406: eidas pipeline i jenkins
 feature/PBLEID-14404: logwriter pipeline i jenkins
 feature/PBLEID-14373: Innloggingspassord for Nexus hentes fra Docker-svermen
 bugfix/PBLEID-14396: Den globale SSH-agenten i Jenkins slutter å fungere etter utrulling av ny versjon
