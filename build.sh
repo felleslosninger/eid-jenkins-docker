@@ -6,8 +6,12 @@ verify() {
 
 deliver() {
     version=$1
+    username=$2
+    password=$3
     docker build -t $(__registry)/eid-jenkins:${version} . || { echo "Build failed"; return 1; }
+    docker login $(__registry) -u "${username}" -p "${password}"
     docker push $(__registry)/eid-jenkins:${version} || { echo "Delivery failed"; return 1; }
+    docker logout $(__registry)
 }
 
 __registry() {
@@ -16,9 +20,11 @@ __registry() {
 
 case $1 in
     verify)
+        shift
         verify
         ;;
     deliver)
-        deliver $2
+        shift
+        deliver ${@}
         ;;
 esac

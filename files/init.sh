@@ -40,13 +40,23 @@ for sshKeyFile in $(find /run/secrets -type f -name ssh.*); do
     sed -i "s|CREDENTIAL_ID|${sshKeyFile##*/}|g" credentials.xml || exit 1
     sed -i "s|CREDENTIAL_FILE|${sshKeyFile}|g" credentials.xml || exit 1
 done
-echo "Adding credentials id crucible"
+
+echo "Adding credentials 'crucible'"
 cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
 sed -i "s|CREDENTIAL_ID|crucible|g" credentials.xml || exit 1
 crucible_username=$(cat /run/secrets/crucible_username) || exit 1
 crucible_password=$(cat /run/secrets/crucible_password) || exit 1
 sed -i "s|USERNAME|${crucible_username}|g" credentials.xml || exit 1
 sed -i "s|PASSWORD|${crucible_password}|g" credentials.xml || exit 1
+
+echo "Adding credentials 'nexus'"
+cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
+sed -i "s|CREDENTIAL_ID|nexus|g" credentials.xml || exit 1
+nexus_username=$(cat /run/secrets/nexus_username) || exit 1
+nexus_password=$(cat /run/secrets/nexus_password) || exit 1
+sed -i "s|USERNAME|${nexus_username}|g" credentials.xml || exit 1
+sed -i "s|PASSWORD|${nexus_password}|g" credentials.xml || exit 1
+
 cat /files/credentials-footer.xml >> credentials.xml || exit 1
 
 mkdir ${JENKINS_HOME}/.ssh

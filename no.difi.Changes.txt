@@ -1,3 +1,4 @@
+feature/PBLEID-14373: Innloggingspassord for Nexus hentes fra Docker-svermen
 bugfix/PBLEID-14396: Den globale SSH-agenten i Jenkins slutter å fungere etter utrulling av ny versjon
 bugfix/PBLEID-14371: Integrate-stadiet får ikke ryddet opp i Git og feiler
 bugfix/PBLEID-14387: Legge til public key for oidc docker test og produksjons hosts

@@ -54,10 +54,13 @@ pipeline {
         }
         stage('Deliver') {
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+            environment {
+                nexus = credentials('nexus')
+            }
             agent any
             steps {
                 script {
-                    ansiColor('xterm') { sh "./build.sh deliver ${env.version}" }
+                    ansiColor('xterm') { sh "./build.sh deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}" }
                 }
             }
         }

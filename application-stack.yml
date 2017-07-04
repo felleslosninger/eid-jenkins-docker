@@ -71,6 +71,16 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
+      - source: nexus_username
+        target: nexus_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: nexus_password
+        target: nexus_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
     volumes:
       - type: bind
         source: ${SSH_AUTH_SOCK}
@@ -126,4 +136,8 @@ secrets:
   crucible_username:
     external: true
   crucible_password:
+    external: true
+  nexus_username:
+    external: true
+  nexus_password:
     external: true
