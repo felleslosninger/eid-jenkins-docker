@@ -1,3 +1,4 @@
+feature/PBLEID-14416: Legg til artifactory api-key som credential
 feature/PBLEID-14406: eidas pipeline i jenkins
 feature/PBLEID-14404: logwriter pipeline i jenkins
 feature/PBLEID-14373: Innloggingspassord for Nexus hentes fra Docker-svermen

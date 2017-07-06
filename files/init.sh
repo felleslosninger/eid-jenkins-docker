@@ -57,6 +57,12 @@ nexus_password=$(cat /run/secrets/nexus_password) || exit 1
 sed -i "s|USERNAME|${nexus_username}|g" credentials.xml || exit 1
 sed -i "s|PASSWORD|${nexus_password}|g" credentials.xml || exit 1
 
+echo "Adding credentials 'artifactory'"
+cat /files/template-credentials-secretstring-entry.xml >> credentials.xml || exit 1
+sed -i "s|CREDENTIAL_ID|artifactory|g" credentials.xml || exit 1
+artifactory_api_key=$(cat /run/secrets/artifactory-cleaner) || exit 1
+sed -i "s|SECRET_STRING|${artifactory_api_key}|g" credentials.xml || exit 1
+
 cat /files/credentials-footer.xml >> credentials.xml || exit 1
 
 mkdir ${JENKINS_HOME}/.ssh
