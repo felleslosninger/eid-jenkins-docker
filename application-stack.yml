@@ -10,10 +10,10 @@ services:
       REPOSITORIES: >
         eid;git@git.difi.local:eid;ssh.git.difi.local;
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
-        kontaktregister-statistikk;https://github.com/difi/kontaktregister-statistikk;;
+        kontaktregister-statistikk;git@github.com:difi/kontaktregister-statistikk;;
         idporten-oidc-client;git@github.com:difi/idporten-klient-oidc.git;ssh.git.difi.local;
         krr-oauth2-server;git@git.difi.local:krr-oauth2-server;ssh.git.difi.local;
-        poc-statistics;https://github.com/difi/poc-statistics;;
+        poc-statistics;git@github.com:difi/poc-statistics;;
         eid-oidc-provider;git@git.difi.local:eid-oidc-provider;ssh.git.difi.local;
         minid-on-the-fly;git@git.difi.local:minid-on-the-fly;ssh.git.difi.local;
         eid-resilience;git@git.difi.local:eid-common-resilience.git;ssh.git.difi.local;
@@ -33,6 +33,7 @@ services:
         eid-pipeline;git@git.difi.local:eid-pipeline.git;ssh.git.difi.local;
         eid-log-writer;git@git.difi.local:eid-log-writer.git;ssh.git.difi.local;
         eidas;git@git.difi.local:eidas.git;ssh.git.difi.local;
+        eid-maintenance;git@git.difi.local:eid-maintenance.git;ssh.git.difi.local
       KNOWN_HOSTS: |
         github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
         git.difi.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG4VYlrX7IlRq+O1lokYTp1oYe7vsIPAmm9uhDec2TVvCkPnSeNhJq9iCyRYCaaCxZLRfUjQdCNc6NvNyXdZb6k=
