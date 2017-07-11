@@ -1,3 +1,4 @@
+feature/PBLEID-14436: Jenkins-jobbene skal kunne lese konfigurasjon fra fil
 feature/PBLEID-14423: Enkel oppdatering av pipeline-skript på alle eid-prosjekter
 feature/PBLEID-14423: Enkel oppdatering av pipeline-skript på alle eid-prosjekter
 feature/PBLEID-14416: Legg til artifactory api-key som credential

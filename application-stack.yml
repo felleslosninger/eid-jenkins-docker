@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   jenkins:
-    image: eid-jenkins02.dmz.local:8081/eid-jenkins:${VERSION}
+    image: eid-jenkins02.dmz.local:8081/jenkins:${VERSION}
     ports:
       - "80:8080"
     environment:
@@ -85,6 +85,9 @@ services:
         uid: '${uid}'
         gid: '${gid}'
     volumes:
+      - type: volume
+        source: jenkins-plugins
+        target: /var/jenkins_home/plugins
       - type: bind
         source: ${SSH_AUTH_SOCK}
         target: /ssh_auth_sock
@@ -102,6 +105,16 @@ services:
         target: /var/jenkins_home/.aws
     networks:
       - pipeline
+  jenkins-plugins:
+    image: eid-jenkins02.dmz.local:8081/jenkins-plugins:${VERSION}
+    volumes:
+      - type: volume
+        source: jenkins-plugins
+        target: /files/plugins
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
   nexus:
     image: sonatype/nexus3:3.3.2
     ports:
@@ -123,6 +136,7 @@ services:
 volumes:
   nexus-data:
     external: true
+  jenkins-plugins:
 
 networks:
   pipeline:
