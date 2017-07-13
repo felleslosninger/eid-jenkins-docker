@@ -11,8 +11,8 @@ pipeline {
     }
     stages {
         stage('Build') {
-            agent any
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+            agent any
             steps {
                 script {
                     env.version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC')))
@@ -24,32 +24,32 @@ pipeline {
         }
         stage('Prepare verification') {
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
-            agent any
-            steps {
-                script {
-                    if (readCommitMessage() != "ready!") error("Developer has not signalled that work is ready")
-                    sshagent(['ssh.github.com']) {
-                        env.verifyRevision = sh(returnStdout: true, script: "pipeline/create-verification-revision")
-                    }
-                }
-            }
-        }
-        stage('Create review') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
             environment {
                 crucible = credentials('crucible')
             }
             agent any
             steps {
                 script {
+                    if (readCommitMessage() != "ready!") error("Developer has not signalled that work is ready for verification")
+                    sshagent(['ssh.github.com']) {
+                        env.verifyRevision = sh(returnStdout: true, script: "pipeline/create-verification-revision")
+                    }
                     sh "pipeline/create-review ${env.verifyRevision} ${env.crucible_USR} ${env.crucible_PSW}"
                 }
             }
+            post { failure { sshagent(['ssh.github.com']) { sh "pipeline/delete-verification-revision" }}}
         }
         stage('Approve code') {
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
             steps {
-                input "Has the code been reviewed and approved?"
+                script {
+                    try {
+                        input message: "Has the code been reviewed and approved?", ok: "Yes"
+                        env.codeApproved = "true"
+                    } catch (Exception ignored) {
+                        env.codeApproved = "false"
+                    }
+                }
             }
         }
         stage('Deliver') {
@@ -63,19 +63,20 @@ pipeline {
                     ansiColor('xterm') { sh "./build.sh deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}" }
                 }
             }
+            post { failure { sshagent(['ssh.github.com']) { sh "pipeline/delete-verification-revision" }}}
         }
         stage('Integrate') {
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
             agent any
             steps {
                 script {
-                    ansiColor('xterm') {
-                        sshagent(['ssh.github.com']) {
-                            sh 'pipeline/integrate-branch'
-                        }
+                    if (env.codeApproved.equals("false")) error("Code not approved")
+                    sshagent(['ssh.github.com']) {
+                        ansiColor('xterm') { sh 'pipeline/integrate-branch' }
                     }
                 }
             }
+            post { failure { sshagent(['ssh.github.com']) { sh "pipeline/delete-verification-revision" }}}
         }
         stage('Deploy') {
             when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
