@@ -8,7 +8,6 @@ services:
     environment:
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
       REPOSITORIES: >
-        eid;git@git.difi.local:eid;ssh.git.difi.local;
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
         kontaktregister-statistikk;git@github.com:difi/kontaktregister-statistikk;;
         idporten-oidc-client;git@github.com:difi/idporten-klient-oidc.git;ssh.git.difi.local;
@@ -16,7 +15,7 @@ services:
         poc-statistics;git@github.com:difi/poc-statistics;;
         eid-oidc-provider;git@git.difi.local:eid-oidc-provider;ssh.git.difi.local;
         minid-on-the-fly;git@git.difi.local:minid-on-the-fly;ssh.git.difi.local;
-        eid-resilience;git@git.difi.local:eid-common-resilience.git;ssh.git.difi.local;
+        eid-common-resilience;git@git.difi.local:eid-common-resilience.git;ssh.git.difi.local;
         eid-common;git@git.difi.local:eid-common.git;ssh.git.difi.local;
         krr;git@git.difi.local:krr.git;ssh.git.difi.local;
         idporten;git@git.difi.local:idporten.git;ssh.git.difi.local;

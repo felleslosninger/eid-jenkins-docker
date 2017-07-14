@@ -1,3 +1,4 @@
+feature/PBLEID-14450: Jobber i Jenkins skal kunne klone Git-submouler uten global ssh-agent
 feature/PBLEID-14435: Enkel oppdatering av pipeline på alle prosjektene
 feature/PBLEID-14436: Jenkins-jobbene skal kunne lese konfigurasjon fra fil
 feature/PBLEID-14423: Enkel oppdatering av pipeline-skript på alle eid-prosjekter
