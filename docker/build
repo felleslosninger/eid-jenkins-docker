@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../pipeline/docker-functions
+
+verify() {
+    buildImage jenkins DEV-SNAPSHOT
+    buildImage jenkins-plugins DEV-SNAPSHOT
+    buildImage nexus DEV-SNAPSHOT
+}
+
+deliver() {
+    [[ $# -eq 3 ]] || { >&2 echo "Usage: $0 VERSION USERNAME PASSWORD"; return 1; }
+    version=$1
+    username=$2
+    password=$3
+    buildImage jenkins-plugins ${version} || return 1
+    buildImage jenkins ${version} || return 1
+    buildImage nexus ${version} || return 1
+    pushImage jenkins-plugins ${version} "${username}" "${password}" || return 1
+    pushImage jenkins ${version} "${username}" "${password}" || return 1
+    pushImage nexus ${version} "${username}" "${password}" || return 1
+}
+
+case $1 in
+    verify)
+        shift
+        verify
+        ;;
+    deliver)
+        shift
+        deliver ${@}
+        ;;
+esac

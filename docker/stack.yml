@@ -115,10 +115,14 @@ services:
         constraints:
           - node.role == manager
   nexus:
-    image: sonatype/nexus3:3.3.2
+    image: eid-jenkins02.dmz.local:8081/nexus:${VERSION}
     ports:
       - "8080:8081"
       - "8081:8082"
+    volumes:
+      - type: volume
+        source: nexus-data
+        target: /nexus-data
     networks:
       - pipeline
     deploy:
@@ -134,7 +138,6 @@ services:
 
 volumes:
   nexus-data:
-    external: true
   jenkins-plugins:
 
 networks:

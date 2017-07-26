@@ -18,7 +18,7 @@ pipeline {
                     env.version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC')))
                     env.commitId = readCommitId().take(7)
                     currentBuild.description = "Building: ${env.commitId}"
-                    sh "./build.sh verify"
+                    sh "docker/build verify"
                 }
             }
         }
@@ -60,7 +60,7 @@ pipeline {
             agent any
             steps {
                 script {
-                    ansiColor('xterm') { sh "./build.sh deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}" }
+                    ansiColor('xterm') { sh "docker/build deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}" }
                 }
             }
             post { failure { sshagent(['ssh.github.com']) { sh "pipeline/delete-verification-revision" }}}
@@ -84,9 +84,9 @@ pipeline {
             steps {
                 script {
                     sshagent(['ssh.git.difi.local']) {
-                        sh "scp application-stack.yml jenkins@eid-jenkins02.dmz.local:"
-                        sh 'ssh jenkins@eid-jenkins02.dmz.local "eval \\$(keychain --eval id_all_jenkins); VERSION=' + env.version + ' uid=\\$(id -u jenkins) gid=\\$(id -g jenkins) docker stack deploy -c application-stack.yml pipeline"'
-                        sh "ssh jenkins@eid-jenkins02.dmz.local rm application-stack.yml"
+                        sh "scp docker/stack.yml jenkins@eid-jenkins02.dmz.local:"
+                        sh 'ssh jenkins@eid-jenkins02.dmz.local "eval \\$(keychain --eval id_all_jenkins); VERSION=' + env.version + ' uid=\\$(id -u jenkins) gid=\\$(id -g jenkins) docker stack deploy -c stack.yml pipeline"'
+                        sh "ssh jenkins@eid-jenkins02.dmz.local rm stack.yml"
                     }
                 }
             }
