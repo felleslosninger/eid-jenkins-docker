@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-[[ $# -eq 2 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD"; return 1; }
+[[ $# -eq 2 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD"; exit 1; }
 username=$1
 password=$2
-curl -v -X POST -u ${username}:${password} --header "Content-Type: application/json" 'http://localhost:8081/service/siesta/rest/v1/script' -d @docker/nexus/create-docker-repository.json
+curl -v -X POST -u ${username}:${password} --header "Content-Type: application/json" 'http://localhost:8081/service/siesta/rest/v1/script' -d @/create-docker-repository.json
+curl -v -X POST -u ${username}:${password} --header "Content-Type: text/plain"       'http://localhost:8081/service/siesta/rest/v1/script/create-docker-repository/run'

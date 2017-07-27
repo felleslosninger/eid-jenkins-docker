@@ -30,7 +30,7 @@ RUN install-plugin.sh build-timeout 1.18
 RUN install-plugin.sh cloudbees-folder 6.0.4
 RUN install-plugin.sh credentials 2.1.13
 RUN install-plugin.sh credentials-binding 1.11
-RUN install-plugin.sh cucumber-reports 3.8.0
+RUN install-plugin.sh cucumber-reports 3.9.0
 RUN install-plugin.sh cucumber-testresult-plugin 0.9.7
 RUN install-plugin.sh display-url-api 2.0
 RUN install-plugin.sh docker-commons 1.6

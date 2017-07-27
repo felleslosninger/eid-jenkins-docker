@@ -1,3 +1,4 @@
+feature/PBLEID-14199: Støtte for Cucumber-rapporter
 feature/PBLEID-14372: Docker-registeret må konfigureres opp i Nexus automatisk
 feature/PBLEID-14450: Jobber i Jenkins skal kunne klone Git-submouler uten global ssh-agent
 feature/PBLEID-14435: Enkel oppdatering av pipeline på alle prosjektene
