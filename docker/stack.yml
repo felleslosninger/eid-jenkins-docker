@@ -84,6 +84,16 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
+      - source: jira_username
+        target: jira_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: jira_password
+        target: jira_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
     volumes:
       - type: volume
         source: jenkins-plugins
@@ -160,4 +170,8 @@ secrets:
   nexus_username:
     external: true
   nexus_password:
+    external: true
+  jira_username:
+    external: true
+  jira_password:
     external: true

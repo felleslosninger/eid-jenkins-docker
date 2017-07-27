@@ -1,3 +1,4 @@
+feature/PBLEID-14471: Byggejobber skal kunne poste til Jira
 bugfix/PBLEID-14472: Nyeste versjon av Structs-plugin må benyttes for Cucumber-plugin
 feature/PBLEID-14199: Støtte for Cucumber-rapporter
 feature/PBLEID-14372: Docker-registeret må konfigureres opp i Nexus automatisk

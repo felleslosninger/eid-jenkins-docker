@@ -57,6 +57,14 @@ nexus_password=$(cat /run/secrets/nexus_password) || exit 1
 sed -i "s|USERNAME|${nexus_username}|g" credentials.xml || exit 1
 sed -i "s|PASSWORD|${nexus_password}|g" credentials.xml || exit 1
 
+echo "Adding credentials 'jira'"
+cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
+sed -i "s|CREDENTIAL_ID|jira|g" credentials.xml || exit 1
+nexus_username=$(cat /run/secrets/jira_username) || exit 1
+nexus_password=$(cat /run/secrets/jira_password) || exit 1
+sed -i "s|USERNAME|${jira_username}|g" credentials.xml || exit 1
+sed -i "s|PASSWORD|${jira_password}|g" credentials.xml || exit 1
+
 echo "Adding credentials 'artifactory'"
 cat /files/template-credentials-secretstring-entry.xml >> credentials.xml || exit 1
 sed -i "s|CREDENTIAL_ID|artifactory|g" credentials.xml || exit 1
