@@ -52,6 +52,7 @@ RUN install-plugin.sh http_request 1.8.19
 RUN install-plugin.sh icon-shim 2.0.3
 RUN install-plugin.sh jackson2-api 2.7.3
 RUN install-plugin.sh javadoc 1.4
+RUN install-plugin.sh jira-steps 1.2.3
 RUN install-plugin.sh jquery-detached 1.2.1
 RUN install-plugin.sh junit 1.20
 RUN install-plugin.sh mailer 1.20

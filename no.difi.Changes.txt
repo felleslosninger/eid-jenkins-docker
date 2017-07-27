@@ -1,3 +1,4 @@
+feature/PBLEID-14473: Steg for interaksjon med Jira
 feature/PBLEID-14471: Byggejobber skal kunne poste til Jira
 bugfix/PBLEID-14472: Nyeste versjon av Structs-plugin må benyttes for Cucumber-plugin
 feature/PBLEID-14199: Støtte for Cucumber-rapporter
