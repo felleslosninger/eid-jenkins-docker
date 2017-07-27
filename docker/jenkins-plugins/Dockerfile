@@ -86,7 +86,7 @@ RUN install-plugin.sh sse-gateway 1.15
 RUN install-plugin.sh ssh-agent 1.15
 RUN install-plugin.sh ssh-credentials 1.13
 RUN install-plugin.sh ssh-slaves 1.17
-RUN install-plugin.sh structs 1.7
+RUN install-plugin.sh structs 1.9
 RUN install-plugin.sh subversion 2.7.2
 RUN install-plugin.sh timestamper 1.8.8
 RUN install-plugin.sh token-macro 2.1
