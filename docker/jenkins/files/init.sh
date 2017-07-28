@@ -60,8 +60,8 @@ sed -i "s|PASSWORD|${nexus_password}|g" credentials.xml || exit 1
 echo "Adding credentials 'jira'"
 cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
 sed -i "s|CREDENTIAL_ID|jira|g" credentials.xml || exit 1
-nexus_username=$(cat /run/secrets/jira_username) || exit 1
-nexus_password=$(cat /run/secrets/jira_password) || exit 1
+jira_username=$(cat /run/secrets/jira_username) || exit 1
+jira_password=$(cat /run/secrets/jira_password) || exit 1
 sed -i "s|USERNAME|${jira_username}|g" credentials.xml || exit 1
 sed -i "s|PASSWORD|${jira_password}|g" credentials.xml || exit 1
 
@@ -72,6 +72,15 @@ artifactory_api_key=$(cat /run/secrets/artifactory-cleaner) || exit 1
 sed -i "s|SECRET_STRING|${artifactory_api_key}|g" credentials.xml || exit 1
 
 cat /files/credentials-footer.xml >> credentials.xml || exit 1
+
+echo "Adding JIRA configuration"
+cat /files/template-jira-basic.xml > org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
+jira_username=$(cat /run/secrets/jira_username) || exit 1
+jira_password=$(cat /run/secrets/jira_password) || exit 1
+sed -i "s|NAME|${JIRA_SITE}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
+sed -i "s|USERNAME|${jira_username}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
+sed -i "s|PASSWORD|${jira_password}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
+sed -i "s|URL|${JIRA_URL}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
 
 mkdir ${JENKINS_HOME}/.ssh
 echo "${KNOWN_HOSTS}" > ${JENKINS_HOME}/.ssh/known_hosts

@@ -6,6 +6,7 @@ services:
     ports:
       - "80:8080"
     environment:
+      JIRA_URL: http://jira.difi.local
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
       REPOSITORIES: >
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;

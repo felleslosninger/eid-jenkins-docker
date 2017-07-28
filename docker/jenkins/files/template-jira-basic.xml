@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.thoughtslive.jenkins.plugins.jira.Config_-ConfigDescriptorImpl plugin="jira-steps@1.2.3">
+    <sites>
+        <org.thoughtslive.jenkins.plugins.jira.Site>
+            <name>NAME</name>
+            <url>URL</url>
+            <loginType>BASIC</loginType>
+            <timeout>10000</timeout>
+            <userName>USERNAME</userName>
+            <password>PASSWORD</password>
+        </org.thoughtslive.jenkins.plugins.jira.Site>
+    </sites>
+</org.thoughtslive.jenkins.plugins.jira.Config_-ConfigDescriptorImpl>
