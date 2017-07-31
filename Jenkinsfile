@@ -60,6 +60,7 @@ pipeline {
             agent any
             steps {
                 script {
+                    if (env.codeApproved.equals("false")) error("Code not approved")
                     ansiColor('xterm') { sh "docker/build deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}" }
                 }
             }
@@ -84,9 +85,9 @@ pipeline {
             steps {
                 script {
                     sshagent(['ssh.git.difi.local']) {
-                        sh "scp docker/stack.yml jenkins@eid-jenkins02.dmz.local:"
-                        sh 'ssh jenkins@eid-jenkins02.dmz.local "eval \\$(keychain --eval id_all_jenkins); VERSION=' + env.version + ' uid=\\$(id -u jenkins) gid=\\$(id -g jenkins) docker stack deploy -c stack.yml pipeline"'
-                        sh "ssh jenkins@eid-jenkins02.dmz.local rm stack.yml"
+                        sh "ssh jenkins@eid-jenkins02.dmz.local mkdir -p /tmp/${env.BRANCH_NAME}"
+                        sh "scp docker/stack.yml docker/run jenkins@eid-jenkins02.dmz.local:/tmp/${env.BRANCH_NAME}"
+                        sh "ssh jenkins@eid-jenkins02.dmz.local /tmp/${env.BRANCH_NAME}/run ${env.version}"
                     }
                 }
             }

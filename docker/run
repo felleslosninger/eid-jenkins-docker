@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+__scriptUrl() {
+    echo -n 'http://eid-jenkins02.dmz.local:8080/service/siesta/rest/v1/script'
+}
+
+addScript() {
+    [[ $# -eq 3 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD SCRIPT"; return 1; }
+    username=$1
+    password=$2
+    script=$3
+    curl -fv -u ${username}:${password} -H 'Content-Type: application/json' "$(__scriptUrl)" -d "${script}" || { >&2 echo "Failed to upload Nexus script"; return 1; }
+}
+
+runScript() {
+    [[ $# -ge 3 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD SCRIPT_NAME [ARGUMENTS]"; return 1; }
+    username=$1
+    password=$2
+    scriptName=$3
+    arguments=$4
+    curl -f -XPOST -u ${username}:${password} -H 'Content-Type: text/plain' "$(__scriptUrl)/${scriptName}/run" -d "${arguments}" || { >&2 echo "Failed to run Nexus script"; return 1; }
+}
+
+createMavenRepositoryProxy() {
+    [[ $# -eq 4 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD REPOSITORY_NAME REPOSITORY_URL"; return 1; }
+    username=$1
+    password=$2
+    repositoryName=$3
+    repositoryUrl=$4
+    runScript "${username}" "${password}" create-maven-repository-proxy "${repositoryName},${repositoryUrl}"
+}
+
+createMavenRepositoryGroup() {
+    [[ $# -eq 4 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD REPOSITORY_NAME REPOSITORY_LIST"; return 1; }
+    username=$1
+    password=$2
+    repositoryName=$3
+    repositoryList=$4
+    runScript "${username}" "${password}" create-maven-repository-group "${repositoryName},${repositoryList}"
+}
+
+workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+stackFile="${workDir}/stack.yml"
+version=$1
+
+VERSION=${version} uid=$(id -u jenkins) gid=$(id -g jenkins) docker stack deploy --detach=false -c ${stackFile} pipeline
+createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
+createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases
+
+rm -rf "${workDir}"
