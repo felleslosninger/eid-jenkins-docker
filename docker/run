@@ -43,8 +43,6 @@ workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 stackFile="${workDir}/stack.yml"
 version=$1
 
-VERSION=${version} uid=$(id -u jenkins) gid=$(id -g jenkins) docker stack deploy --detach=false -c ${stackFile} pipeline
+VERSION=${version} uid=$(id -u jenkins) gid=$(id -g jenkins) docker stack deploy -c ${stackFile} pipeline
 createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
 createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases
-
-rm -rf "${workDir}"

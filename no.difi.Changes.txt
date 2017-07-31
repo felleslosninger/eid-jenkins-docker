@@ -1,3 +1,4 @@
+bugfix/PBLEID-14493: Deploy av Jenkins feiler
 feature/PBLEID-14478: Byggejobber skal kunne opprette og slette Docker-registre og Maven-repoer
 bugfix/PBLEID-14474: Mangler konfigurasjon for jira-steps plugin
 feature/PBLEID-14473: Steg for interaksjon med Jira
