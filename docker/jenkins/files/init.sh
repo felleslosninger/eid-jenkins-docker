@@ -77,8 +77,8 @@ echo "Adding JIRA configuration"
 cat /files/template-jira-basic.xml > org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
 jira_username=$(cat /run/secrets/jira_username) || exit 1
 jira_password=$(cat /run/secrets/jira_password) || exit 1
-sed -i "s|NAME|${JIRA_SITE}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
 sed -i "s|USERNAME|${jira_username}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
+sed -i "s|NAME|${JIRA_SITE}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
 sed -i "s|PASSWORD|${jira_password}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
 sed -i "s|URL|${JIRA_URL}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
 
