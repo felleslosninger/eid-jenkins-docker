@@ -142,7 +142,7 @@ services:
         constraints:
           - node.role == manager
   selenium_host:
-    image: selenium/standalone-firefox:2.53.0
+    image: selenium/standalone-firefox:3.4.0
     ports:
       - "4444:4444"
     networks:
