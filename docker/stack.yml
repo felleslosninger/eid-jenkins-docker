@@ -140,13 +140,17 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.labels.nexus == true
   selenium_host:
     image: selenium/standalone-firefox:3.4.0
     ports:
       - "4444:4444"
     networks:
       - pipeline
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
 
 volumes:
   nexus-data:
