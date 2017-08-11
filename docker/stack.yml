@@ -131,7 +131,7 @@ services:
         constraints:
           - node.labels.jenkins-master == true
   nexus:
-    image: eid-jenkins02.dmz.local:8081/nexus:${VERSION}
+    image: eid-jenkins02.dmz.local:8081/nexus:2017-08-07-1357
     ports:
       - "8080:8081"
       - "8081:8082"
