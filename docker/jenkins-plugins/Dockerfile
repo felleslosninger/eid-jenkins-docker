@@ -1,4 +1,6 @@
 FROM alpine:3.6
+ENV uid 1000
+ENV gid 1000
 
 RUN apk add --no-cache coreutils curl zip unzip bash ttf-dejavu ca-certificates openssl
 COPY install-plugin.sh /usr/local/bin/
@@ -7,8 +9,8 @@ RUN chmod +x /usr/local/bin/install-plugin.sh
 
 RUN install-plugin.sh Parameterized-Remote-Trigger 2.2.2
 RUN install-plugin.sh ace-editor 1.1
-RUN install-plugin.sh ansicolor 0.5.0
-RUN install-plugin.sh ant 1.5
+RUN install-plugin.sh ansicolor 0.5.1
+RUN install-plugin.sh ant 1.6
 RUN install-plugin.sh antisamy-markup-formatter 1.5
 RUN install-plugin.sh authentication-tokens 1.3
 RUN install-plugin.sh blueocean-autofavorite 1.0.0
@@ -22,6 +24,7 @@ RUN install-plugin.sh blueocean-i18n 1.1.6
 RUN install-plugin.sh blueocean-jwt 1.1.6
 RUN install-plugin.sh blueocean-personalization 1.1.6
 RUN install-plugin.sh blueocean-pipeline-api-impl 1.1.6
+RUN install-plugin.sh blueocean-pipeline-scm-api 1.1.6
 RUN install-plugin.sh blueocean-pipeline-editor 0.2.0
 RUN install-plugin.sh blueocean-rest 1.1.6
 RUN install-plugin.sh blueocean-rest-impl 1.1.6
@@ -39,7 +42,7 @@ RUN install-plugin.sh docker-commons 1.8
 RUN install-plugin.sh docker-workflow 1.12
 RUN install-plugin.sh durable-task 1.14
 RUN install-plugin.sh email-ext 2.58
-RUN install-plugin.sh envinject 2.1
+RUN install-plugin.sh envinject 2.1.3
 RUN install-plugin.sh external-monitor-job 1.7
 RUN install-plugin.sh favorite 2.3.0
 RUN install-plugin.sh git 3.5.1
@@ -65,7 +68,7 @@ RUN install-plugin.sh metrics 3.1.2.10
 RUN install-plugin.sh momentjs 1.1.1
 RUN install-plugin.sh pipeline-build-step 2.5.1
 RUN install-plugin.sh pipeline-github-lib 1.0
-RUN install-plugin.sh pipeline-graph-analysis 1.4
+RUN install-plugin.sh pipeline-graph-analysis 1.5
 RUN install-plugin.sh pipeline-input-step 2.8
 RUN install-plugin.sh pipeline-milestone-step 1.3.1
 RUN install-plugin.sh pipeline-model-api 1.1.9
@@ -76,7 +79,7 @@ RUN install-plugin.sh pipeline-rest-api 2.8
 RUN install-plugin.sh pipeline-stage-step 2.2
 RUN install-plugin.sh pipeline-stage-tags-metadata 1.1.9
 RUN install-plugin.sh pipeline-stage-view 2.8
-RUN install-plugin.sh pipeline-utility-steps 1.3.0
+RUN install-plugin.sh pipeline-utility-steps 1.4.0
 RUN install-plugin.sh plain-credentials 1.4
 RUN install-plugin.sh pubsub-light 1.12
 RUN install-plugin.sh resource-disposer 0.7
@@ -89,7 +92,7 @@ RUN install-plugin.sh ssh-agent 1.15
 RUN install-plugin.sh ssh-credentials 1.13
 RUN install-plugin.sh ssh-slaves 1.20
 RUN install-plugin.sh structs 1.10
-RUN install-plugin.sh subversion 2.7.2
+RUN install-plugin.sh subversion 2.9
 RUN install-plugin.sh timestamper 1.8.8
 RUN install-plugin.sh token-macro 2.1
 RUN install-plugin.sh variant 1.1
