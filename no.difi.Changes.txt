@@ -1,3 +1,4 @@
+feature/PBLEID-14596: Flytt services i swarm
 feature/PBLEID-14594: oppdatere jenkins
 feature/PBLEID-14527: Nexus på dedikert maskin
 feature/PBLEID-14525: oppdatere selenium standalone version i jenkins-docker

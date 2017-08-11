@@ -48,7 +48,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.labels.jenkins-master == true
     secrets:
       - source: ssh.git.difi.local
         target: ssh.git.difi.local
@@ -123,9 +123,13 @@ services:
         source: jenkins-plugins
         target: /files/plugins
     deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
       placement:
         constraints:
-          - node.role == manager
+          - node.labels.jenkins-master == true
   nexus:
     image: eid-jenkins02.dmz.local:8081/nexus:${VERSION}
     ports:
@@ -150,7 +154,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.labels.jenkins-master != true
 
 volumes:
   nexus-data:
