@@ -95,6 +95,22 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
+      - source: docker-ca.build
+        target: docker-ca.build
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker-cert.build
+        target: docker-cert.build
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker-key.build
+        target: docker-key.build
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+
     volumes:
       - type: volume
         source: jenkins-plugins
@@ -183,4 +199,10 @@ secrets:
   jira_username:
     external: true
   jira_password:
+    external: true
+  docker-ca.build:
+    external: true
+  docker-cert.build:
+    external: true
+  docker-key.build:
     external: true
