@@ -44,7 +44,6 @@ ENV PATH=/usr/local/maven/bin:$PATH
 ENV DOCKER_HOST tcp://localhost:2376
 ENV DOCKER_TLS_VERIFY 1
 ENV DOCKER_CERT_PATH $JENKINS_HOME/.docker
-ENV SSH_AUTH_SOCK /ssh_auth_sock
 ENV JIRA_SITE jira
 
 COPY files/ files/

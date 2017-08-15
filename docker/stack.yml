@@ -116,9 +116,6 @@ services:
         source: jenkins-plugins
         target: /var/jenkins_home/plugins
       - type: bind
-        source: ${SSH_AUTH_SOCK}
-        target: /ssh_auth_sock
-      - type: bind
         source: ${HOME}/data
         target: /var/jenkins_home
       - type: bind

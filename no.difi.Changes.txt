@@ -1,3 +1,4 @@
+bugfix/PBLEID-14618: Jenkins-tjenesten starter ikke etter omstart av vertsmaskinen
 feature/PBLEID-14517: Docker-bilder skal bygges og test-konteinere skal kjøres på eid-jenkins03.dmz.local
 feature/PBLEID-14599: Oppdatere jenkins-plugins
 feature/PBLEID-14598: Oppdatere jenkins-plugins
