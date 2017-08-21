@@ -197,9 +197,9 @@ secrets:
     external: true
   jira_password:
     external: true
-  docker-ca.build:
+  docker-ca.eid-jenkins03.dmz.local:
     external: true
-  docker-cert.build:
+  docker-cert.eid-jenkins03.dmz.local:
     external: true
-  docker-key.build:
+  docker-key.eid-jenkins03.dmz.local:
     external: true
