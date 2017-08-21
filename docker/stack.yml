@@ -95,17 +95,17 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker-ca.build
+      - source: docker-ca.eid-jenkins03.dmz.local
         target: docker-ca.build
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker-cert.build
+      - source: docker-cert.eid-jenkins03.dmz.local
         target: docker-cert.build
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker-key.build
+      - source: docker-key.eid-jenkins03.dmz.local
         target: docker-key.build
         mode: 0400
         uid: '${uid}'
