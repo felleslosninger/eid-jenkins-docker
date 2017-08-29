@@ -2,6 +2,7 @@
 <scriptApproval plugin="script-security@1.25">
     <approvedScriptHashes/>
     <approvedSignatures>
+        <string>method org.thoughtslive.jenkins.plugins.jira.api.ResponseData getData</string>
         <string>method groovy.json.JsonSlurperClassic parseText java.lang.String</string>
         <string>method hudson.model.Run getPreviousBuild</string>
         <string>method hudson.model.Run getResult</string>
