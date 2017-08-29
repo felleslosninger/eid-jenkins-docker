@@ -1,3 +1,4 @@
+bugfix/PBLEID-14691: puppet_modules mangler byggejobb
 bugfix/PBLEID-14652: legg til eid-test01 i known hosts
 bugfix/PBLEID-14651: Oppdatering av Jenkins-tjenesten feiler med "undefined secret ..."
 bugfix/PBLEID-14650: Jenkins-tjenesten skal benytte Docker-engine på eid-jenkins03 for å bygge Docker-bilder
