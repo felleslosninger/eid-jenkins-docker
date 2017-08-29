@@ -1,3 +1,4 @@
+bugfix/PBLEID-14692: puppet_modules_oidc mangler byggejobb
 bugfix/PBLEID-14691: puppet_modules mangler byggejobb
 bugfix/PBLEID-14652: legg til eid-test01 i known hosts
 bugfix/PBLEID-14651: Oppdatering av Jenkins-tjenesten feiler med "undefined secret ..."
