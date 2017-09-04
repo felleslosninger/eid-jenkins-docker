@@ -1,3 +1,4 @@
+feature/PBLEID-14727: Oppdatere jenkins, docker og plugins
 bugfix/PBLEID-14698: Byggejobber har ikke tillatelse til å bruke JIRA-APIet
 bugfix/PBLEID-14692: puppet_modules_oidc mangler byggejobb
 bugfix/PBLEID-14691: puppet_modules mangler byggejobb

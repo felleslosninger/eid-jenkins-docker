@@ -1,11 +1,11 @@
 FROM openjdk:8u111-jdk-alpine
 
-ARG JENKINS_VERSION=2.73
-ARG JENKINS_SHA=1928aa23563876b2cf1b1b8a948eb99b7f2c7601
+ARG JENKINS_VERSION=2.77
+ARG JENKINS_SHA=a16df07f53091253460993794cb2d47d965a8155
 ARG MAVEN_VERSION=3.5.0
-ARG DOCKER_VERSION=17.05.0-ce
-ARG DOCKER_SHA=340e0b5a009ba70e1b644136b94d13824db0aeb52e09071410f35a95d94316d9
-ARG DOCKER_MACHINE_VERSION=0.8.2
+ARG DOCKER_VERSION=17.06.1-ce
+ARG DOCKER_SHA=e35fe12806eadbb7eb8aa63e3dfb531bda5f901cd2c14ac9cdcd54df6caed697
+ARG DOCKER_MACHINE_VERSION=0.12.2
 ENV uid 1000
 ENV gid 1000
 
@@ -25,7 +25,8 @@ RUN cd /usr/local && \
     ln -sv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven
 
 # Install Docker (client)
-RUN curl -fSL "https://get.docker.com/builds/$(uname -s)/$(uname -m)/docker-$DOCKER_VERSION.tgz" -o docker.tgz \
+
+RUN curl -fSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-$DOCKER_VERSION.tgz" -o docker.tgz \
 	&& echo "${DOCKER_SHA} *docker.tgz" | sha256sum -c - \
 	&& tar -xzvf docker.tgz \
 	&& mv docker/* /usr/local/bin/ \
