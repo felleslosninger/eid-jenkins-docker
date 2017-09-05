@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../pipeline/docker-functions
+PIPELINE_SCRIPT_LOCATION=pipeline
+source ${PIPELINE_SCRIPT_LOCATION}/docker/docker-functions
 
 verify() {
     buildImage jenkins DEV-SNAPSHOT
