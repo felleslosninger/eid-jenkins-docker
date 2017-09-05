@@ -65,7 +65,15 @@ jira_password=$(cat /run/secrets/jira_password) || exit 1
 sed -i "s|USERNAME|${jira_username}|g" credentials.xml || exit 1
 sed -i "s|PASSWORD|${jira_password}|g" credentials.xml || exit 1
 
-echo "Adding credentials 'artifactory'"
+echo "Adding credentials 'artifactory-publish'"
+cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
+sed -i "s|CREDENTIAL_ID|artifactory-publish|g" credentials.xml || exit 1
+artifactory_username=$(cat /run/secrets/artifactory_username) || exit 1
+artifactory_password=$(cat /run/secrets/artifactory_password) || exit 1
+sed -i "s|USERNAME|${artifactory_username}|g" credentials.xml || exit 1
+sed -i "s|PASSWORD|${artifactory_password}|g" credentials.xml || exit 1
+
+echo "Adding credentials 'artifactory-cleaner'"
 cat /files/template-credentials-secretstring-entry.xml >> credentials.xml || exit 1
 sed -i "s|CREDENTIAL_ID|artifactory|g" credentials.xml || exit 1
 artifactory_api_key=$(cat /run/secrets/artifactory-cleaner) || exit 1

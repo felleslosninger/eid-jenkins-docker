@@ -1,3 +1,4 @@
+bugfix/PBLEID-14741: Jenkins mangler brukernavn og passord for publisering til Artifactory
 feature/PBLEID-14727: Oppdatere jenkins, docker og plugins
 bugfix/PBLEID-14698: Byggejobber har ikke tillatelse til å bruke JIRA-APIet
 bugfix/PBLEID-14692: puppet_modules_oidc mangler byggejobb

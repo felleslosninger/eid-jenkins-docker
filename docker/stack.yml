@@ -63,6 +63,16 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
+      - source: artifactory_username
+        target: artifactory_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: artifactory_password
+        target: artifactory_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
       - source: artifactory-cleaner
         target: artifactory-cleaner
         mode: 0400
@@ -187,6 +197,10 @@ secrets:
   ssh.github.com:
     external: true
   artifactory-cleaner:
+    external: true
+  artifactory_username:
+    external: true
+  artifactory_password:
     external: true
   crucible_username:
     external: true
