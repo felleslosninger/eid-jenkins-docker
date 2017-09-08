@@ -34,6 +34,7 @@ services:
         eid-log-writer;git@git.difi.local:eid-log-writer.git;ssh.git.difi.local;
         eidas;git@git.difi.local:eidas.git;ssh.git.difi.local;
         eid-maintenance;git@git.difi.local:eid-maintenance.git;ssh.git.difi.local
+        eid-docker-maintenance;git@git.difi.local:eid-docker-maintenance.git;ssh.git.difi.local
         puppet_modules;git@eid-gitlab.dmz.local:puppet/puppet_modules;ssh.git.difi.local
         puppet_modules_oidc;git@eid-gitlab.dmz.local:puppet/puppet_modules_oidc;ssh.git.difi.local
         puppet_hiera;git@eid-gitlab.dmz.local:puppet/puppet_hiera;ssh.git.difi.local
