@@ -14,6 +14,7 @@ RUN install-plugin.sh antisamy-markup-formatter 1.5
 RUN install-plugin.sh docker-commons 1.8
 RUN install-plugin.sh blueocean-events 1.2.0
 RUN install-plugin.sh timestamper 1.8.8
+RUN install-plugin.sh analysis-core 1.92
 RUN install-plugin.sh pipeline-rest-api 2.9
 RUN install-plugin.sh blueocean-rest 1.2.0
 RUN install-plugin.sh github-branch-source 2.2.3
@@ -34,12 +35,13 @@ RUN install-plugin.sh ace-editor 1.1
 RUN install-plugin.sh cloudbees-folder 6.1.2
 RUN install-plugin.sh blueocean-pipeline-api-impl 1.2.0
 RUN install-plugin.sh pipeline-model-api 1.1.9
+RUN install-plugin.sh warnings 4.63
 RUN install-plugin.sh variant 1.1
 RUN install-plugin.sh git 3.5.1
 RUN install-plugin.sh matrix-auth 1.7
 RUN install-plugin.sh jira 2.4.2
 RUN install-plugin.sh workflow-job 2.14.1
-RUN install-plugin.sh script-security 1.33
+RUN install-plugin.sh script-security 1.34
 RUN install-plugin.sh pipeline-milestone-step 1.3.1
 RUN install-plugin.sh git-server 1.7
 RUN install-plugin.sh javadoc 1.4
@@ -56,6 +58,7 @@ RUN install-plugin.sh github 1.28.0
 RUN install-plugin.sh envinject-api 1.2
 RUN install-plugin.sh metrics 3.1.2.10
 RUN install-plugin.sh blueocean-dashboard 1.2.0
+RUN install-plugin.sh maven-plugin 2.17
 RUN install-plugin.sh workflow-durable-task-step 2.15
 RUN install-plugin.sh junit 1.21
 RUN install-plugin.sh pipeline-graph-analysis 1.5
@@ -73,13 +76,14 @@ RUN install-plugin.sh blueocean-i18n 1.2.0
 RUN install-plugin.sh authentication-tokens 1.3
 RUN install-plugin.sh pipeline-model-extensions 1.1.9
 RUN install-plugin.sh blueocean-personalization 1.2.0
-RUN install-plugin.sh credentials 2.1.14
+RUN install-plugin.sh credentials 2.1.15
 RUN install-plugin.sh workflow-support 2.14
 RUN install-plugin.sh ant 1.7
 RUN install-plugin.sh pipeline-github-lib 1.0
 RUN install-plugin.sh blueocean-config 1.2.0
 RUN install-plugin.sh blueocean-pipeline-scm-api 1.2.0
-RUN install-plugin.sh workflow-cps 2.39
+RUN install-plugin.sh workflow-cps 2.40
+RUN install-plugin.sh discard-old-build 1.05
 RUN install-plugin.sh branch-api 2.0.11
 RUN install-plugin.sh webhook-step 1.2
 RUN install-plugin.sh workflow-api 2.20
