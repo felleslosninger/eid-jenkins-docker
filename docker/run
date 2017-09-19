@@ -41,8 +41,10 @@ createMavenRepositoryGroup() {
 
 workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 stackFile="${workDir}/stack.yml"
+[[ $# -eq 1 ]] || { >&2 echo "Usage: $0 VERSION"; exit 1; }
+
 version=$1
 
-VERSION=${version} uid=$(id -u jenkins) gid=$(id -g jenkins) docker stack deploy -c ${stackFile} pipeline || { >&2 echo "Failed to deploy application stack"; return 1; }
-createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
-createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases
+VERSION=${version} docker stack deploy -c ${stackFile} pipeline || { >&2 echo "Failed to deploy application stack"; exit 1; }
+#createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
+#createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases

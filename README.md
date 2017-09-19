@@ -6,15 +6,15 @@ Dette er en prekonfigurert Jenkins-instans som benytter pipeline-as-code-konsept
 
 Følgende verktøy er tilgjengelig for byggejobber direkte fra `PATH`:
 * Java Development Kit 8 (`java`)
-* Maven 3.5 (`mvn`)
-* Docker klient 17.05.0-ce (`docker`)
-* Docker Machine 0.8 (`docker-machine`)
+* Maven 3.5.0 (`mvn`)
+* Docker klient 17.06.1-ce (`docker`)
+* Docker Machine 0.12.2 (`docker-machine`)
 * AWS CLI (`aws`)
 
 ## Hvordan kjøre applikasjonen
 
 Følgende krav stilles til vertsmaskinen:
-* Docker Engine (1.12.1 eller nyere) er installert.
+* Docker Engine (17.06 eller nyere) er installert.
 * Det finnes en bruker `jenkins`.
 
 For byggejobber som trenger Docker:
@@ -32,27 +32,7 @@ For byggejobber som trenger AWS:
   en AWS-bruker som har nødvendige rettigheter til å utføre det byggejobbene trenger
   (f.eks. en IAM-bruker med sikkerhetspolicien `AmazonEC2FullAccess`).
 
-Applikasjonen kan kjøres som en tjeneste på en Docker-sverm. `pipeline/application.sh create` gjør dette for deg.
-
-Alternativt kan en enkelt konteiner startes på følgende måte:
-```
-$ USER=jenkins
-$ docker run -d \
-  -p 80:8080 \
-  -v $SSH_AUTH_SOCK:/ssh_auth_sock \
-  -v $(eval echo ~$USER)/data:/var/jenkins_home/ \
-  -v $(eval echo ~$USER)/.ssh/known_hosts:/var/jenkins_home/.ssh/known_hosts \
-  -v $(eval echo ~$USER)/.docker:/var/jenkins_home/.docker \
-  -v $(eval echo ~$USER)/.aws:/var/jenkins_home/.aws \
-  -v $(eval echo ~$USER)/.m2:/var/jenkins_home/.m2 \
-  -e uid=`id -u $USER` \
-  -e gid=`id -g $USER` \
-  -e DOCKER_HOST=tcp://$HOSTNAME:2376 \
-  --restart=unless-stopped \
-  --name jenkins \
-  docker-registry.dmz.local/eid-jenkins
-```
-*NB! Containere som ikke startes som service, kan ikke kjøre fullstendige deploy-bygg.*
+Applikasjonen kan kjøres som et sett tjenester (en _stack_) på en Docker-sverm. `docker/run` gjør dette for deg.
 
 ## Hvordan vedlikeholde bildet
 

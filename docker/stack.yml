@@ -7,7 +7,10 @@ services:
       - "80:8080"
     environment:
       JIRA_URL: http://jira.difi.local
+      ISSUE_STATUS_CODE_APPROVED: 10005
+      ISSUE_STATUS_CODE_REVIEW: 10012
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
+      DOCKER_TLS_VERIFY: 1
       REPOSITORIES: >
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
         kontaktregister-statistikk;git@github.com:difi/kontaktregister-statistikk;;
@@ -125,7 +128,6 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-
     volumes:
       - type: volume
         source: jenkins-plugins
@@ -133,15 +135,6 @@ services:
       - type: bind
         source: ${HOME}/data
         target: /var/jenkins_home
-      - type: bind
-        source: ${HOME}/.docker
-        target: /var/jenkins_home/.docker
-      - type: bind
-        source: ${HOME}/.m2
-        target: /var/jenkins_home/.m2
-      - type: bind
-        source: ${HOME}/.aws
-        target: /var/jenkins_home/.aws
     networks:
       - pipeline
   jenkins-plugins:

@@ -1,7 +1,7 @@
 FROM openjdk:8u111-jdk-alpine
 
-ARG JENKINS_VERSION=2.77
-ARG JENKINS_SHA=a16df07f53091253460993794cb2d47d965a8155
+ARG JENKINS_VERSION=2.78
+ARG JENKINS_SHA=29f8dd6b33a4552cbada05a1a1d12a3f3007a0b4
 ARG MAVEN_VERSION=3.5.0
 ARG DOCKER_VERSION=17.06.1-ce
 ARG DOCKER_SHA=e35fe12806eadbb7eb8aa63e3dfb531bda5f901cd2c14ac9cdcd54df6caed697
@@ -42,10 +42,6 @@ RUN curl -fSL https://github.com/docker/machine/releases/download/v${DOCKER_MACH
 RUN pip install awscli && apk --purge -v del py-pip
 
 ENV PATH=/usr/local/maven/bin:$PATH
-ENV DOCKER_HOST tcp://localhost:2376
-ENV DOCKER_TLS_VERIFY 1
-ENV DOCKER_CERT_PATH $JENKINS_HOME/.docker
-ENV JIRA_SITE jira
 
 COPY files/ files/
 RUN chmod +x /files/init.sh

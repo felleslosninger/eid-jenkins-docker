@@ -2,6 +2,7 @@
 
 PIPELINE_SCRIPT_LOCATION=pipeline
 source ${PIPELINE_SCRIPT_LOCATION}/docker/docker-functions
+source ../pipeline/docker/docker-functions 2>/dev/null # For IntelliJ/BashSupport's method binding
 
 verify() {
     buildImage jenkins DEV-SNAPSHOT

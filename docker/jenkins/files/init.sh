@@ -1,97 +1,126 @@
 #!/usr/bin/env bash
 
-addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins -s /bin/bash -D jenkins
-
-cd ${JENKINS_HOME}
-
-cp /files/scriptApproval.xml .
-cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml .
-cp /files/jenkins.model.JenkinsLocationConfiguration.xml .
+createConfiguration() {
+    local issueStatusCodeApproved=${1}
+    local issueStatusCodeReview=${2}
+    local file=${JENKINS_HOME}/config.xml
+    cp /files/template-config.xml ${file}
+    sed -i "s|\${ISSUE_STATUS_CODE_APPROVED}|${issueStatusCodeApproved}|g" ${file}
+    sed -i "s|\${ISSUE_STATUS_CODE_REVIEW}|${issueStatusCodeReview}|g" ${file}
+}
 
 createJob() {
-    local name=$1
-    local repo=$2
-    local credentialId=$3
+    local name=${1}
+    local repo=${2}
+    local credentialId=${3}
     local jobDir=$(jobDir ${name})
-    echo "Creating job '${name}' from repository '${repo}' with credentials id '${credentialId}'..."
-    [ ! -e ${jobDir} ] && mkdir -p ${jobDir}
-    cp /files/template-config.xml ${jobDir}/config.xml
+    echo "Creating job '${name}' from repository '${repo}' with SSH credential '${credentialId}'..."
+    mkdir -p ${jobDir}
+    cp /files/template-job-config.xml ${jobDir}/config.xml
     sed -i "s|REPO|${repo}|g" ${jobDir}/config.xml
     sed -i "s|CREDENTIAL_ID|${credentialId}|g" ${jobDir}/config.xml
 }
 
 jobDir() {
-    name=$1
-    local jobDir="jobs/${name}"
+    local name=${1}
+    local jobDir="${JENKINS_HOME}/jobs/${name}"
     echo -n ${jobDir}
 }
 
-for repository in ${REPOSITORIES}; do
-    name=$(echo ${repository} | cut -d';' -f1)
-    url=$(echo ${repository} | cut -d';' -f2)
-    credentialId=$(echo ${repository} | cut -d';' -f3)
-    createJob "${name}" "${url}" "${credentialId}"
-done
+createJobs() {
+    local repositories=${1}
+    local name url credentialId
+    for repository in ${repositories}; do
+        name=$(echo ${repository} | cut -d';' -f1)
+        url=$(echo ${repository} | cut -d';' -f2)
+        credentialId=$(echo ${repository} | cut -d';' -f3)
+        createJob "${name}" "${url}" "${credentialId}"
+    done
+}
 
-cat /files/credentials-header.xml > credentials.xml || exit 1
-for sshKeyFile in $(find /run/secrets -type f -name ssh.*); do
-    echo "Adding SSH key from $sshKeyFile to credentials store"
-    cat /files/template-credentials-sshkey-entry.xml >> credentials.xml || exit 1
-    sed -i "s|CREDENTIAL_ID|${sshKeyFile##*/}|g" credentials.xml || exit 1
-    sed -i "s|CREDENTIAL_FILE|${sshKeyFile}|g" credentials.xml || exit 1
-done
+createUserPassCredential() {
+    local id=${1}
+    local filePrefix=${2-${id}}
+    local username password
+    local credentialFile=${JENKINS_HOME}/credentials.xml
+    echo "Adding username/password credential '${id}'"
+    cat /files/template-credentials-userpass-entry.xml >> ${credentialFile} || return 1
+    sed -i "s|CREDENTIAL_ID|${id}|g" ${credentialFile} || return 1
+    username=$(cat /run/secrets/${filePrefix}_username) || return 1
+    password=$(cat /run/secrets/${filePrefix}_password) || return 1
+    sed -i "s|USERNAME|${username}|g" ${credentialFile} || return 1
+    sed -i "s|PASSWORD|${password}|g" ${credentialFile} || return 1
+}
 
-echo "Adding credentials 'crucible'"
-cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
-sed -i "s|CREDENTIAL_ID|crucible|g" credentials.xml || exit 1
-crucible_username=$(cat /run/secrets/crucible_username) || exit 1
-crucible_password=$(cat /run/secrets/crucible_password) || exit 1
-sed -i "s|USERNAME|${crucible_username}|g" credentials.xml || exit 1
-sed -i "s|PASSWORD|${crucible_password}|g" credentials.xml || exit 1
+createSecretStringCredential() {
+    local id=${1}
+    local fileName=${2-${id}}
+    local secret
+    local credentialFile=${JENKINS_HOME}/credentials.xml
+    echo "Adding secret string credential '${id}'"
+    cat /files/template-credentials-secretstring-entry.xml >> ${credentialFile} || return 1
+    sed -i "s|CREDENTIAL_ID|${id}|g" ${credentialFile} || return 1
+    secret=$(cat /run/secrets/${fileName}) || return 1
+    sed -i "s|SECRET_STRING|${secret}|g" ${credentialFile} || return 1
+}
 
-echo "Adding credentials 'nexus'"
-cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
-sed -i "s|CREDENTIAL_ID|nexus|g" credentials.xml || exit 1
-nexus_username=$(cat /run/secrets/nexus_username) || exit 1
-nexus_password=$(cat /run/secrets/nexus_password) || exit 1
-sed -i "s|USERNAME|${nexus_username}|g" credentials.xml || exit 1
-sed -i "s|PASSWORD|${nexus_password}|g" credentials.xml || exit 1
+createSshKeyCredential() {
+    local keyFile=${1}
+    local credentialFile=${JENKINS_HOME}/credentials.xml
+    echo "Adding SSH key credential '${keyFile}'"
+    cat /files/template-credentials-sshkey-entry.xml >> ${credentialFile} || return 1
+    sed -i "s|CREDENTIAL_ID|${keyFile##*/}|g" ${credentialFile} || return 1
+    sed -i "s|CREDENTIAL_FILE|${keyFile}|g" ${credentialFile} || return 1
+}
 
-echo "Adding credentials 'jira'"
-cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
-sed -i "s|CREDENTIAL_ID|jira|g" credentials.xml || exit 1
-jira_username=$(cat /run/secrets/jira_username) || exit 1
-jira_password=$(cat /run/secrets/jira_password) || exit 1
-sed -i "s|USERNAME|${jira_username}|g" credentials.xml || exit 1
-sed -i "s|PASSWORD|${jira_password}|g" credentials.xml || exit 1
+createCredentials() {
+    local credentialFile=${JENKINS_HOME}/credentials.xml
+    cat /files/credentials-header.xml > ${credentialFile} || return 1
+    for sshKeyFile in $(find /run/secrets -type f -name ssh.*); do createSshKeyCredential ${sshKeyFile}; done
+    createUserPassCredential 'crucible'
+    createUserPassCredential 'nexus'
+    createUserPassCredential 'jira'
+    createUserPassCredential 'artifactory-publish' 'artifactory'
+    createSecretStringCredential 'artifactory' 'artifactory-cleaner'
+    cat /files/credentials-footer.xml >> ${credentialFile} || return 1
+}
 
-echo "Adding credentials 'artifactory-publish'"
-cat /files/template-credentials-userpass-entry.xml >> credentials.xml || exit 1
-sed -i "s|CREDENTIAL_ID|artifactory-publish|g" credentials.xml || exit 1
-artifactory_username=$(cat /run/secrets/artifactory_username) || exit 1
-artifactory_password=$(cat /run/secrets/artifactory_password) || exit 1
-sed -i "s|USERNAME|${artifactory_username}|g" credentials.xml || exit 1
-sed -i "s|PASSWORD|${artifactory_password}|g" credentials.xml || exit 1
+createDockerCredentials() {
+    echo "Adding Docker credentials for TLS"
+    mkdir ${JENKINS_HOME}/.docker
+    cat /run/secrets/docker-ca.build > ${JENKINS_HOME}/.docker/ca.pem
+    cat /run/secrets/docker-key.build > ${JENKINS_HOME}/.docker/key.pem
+    cat /run/secrets/docker-cert.build > ${JENKINS_HOME}/.docker/cert.pem
+}
 
-echo "Adding credentials 'artifactory-cleaner'"
-cat /files/template-credentials-secretstring-entry.xml >> credentials.xml || exit 1
-sed -i "s|CREDENTIAL_ID|artifactory|g" credentials.xml || exit 1
-artifactory_api_key=$(cat /run/secrets/artifactory-cleaner) || exit 1
-sed -i "s|SECRET_STRING|${artifactory_api_key}|g" credentials.xml || exit 1
+createJiraConfiguration() {
+    local file="${JENKINS_HOME}/org.thoughtslive.jenkins.plugins.jira.Config.xml"
+    echo "Adding JIRA configuration"
+    cat /files/template-jira-basic.xml > ${file} || return 1
+    jira_username=$(cat /run/secrets/jira_username) || return 1
+    jira_password=$(cat /run/secrets/jira_password) || return 1
+    sed -i "s|USERNAME|${jira_username}|g" ${file} || return 1
+    sed -i "s|NAME|${JIRA_SITE}|g" ${file} || return 1
+    sed -i "s|PASSWORD|${jira_password}|g" ${file} || return 1
+    sed -i "s|URL|${JIRA_URL}|g" ${file} || return 1
+}
 
-cat /files/credentials-footer.xml >> credentials.xml || exit 1
+createSshKnownHosts() {
+    mkdir -p ${JENKINS_HOME}/.ssh
+    echo "${KNOWN_HOSTS}" > ${JENKINS_HOME}/.ssh/known_hosts
+    chmod 600 ${JENKINS_HOME}/.ssh/known_hosts
+}
 
-echo "Adding JIRA configuration"
-cat /files/template-jira-basic.xml > org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
-jira_username=$(cat /run/secrets/jira_username) || exit 1
-jira_password=$(cat /run/secrets/jira_password) || exit 1
-sed -i "s|USERNAME|${jira_username}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
-sed -i "s|NAME|${JIRA_SITE}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
-sed -i "s|PASSWORD|${jira_password}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
-sed -i "s|URL|${JIRA_URL}|g" org.thoughtslive.jenkins.plugins.jira.Config.xml || exit 1
+addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins -s /bin/bash -D jenkins
 
-mkdir ${JENKINS_HOME}/.ssh
-echo "${KNOWN_HOSTS}" > ${JENKINS_HOME}/.ssh/known_hosts
-chmod 600 ${JENKINS_HOME}/.ssh/known_hosts
+cp /files/scriptApproval.xml ${JENKINS_HOME}
+cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
+cp /files/jenkins.model.JenkinsLocationConfiguration.xml ${JENKINS_HOME}
 
+createConfiguration ${ISSUE_STATUS_CODE_APPROVED} ${ISSUE_STATUS_CODE_REVIEW}
+createJobs ${REPOSITORIES} || exit 1
+createCredentials || exit 1
+createDockerCredentials || exit 1
+createJiraConfiguration || exit 1
+createSshKnownHosts || exit 1
 chown -R ${uid}:${gid} ${JENKINS_HOME}

@@ -1,5 +1,6 @@
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
 import static java.time.ZonedDateTime.now
 
@@ -8,79 +9,135 @@ pipeline {
     options {
         timeout(time: 5, unit: 'DAYS')
         disableConcurrentBuilds()
+        ansiColor('xterm')
     }
     stages {
-        stage('Build') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+        stage('Check build') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) } }
             agent any
             steps {
                 script {
-                    env.version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC')))
-                    env.commitId = readCommitId().take(7)
-                    currentBuild.description = "Building: ${env.commitId}"
-                    sh "docker/build verify"
+                    currentBuild.description = "Building from commit " + readCommitId()
+                    if (readCommitMessage() == "ready!") {
+                        env.verification = 'true'
+                    }
+                }
+                sh "docker/build verify"
+            }
+        }
+        stage('Wait for code reviewer to start') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
+            steps {
+                script {
+                    retry(count: 1000000) {
+                        if (issueStatus(issueId(env.BRANCH_NAME)) != env.ISSUE_STATUS_CODE_REVIEW) {
+                            sleep 10
+                            error("Issue is not yet under code review")
+                        }
+                    }
                 }
             }
         }
-        stage('Prepare verification') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+        stage('Wait for verification slot') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
+            agent any
+            steps {
+                script {
+                    sshagent(['ssh.github.com']) {
+                        retry(count: 1000000) {
+                            sleep 10
+                            sh 'pipeline/git/available-verification-slot'
+                        }
+                    }
+                }
+            }
+        }
+        stage('Create code review') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             environment {
                 crucible = credentials('crucible')
             }
             agent any
             steps {
                 script {
-                    if (readCommitMessage() != "ready!") error("Developer has not signalled that work is ready for verification")
+                    version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC'))) + "-" + readCommitId()
                     sshagent(['ssh.github.com']) {
-                        env.verifyRevision = sh(returnStdout: true, script: "pipeline/create-verification-revision")
+                        verifyRevision = sh returnStdout: true, script: "pipeline/git/create-verification-revision ${version}"
                     }
-                    sh "pipeline/create-review ${env.verifyRevision} ${env.crucible_USR} ${env.crucible_PSW}"
+                    sh "pipeline/create-review ${verifyRevision} ${env.crucible_USR} ${env.crucible_PSW}"
                 }
             }
-            post { failure { sshagent(['ssh.github.com']) { sh "pipeline/delete-verification-revision" }}}
+            post {
+                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
+                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
+            }
         }
-        stage('Approve code') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+        stage('Wait for code reviewer to finish') {
+            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
             steps {
                 script {
+                    env.codeApproved = "false"
+                    env.jobAborted = "false"
                     try {
-                        input message: "Has the code been reviewed and approved?", ok: "Yes"
-                        env.codeApproved = "true"
-                    } catch (Exception ignored) {
-                        env.codeApproved = "false"
+                        retry(count: 1000000) {
+                            if (issueStatus(issueId(env.BRANCH_NAME)) == env.ISSUE_STATUS_CODE_REVIEW) {
+                                sleep 10
+                                error("Issue is still under code review")
+                            }
+                        }
+                        if (issueStatus(issueId(env.BRANCH_NAME)) == env.ISSUE_STATUS_CODE_APPROVED)
+                            env.codeApproved = "true"
+                    } catch (FlowInterruptedException e) {
+                        env.jobAborted = "true"
                     }
                 }
             }
         }
         stage('Deliver') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            agent any
             environment {
                 nexus = credentials('nexus')
             }
-            agent any
             steps {
                 script {
-                    if (env.codeApproved.equals("false")) error("Code not approved")
-                    ansiColor('xterm') { sh "docker/build deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}" }
+                    if (env.jobAborted == "true") {
+                        error("Job was aborted")
+                    } else if (env.codeApproved == "false") {
+                        error("Code was not approved")
+                    }
+                    version = versionFromCommitMessage()
+                    commitId = readCommitId()
+                    currentBuild.description = "Publish version ${version} from commit ${commitId}"
+                    sh "docker/build deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}"
                 }
             }
-            post { failure { sshagent(['ssh.github.com']) { sh "pipeline/delete-verification-revision" }}}
+            post {
+                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
+                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
+            }
         }
-        stage('Integrate') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+        stage('Integrate code') {
+            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
             agent any
             steps {
                 script {
-                    if (env.codeApproved.equals("false")) error("Code not approved")
                     sshagent(['ssh.github.com']) {
-                        ansiColor('xterm') { sh 'pipeline/integrate-branch' }
+                        sh 'git push origin HEAD:master'
                     }
                 }
             }
-            post { failure { sshagent(['ssh.github.com']) { sh "pipeline/delete-verification-revision" }}}
+            post {
+                always {
+                    sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }
+                }
+                success {
+                    sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME#verify/}" }
+                }
+            }
         }
         stage('Deploy') {
-            when { expression { env.BRANCH_NAME.matches(/(feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
             agent any
             steps {
                 script {
@@ -94,7 +151,8 @@ pipeline {
         }
     }
     post {
-        changed {
+        success {
+            echo "Success"
             notifySuccess()
         }
         unstable {
@@ -106,13 +164,17 @@ pipeline {
             notifyFailed()
         }
         aborted {
-            notifyFailed()
             echo "Aborted"
+            notifyFailed()
         }
         always {
-            echo "Finish building ${env.commitMessage}"
+            echo "Build finished"
         }
     }
+}
+
+String versionFromCommitMessage() {
+    return readCommitMessage().tokenize(':')[0]
 }
 
 def notifyFailed() {
@@ -152,10 +214,18 @@ boolean isPreviousBuildFailOrUnstable() {
     return false
 }
 
-String readCommitId() {
-    return sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+static def issueId(def branchName) {
+    return branchName.tokenize('/')[-1]
 }
 
-String readCommitMessage() {
+String issueStatus(def issueId) {
+    return jiraGetIssue(idOrKey: issueId, site: 'jira').data.fields['status']['id']
+}
+
+def readCommitId() {
+    return sh(returnStdout: true, script: 'git rev-parse HEAD').trim().take(7)
+}
+
+def readCommitMessage() {
     return sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
 }
