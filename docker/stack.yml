@@ -9,7 +9,7 @@ services:
       JIRA_URL: http://jira.difi.local
       ISSUE_STATUS_CODE_APPROVED: 10005
       ISSUE_STATUS_CODE_REVIEW: 10012
-      DOCKER_HOST: tcp://eid-jenkins03.dmz.local:2376
+      DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
       DOCKER_TLS_VERIFY: 1
       REPOSITORIES: >
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
@@ -113,6 +113,21 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
+      - source: docker-ca.eid-jenkins02.dmz.local
+        target: docker-ca.agent
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker-cert.eid-jenkins02.dmz.local
+        target: docker-cert.agent
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker-key.eid-jenkins02.dmz.local
+        target: docker-key.agent
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
       - source: docker-ca.eid-jenkins03.dmz.local
         target: docker-ca.build
         mode: 0400
@@ -208,6 +223,12 @@ secrets:
   jira_username:
     external: true
   jira_password:
+    external: true
+  docker-ca.eid-jenkins02.dmz.local:
+    external: true
+  docker-cert.eid-jenkins02.dmz.local:
+    external: true
+  docker-key.eid-jenkins02.dmz.local:
     external: true
   docker-ca.eid-jenkins03.dmz.local:
     external: true

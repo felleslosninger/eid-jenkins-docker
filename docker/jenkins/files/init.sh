@@ -88,9 +88,9 @@ createCredentials() {
 createDockerCredentials() {
     echo "Adding Docker credentials for TLS"
     mkdir ${JENKINS_HOME}/.docker
-    cat /run/secrets/docker-ca.build > ${JENKINS_HOME}/.docker/ca.pem
-    cat /run/secrets/docker-key.build > ${JENKINS_HOME}/.docker/key.pem
-    cat /run/secrets/docker-cert.build > ${JENKINS_HOME}/.docker/cert.pem
+    cat /run/secrets/docker-ca.agent > ${JENKINS_HOME}/.docker/ca.pem
+    cat /run/secrets/docker-key.agent > ${JENKINS_HOME}/.docker/key.pem
+    cat /run/secrets/docker-cert.agent > ${JENKINS_HOME}/.docker/cert.pem
 }
 
 createJiraConfiguration() {
