@@ -109,7 +109,7 @@ pipeline {
                     version = versionFromCommitMessage()
                     commitId = readCommitId()
                     currentBuild.description = "Publish version ${version} from commit ${commitId}"
-                    sh "docker/build deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}"
+                    sh "docker/build deliver ${version} ${env.nexus_USR} ${env.nexus_PSW}"
                 }
             }
             post {

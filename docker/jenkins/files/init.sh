@@ -100,7 +100,6 @@ createJiraConfiguration() {
     jira_username=$(cat /run/secrets/jira_username) || return 1
     jira_password=$(cat /run/secrets/jira_password) || return 1
     sed -i "s|USERNAME|${jira_username}|g" ${file} || return 1
-    sed -i "s|NAME|${JIRA_SITE}|g" ${file} || return 1
     sed -i "s|PASSWORD|${jira_password}|g" ${file} || return 1
     sed -i "s|URL|${JIRA_URL}|g" ${file} || return 1
 }
