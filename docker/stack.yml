@@ -10,7 +10,6 @@ services:
       ISSUE_STATUS_CODE_APPROVED: 10005
       ISSUE_STATUS_CODE_REVIEW: 10012
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
-      DOCKER_TLS_VERIFY: 1
       REPOSITORIES: >
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
         kontaktregister-statistikk;git@github.com:difi/kontaktregister-statistikk;;

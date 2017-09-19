@@ -37,7 +37,13 @@
                     <default>
                         <comparator class="hudson.util.CaseInsensitiveComparator"/>
                     </default>
-                    <int>3</int>
+                    <int>6</int>
+                    <string>DOCKER_HOST</string>
+                    <string>${DOCKER_HOST}</string>
+                    <string>DOCKER_CERT_PATH</string>
+                    <string>/docker</string>
+                    <string>DOCKER_TLS_VERIFY</string>
+                    <string>1</string>
                     <string>JIRA_SITE</string>
                     <string>jira</string>
                     <string>ISSUE_STATUS_CODE_APPROVED</string>

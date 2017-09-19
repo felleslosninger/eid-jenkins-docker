@@ -4,6 +4,9 @@ import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
 import static java.time.ZonedDateTime.now
 
+def buildHostUser = 'jenkins'
+def buildHostName = 'eid-jenkins03.dmz.local'
+
 pipeline {
     agent none
     options {
@@ -95,9 +98,14 @@ pipeline {
         }
         stage('Deliver') {
             when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
-            agent any
             environment {
                 nexus = credentials('nexus')
+            }
+            agent {
+                dockerfile {
+                    dir 'docker'
+                    args '-v /var/jenkins_home/.ssh/known_hosts:/root/.ssh/known_hosts -u root:root'
+                }
             }
             steps {
                 script {
@@ -107,9 +115,11 @@ pipeline {
                         error("Code was not approved")
                     }
                     version = versionFromCommitMessage()
-                    commitId = readCommitId()
-                    currentBuild.description = "Publish version ${version} from commit ${commitId}"
-                    sh "docker/build deliver ${version} ${env.nexus_USR} ${env.nexus_PSW}"
+                    DOCKER_HOST = sh(returnStdout: true, script: 'pipeline/docker/define-docker-host-for-ssh-tunnel')
+                    sshagent(['ssh.git.difi.local']) {
+                        sh "DOCKER_HOST=${DOCKER_HOST} pipeline/docker/create-ssh-tunnel-for-docker-host ${buildHostUser}@${buildHostName}"
+                    }
+                    sh "DOCKER_TLS_VERIFY= DOCKER_HOST=${DOCKER_HOST} docker/build deliver ${version} ${env.nexus_USR} ${env.nexus_PSW}"
                 }
             }
             post {
@@ -141,10 +151,11 @@ pipeline {
             agent any
             steps {
                 script {
+                    version = versionFromCommitMessage()
                     sshagent(['ssh.git.difi.local']) {
                         sh "ssh jenkins@eid-jenkins02.dmz.local mkdir -p /tmp/${env.BRANCH_NAME}"
                         sh "scp docker/stack.yml docker/run jenkins@eid-jenkins02.dmz.local:/tmp/${env.BRANCH_NAME}"
-                        sh "ssh jenkins@eid-jenkins02.dmz.local /tmp/${env.BRANCH_NAME}/run ${env.version}"
+                        sh "ssh jenkins@eid-jenkins02.dmz.local /tmp/${env.BRANCH_NAME}/run ${version}"
                     }
                 }
             }

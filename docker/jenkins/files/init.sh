@@ -3,10 +3,12 @@
 createConfiguration() {
     local issueStatusCodeApproved=${1}
     local issueStatusCodeReview=${2}
+    local dockerHost=${3}
     local file=${JENKINS_HOME}/config.xml
     cp /files/template-config.xml ${file}
     sed -i "s|\${ISSUE_STATUS_CODE_APPROVED}|${issueStatusCodeApproved}|g" ${file}
     sed -i "s|\${ISSUE_STATUS_CODE_REVIEW}|${issueStatusCodeReview}|g" ${file}
+    sed -i "s|\${DOCKER_HOST}|${dockerHost}|g" ${file}
 }
 
 createJob() {
@@ -87,10 +89,10 @@ createCredentials() {
 
 createDockerCredentials() {
     echo "Adding Docker credentials for TLS"
-    mkdir ${JENKINS_HOME}/.docker
-    cat /run/secrets/docker-ca.agent > ${JENKINS_HOME}/.docker/ca.pem
-    cat /run/secrets/docker-key.agent > ${JENKINS_HOME}/.docker/key.pem
-    cat /run/secrets/docker-cert.agent > ${JENKINS_HOME}/.docker/cert.pem
+    mkdir /docker || return 1
+    cp /run/secrets/docker-ca.agent > /docker/ca.pem || return 1
+    cp /run/secrets/docker-key.agent > /docker/key.pem || return 1
+    cp /run/secrets/docker-cert.agent > /docker/cert.pem || return 1
 }
 
 createJiraConfiguration() {
@@ -116,7 +118,7 @@ cp /files/scriptApproval.xml ${JENKINS_HOME}
 cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
 cp /files/jenkins.model.JenkinsLocationConfiguration.xml ${JENKINS_HOME}
 
-createConfiguration ${ISSUE_STATUS_CODE_APPROVED} ${ISSUE_STATUS_CODE_REVIEW}
+createConfiguration ${ISSUE_STATUS_CODE_APPROVED} ${ISSUE_STATUS_CODE_REVIEW} ${DOCKER_HOST}
 createJobs ${REPOSITORIES} || exit 1
 createCredentials || exit 1
 createDockerCredentials || exit 1
