@@ -6,6 +6,9 @@ import static java.time.ZonedDateTime.now
 
 def buildHostUser = 'jenkins'
 def buildHostName = 'eid-jenkins03.dmz.local'
+def deployStackName = 'pipeline'
+def deployHostName = 'eid-jenkins02.dmz.local'
+def deployHostUser = 'jenkins'
 
 pipeline {
     agent none
@@ -148,14 +151,17 @@ pipeline {
         }
         stage('Deploy') {
             when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            environment {
+                nexus = credentials('nexus')
+            }
             agent any
             steps {
                 script {
                     version = versionFromCommitMessage()
                     sshagent(['ssh.git.difi.local']) {
-                        sh "ssh jenkins@eid-jenkins02.dmz.local mkdir -p /tmp/${env.BRANCH_NAME}"
-                        sh "scp docker/stack.yml docker/run jenkins@eid-jenkins02.dmz.local:/tmp/${env.BRANCH_NAME}"
-                        sh "ssh jenkins@eid-jenkins02.dmz.local /tmp/${env.BRANCH_NAME}/run ${version}"
+                        sh "ssh ${deployHostUser}@${deployHostName} mkdir -p /tmp/${env.BRANCH_NAME}"
+                        sh "scp docker/stack.yml docker/run ${deployHostUser}@${deployHostName}:/tmp/${env.BRANCH_NAME}"
+                        sh "ssh ${deployHostUser}@${deployHostName} /tmp/${env.BRANCH_NAME}/run ${env.nexus_USR} ${env.nexus_PSW} ${deployStackName} ${version}"
                     }
                 }
             }

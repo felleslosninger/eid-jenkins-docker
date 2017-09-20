@@ -90,9 +90,10 @@ createCredentials() {
 createDockerCredentials() {
     echo "Adding Docker credentials for TLS"
     mkdir /docker || return 1
-    cp /run/secrets/docker-ca.agent > /docker/ca.pem || return 1
-    cp /run/secrets/docker-key.agent > /docker/key.pem || return 1
-    cp /run/secrets/docker-cert.agent > /docker/cert.pem || return 1
+    cp /run/secrets/docker-ca.agent /docker/ca.pem || return 1
+    cp /run/secrets/docker-key.agent /docker/key.pem || return 1
+    cp /run/secrets/docker-cert.agent /docker/cert.pem || return 1
+    chmod -R a+r /docker || return 1
 }
 
 createJiraConfiguration() {
@@ -125,3 +126,4 @@ createDockerCredentials || exit 1
 createJiraConfiguration || exit 1
 createSshKnownHosts || exit 1
 chown -R ${uid}:${gid} ${JENKINS_HOME}
+

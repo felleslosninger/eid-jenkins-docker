@@ -39,12 +39,24 @@ createMavenRepositoryGroup() {
     runScript "${username}" "${password}" create-maven-repository-group "${repositoryName},${repositoryList}"
 }
 
-workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-stackFile="${workDir}/stack.yml"
-[[ $# -eq 1 ]] || { >&2 echo "Usage: $0 VERSION"; exit 1; }
+run() {
+    [[ $# -eq 4 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD STACK_NAME VERSION"; return 1; }
+    local registryUser=$1
+    local registryPassword=$2
+    local stackName=$3
+    local version=$4
+    workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    stackFile="${workDir}/stack.yml"
+    docker login $(__registry) -u ${registryUser} -p ${registryPassword}
+    VERSION=${version} uid=1797 gid=503 docker stack deploy --with-registry-auth -c ${stackFile} ${stackName}
+    docker logout $(__registry)
+}
 
-version=$1
+__registry() {
+    echo -n 'eid-jenkins02.dmz.local:8081'
+}
 
-VERSION=${version} uid=$(id -u jenkins) gid=$(id -g jenkins) docker stack deploy -c ${stackFile} pipeline || { >&2 echo "Failed to deploy application stack"; exit 1; }
+run ${@}
+
 #createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
 #createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases
