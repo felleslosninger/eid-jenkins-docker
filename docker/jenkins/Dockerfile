@@ -1,7 +1,9 @@
+ARG PLUGINS_VERSION
+FROM eid-jenkins02.dmz.local:8081/jenkins-plugins:${PLUGINS_VERSION} AS plugins
 FROM openjdk:8u111-jdk-alpine
 
-ARG JENKINS_VERSION=2.78
-ARG JENKINS_SHA=29f8dd6b33a4552cbada05a1a1d12a3f3007a0b4
+ARG JENKINS_VERSION=2.79
+ARG JENKINS_SHA=272e035475837b5e1c4efb84c8b65949e3f658a3
 ARG MAVEN_VERSION=3.5.0
 ARG DOCKER_VERSION=17.06.1-ce
 ARG DOCKER_SHA=e35fe12806eadbb7eb8aa63e3dfb531bda5f901cd2c14ac9cdcd54df6caed697
@@ -45,6 +47,8 @@ ENV PATH=/usr/local/maven/bin:$PATH
 
 COPY files/ files/
 RUN chmod +x /files/init.sh
+
+COPY --from=plugins /files/plugins /plugins
 
 EXPOSE 8080
 

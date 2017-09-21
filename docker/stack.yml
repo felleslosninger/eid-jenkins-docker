@@ -143,28 +143,11 @@ services:
         uid: '${uid}'
         gid: '${gid}'
     volumes:
-      - type: volume
-        source: jenkins-plugins
-        target: /var/jenkins_home/plugins
       - type: bind
         source: ${HOME}/data
         target: /var/jenkins_home
     networks:
       - pipeline
-  jenkins-plugins:
-    image: eid-jenkins02.dmz.local:8081/jenkins-plugins:${VERSION}
-    volumes:
-      - type: volume
-        source: jenkins-plugins
-        target: /files/plugins
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-      placement:
-        constraints:
-          - node.labels.jenkins-master == true
   nexus:
     image: eid-jenkins02.dmz.local:8081/nexus:2017-08-07-1357
     ports:
@@ -193,7 +176,6 @@ services:
 
 volumes:
   nexus-data:
-  jenkins-plugins:
 
 networks:
   pipeline:

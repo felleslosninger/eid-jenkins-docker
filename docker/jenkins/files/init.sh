@@ -118,6 +118,8 @@ addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins 
 cp /files/scriptApproval.xml ${JENKINS_HOME}
 cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
 cp /files/jenkins.model.JenkinsLocationConfiguration.xml ${JENKINS_HOME}
+ln -s /plugins ${JENKINS_HOME}/plugins
+chown -R ${uid}:${gid} /plugins
 
 createConfiguration ${ISSUE_STATUS_CODE_APPROVED} ${ISSUE_STATUS_CODE_REVIEW} ${DOCKER_HOST}
 createJobs ${REPOSITORIES} || exit 1

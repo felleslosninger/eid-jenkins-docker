@@ -1,14 +1,14 @@
-CLONE_URL=$1
-if [ "${CLONE_URL}" = "" ]
-then
-echo "Must specify jenkins baseurl"
-exit 0
-fi
-PLUGINS=$(curl -s "${CLONE_URL}/pluginManager/api/xml?depth=1&xpath=/*/*/shortName|/*/*/version&wrapper=plugins")
-PLUGINS_RUN=$(echo $PLUGINS|perl -pe 's/.*?<shortName>([\w-]+).*?<version>([^<]+)()(<\/\w+>)+/RUN install-plugin.sh \1 \2;/g')
+#!/usr/bin/env bash
 
-grep -v "RUN install-plugin.sh" ../docker/jenkins-plugins/Dockerfile>tmp_Dockerfile
-sed -i  "s/VOLUME/${PLUGINS_RUN}VOLUME/g" tmp_Dockerfile
-sed -i  "s/\;/\n/g" tmp_Dockerfile
-mv tmp_Dockerfile ../docker/jenkins-plugins/Dockerfile
+[[ $# -eq 1 ]] || { >&2 echo "Usage: $0 JENKINS_BASE_URL"; exit 1; }
+jenkinsBaseUrl=$1
+rootDir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+dockerFile="${rootDir}/docker/jenkins-plugins/Dockerfile"
+tmpFile=$(mktemp)
+cat ${dockerFile} | grep -v "RUN install-plugin.sh" > ${tmpFile}
+currentPlugins=$(${rootDir}/utils/get-current-plugins ${jenkinsBaseUrl}) || exit 1
+for plugin in ${currentPlugins}; do
+    echo "RUN install-plugin.sh ${plugin/:/ }" >> ${tmpFile}
+done
+mv ${tmpFile} ${dockerFile}
 
