@@ -83,6 +83,7 @@ createCredentials() {
     createUserPassCredential 'nexus'
     createUserPassCredential 'jira'
     createUserPassCredential 'artifactory-publish' 'artifactory'
+    createUserPassCredential 'aws'
     createSecretStringCredential 'artifactory' 'artifactory-cleaner'
     cat /files/credentials-footer.xml >> ${credentialFile} || return 1
 }

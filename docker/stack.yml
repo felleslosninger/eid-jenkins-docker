@@ -112,6 +112,16 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
+      - source: aws_username
+        target: aws_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: aws_password
+        target: aws_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
       - source: docker-ca.eid-jenkins02.dmz.local
         target: docker-ca.agent
         mode: 0400
@@ -204,6 +214,10 @@ secrets:
   jira_username:
     external: true
   jira_password:
+    external: true
+  aws_username:
+    external: true
+  aws_password:
     external: true
   docker-ca.eid-jenkins02.dmz.local:
     external: true
