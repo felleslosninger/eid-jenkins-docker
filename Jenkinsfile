@@ -78,6 +78,58 @@ pipeline {
                 aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
             }
         }
+        stage('Deliver artifacts') {
+            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            environment {
+                nexus = credentials('nexus')
+            }
+            agent {
+                dockerfile {
+                    dir 'docker'
+                    args '-v /var/jenkins_home/.ssh/known_hosts:/root/.ssh/known_hosts -u root:root'
+                }
+            }
+            steps {
+                script {
+                    version = versionFromCommitMessage()
+                    DOCKER_HOST = sh(returnStdout: true, script: 'pipeline/docker/define-docker-host-for-ssh-tunnel')
+                    sshagent(['ssh.git.difi.local']) {
+                        sh "DOCKER_HOST=${DOCKER_HOST} pipeline/docker/create-ssh-tunnel-for-docker-host ${buildHostUser}@${buildHostName}"
+                    }
+                    sh "DOCKER_TLS_VERIFY= DOCKER_HOST=${DOCKER_HOST} docker/build deliver ${version} ${env.nexus_USR} ${env.nexus_PSW}"
+                }
+            }
+            post {
+                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
+                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
+            }
+        }
+        stage('Deploy for verification') {
+            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            environment {
+                nexus = credentials('nexus')
+            }
+            agent any
+            steps {
+                echo "Verification not implemented"
+            }
+        }
+        stage('Verify behaviour') {
+            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            agent {
+                dockerfile {
+                    dir 'docker'
+                    args '-v /var/jenkins_home/.ssh/known_hosts:/root/.ssh/known_hosts -u root:root'
+                }
+            }
+            steps {
+                echo "Verification not implemented"
+            }
+            post {
+                failure { sshagent([gitSshKey]) { sh "git push origin --delete \${BRANCH_NAME}" }}
+                aborted { sshagent([gitSshKey]) { sh "git push origin --delete \${BRANCH_NAME}" }}
+            }
+        }
         stage('Wait for code reviewer to finish') {
             when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
             steps {
@@ -99,17 +151,9 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
+        stage('Integrate code') {
             when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
-            environment {
-                nexus = credentials('nexus')
-            }
-            agent {
-                dockerfile {
-                    dir 'docker'
-                    args '-v /var/jenkins_home/.ssh/known_hosts:/root/.ssh/known_hosts -u root:root'
-                }
-            }
+            agent any
             steps {
                 script {
                     if (env.jobAborted == "true") {
@@ -117,24 +161,6 @@ pipeline {
                     } else if (env.codeApproved == "false") {
                         error("Code was not approved")
                     }
-                    version = versionFromCommitMessage()
-                    DOCKER_HOST = sh(returnStdout: true, script: 'pipeline/docker/define-docker-host-for-ssh-tunnel')
-                    sshagent(['ssh.git.difi.local']) {
-                        sh "DOCKER_HOST=${DOCKER_HOST} pipeline/docker/create-ssh-tunnel-for-docker-host ${buildHostUser}@${buildHostName}"
-                    }
-                    sh "DOCKER_TLS_VERIFY= DOCKER_HOST=${DOCKER_HOST} docker/build deliver ${version} ${env.nexus_USR} ${env.nexus_PSW}"
-                }
-            }
-            post {
-                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
-                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
-            }
-        }
-        stage('Integrate code') {
-            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
-            agent any
-            steps {
-                script {
                     sshagent(['ssh.github.com']) {
                         sh 'git push origin HEAD:master'
                     }
@@ -149,7 +175,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy for production') {
             when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
             environment {
                 nexus = credentials('nexus')

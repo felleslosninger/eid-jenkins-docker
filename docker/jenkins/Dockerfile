@@ -44,6 +44,8 @@ RUN curl -fSL https://github.com/docker/machine/releases/download/v${DOCKER_MACH
 RUN pip install awscli && apk --purge -v del py-pip
 
 ENV PATH=/usr/local/maven/bin:$PATH
+ENV DOCKER_TLS_VERIFY 1
+ENV DOCKER_CERT_PATH /docker
 
 COPY files/ files/
 RUN chmod +x /files/init.sh
