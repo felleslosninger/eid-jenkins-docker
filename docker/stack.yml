@@ -159,7 +159,7 @@ services:
     networks:
       - pipeline
   nexus:
-    image: eid-jenkins02.dmz.local:8081/nexus:2017-08-07-1357
+    image: eid-jenkins02.dmz.local:8081/nexus:2017-09-29
     ports:
       - "8080:8081"
       - "8081:8082"
