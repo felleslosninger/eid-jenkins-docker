@@ -122,6 +122,16 @@ services:
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
+      - source: dockerHub_username
+        target: dockerHub_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: dockerHub_password
+        target: dockerHub_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
       - source: docker-ca.eid-jenkins02.dmz.local
         target: docker-ca.agent
         mode: 0400
@@ -218,6 +228,10 @@ secrets:
   aws_username:
     external: true
   aws_password:
+    external: true
+  dockerHub_username:
+    external: true
+  dockerHub_password:
     external: true
   docker-ca.eid-jenkins02.dmz.local:
     external: true

@@ -79,7 +79,7 @@ pipeline {
             }
         }
         stage('Deliver artifacts') {
-            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             environment {
                 nexus = credentials('nexus')
             }
@@ -91,6 +91,7 @@ pipeline {
             }
             steps {
                 script {
+                    sh "git checkout verify/\${BRANCH_NAME}"
                     version = versionFromCommitMessage()
                     DOCKER_HOST = sh(returnStdout: true, script: 'pipeline/docker/define-docker-host-for-ssh-tunnel')
                     sshagent(['ssh.git.difi.local']) {
@@ -100,12 +101,12 @@ pipeline {
                 }
             }
             post {
-                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
-                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }}
+                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
+                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
             }
         }
         stage('Deploy for verification') {
-            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             environment {
                 nexus = credentials('nexus')
             }
@@ -115,7 +116,7 @@ pipeline {
             }
         }
         stage('Verify behaviour') {
-            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             agent {
                 dockerfile {
                     dir 'docker'
@@ -126,12 +127,12 @@ pipeline {
                 echo "Verification not implemented"
             }
             post {
-                failure { sshagent([gitSshKey]) { sh "git push origin --delete \${BRANCH_NAME}" }}
-                aborted { sshagent([gitSshKey]) { sh "git push origin --delete \${BRANCH_NAME}" }}
+                failure { sshagent([gitSshKey]) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
+                aborted { sshagent([gitSshKey]) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
             }
         }
         stage('Wait for code reviewer to finish') {
-            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             steps {
                 script {
                     env.codeApproved = "false"
@@ -152,7 +153,7 @@ pipeline {
             }
         }
         stage('Integrate code') {
-            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             agent any
             steps {
                 script {
@@ -161,28 +162,30 @@ pipeline {
                     } else if (env.codeApproved == "false") {
                         error("Code was not approved")
                     }
+
                     sshagent(['ssh.github.com']) {
-                        sh 'git push origin HEAD:master'
+                        sh "git push origin verify/\${BRANCH_NAME}:master"
                     }
                 }
             }
             post {
                 always {
-                    sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }
+                    sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }
                 }
                 success {
-                    sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME#verify/}" }
+                    sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }
                 }
             }
         }
         stage('Deploy for production') {
-            when { expression { env.BRANCH_NAME.matches(/verify\/(work|feature|bugfix)\/(\w+-\w+)/) } }
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             environment {
                 nexus = credentials('nexus')
             }
             agent any
             steps {
                 script {
+                    sh "git checkout verify/\${BRANCH_NAME}"
                     version = versionFromCommitMessage()
                     sshagent(['ssh.git.difi.local']) {
                         sh "ssh ${deployHostUser}@${deployHostName} mkdir -p /tmp/${env.BRANCH_NAME}"
