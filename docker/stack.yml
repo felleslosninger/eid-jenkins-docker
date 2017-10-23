@@ -9,6 +9,8 @@ services:
       JIRA_URL: http://jira.difi.local
       ISSUE_STATUS_CODE_APPROVED: 10005
       ISSUE_STATUS_CODE_REVIEW: 10012
+      ISSUE_STATUS_MANUAL_VERIFICATION: 10009
+      ISSUE_STATUS_MANUAL_VERIFICATION_OK: 10010
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
       REPOSITORIES: >
         jenkins-docker;git@github.com:difi/jenkins-docker;ssh.git.difi.local;
