@@ -37,7 +37,7 @@
                     <default>
                         <comparator class="hudson.util.CaseInsensitiveComparator"/>
                     </default>
-                    <int>5</int>
+                    <int>6</int>
                     <string>JIRA_SITE</string>
                     <string>jira</string>
                     <string>ISSUE_STATUS_CODE_APPROVED</string>
@@ -48,6 +48,8 @@
                     <string>${ISSUE_STATUS_MANUAL_VERIFICATION}</string>
                     <string>ISSUE_STATUS_MANUAL_VERIFICATION_OK</string>
                     <string>${ISSUE_STATUS_MANUAL_VERIFICATION_OK}</string>
+                    <string>ISSUE_TRANSITION_READY_FOR_CODE_REVIEW</string>
+                    <string>${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}</string>
                 </tree-map>
             </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>

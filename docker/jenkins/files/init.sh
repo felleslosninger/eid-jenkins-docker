@@ -5,11 +5,15 @@ createConfiguration() {
     local issueStatusCodeReview=${2}
     local issueStatusManualVerification=${3}
     local issueStatusManualVerificationOk=${4}
-    local dockerHost=${5}
+    local issueTransitionReadyForCodeReview=${5}
+    local dockerHost=${6}
     local file=${JENKINS_HOME}/config.xml
     cp /files/template-config.xml ${file}
     sed -i "s|\${ISSUE_STATUS_CODE_APPROVED}|${issueStatusCodeApproved}|g" ${file}
     sed -i "s|\${ISSUE_STATUS_CODE_REVIEW}|${issueStatusCodeReview}|g" ${file}
+    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION}|${issueStatusManualVerification}|g" ${file}
+    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION_OK}|${issueStatusManualVerificationOk}|g" ${file}
+    sed -i "s|\${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}|${issueTransitionReadyForCodeReview}|g" ${file}
     sed -i "s|\${DOCKER_HOST}|${dockerHost}|g" ${file}
 }
 
@@ -125,7 +129,7 @@ cp /files/jenkins.model.JenkinsLocationConfiguration.xml ${JENKINS_HOME}
 ln -s /plugins ${JENKINS_HOME}/plugins
 chown -R ${uid}:${gid} /plugins
 
-createConfiguration ${ISSUE_STATUS_CODE_APPROVED} ${ISSUE_STATUS_CODE_REVIEW} ${ISSUE_STATUS_MANUAL_VERIFICATION} ${ISSUE_STATUS_MANUAL_VERIFICATION_OK} ${DOCKER_HOST}
+createConfiguration ${ISSUE_STATUS_CODE_APPROVED} ${ISSUE_STATUS_CODE_REVIEW} ${ISSUE_STATUS_MANUAL_VERIFICATION} ${ISSUE_STATUS_MANUAL_VERIFICATION_OK} ${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW} ${DOCKER_HOST}
 createJobs ${REPOSITORIES} || exit 1
 createCredentials || exit 1
 createDockerCredentials || exit 1
