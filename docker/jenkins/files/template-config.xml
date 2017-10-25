@@ -37,7 +37,7 @@
                     <default>
                         <comparator class="hudson.util.CaseInsensitiveComparator"/>
                     </default>
-                    <int>9</int>
+                    <int>10</int>
                     <string>JIRA_SITE</string>
                     <string>jira</string>
                     <string>ISSUE_STATUS_OPEN</string>
@@ -56,6 +56,8 @@
                     <string>${ISSUE_TRANSITION_START}</string>
                     <string>ISSUE_TRANSITION_READY_FOR_CODE_REVIEW</string>
                     <string>${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}</string>
+                    <string>ISSUE_TRANSITION_RESUME_WORK</string>
+                    <string>${ISSUE_TRANSITION_RESUME_WORK}</string>
                 </tree-map>
             </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>

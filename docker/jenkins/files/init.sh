@@ -1,26 +1,17 @@
 #!/usr/bin/env bash
 
 createConfiguration() {
-    local issueStatusOpen=${1}
-    local issueStatusInProgress=${2}
-    local issueStatusCodeApproved=${3}
-    local issueStatusCodeReview=${4}
-    local issueStatusManualVerification=${5}
-    local issueStatusManualVerificationOk=${6}
-    local issueTransitionStart=${7}
-    local issueTransitionReadyForCodeReview=${8}
-    local dockerHost=${9}
     local file=${JENKINS_HOME}/config.xml
     cp /files/template-config.xml ${file}
-    sed -i "s|\${ISSUE_STATUS_OPEN}|${issueStatusOpen}|g" ${file}
-    sed -i "s|\${ISSUE_STATUS_IN_PROGRESS}|${issueStatusInProgress}|g" ${file}
-    sed -i "s|\${ISSUE_STATUS_CODE_APPROVED}|${issueStatusCodeApproved}|g" ${file}
-    sed -i "s|\${ISSUE_STATUS_CODE_REVIEW}|${issueStatusCodeReview}|g" ${file}
-    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION}|${issueStatusManualVerification}|g" ${file}
-    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION_OK}|${issueStatusManualVerificationOk}|g" ${file}
-    sed -i "s|\${ISSUE_TRANSITION_START}|${issueTransitionStart}|g" ${file}
-    sed -i "s|\${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}|${issueTransitionReadyForCodeReview}|g" ${file}
-    sed -i "s|\${DOCKER_HOST}|${dockerHost}|g" ${file}
+    sed -i "s|\${ISSUE_STATUS_OPEN}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_STATUS_IN_PROGRESS}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_STATUS_CODE_APPROVED}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_STATUS_CODE_REVIEW}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION_OK}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_TRANSITION_START}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}|${1}|g" ${file} && shift
+    sed -i "s|\${ISSUE_TRANSITION_RESUME_WORK}|${1}|g" ${file} && shift
 }
 
 createJob() {
@@ -136,15 +127,15 @@ ln -s /plugins ${JENKINS_HOME}/plugins
 chown -R ${uid}:${gid} /plugins
 
 createConfiguration \
-    ${ISSUE_STATUS_OPEN} \
-    ${ISSUE_STATUS_IN_PROGRESS} \
-    ${ISSUE_STATUS_CODE_APPROVED} \
-    ${ISSUE_STATUS_CODE_REVIEW} \
-    ${ISSUE_STATUS_MANUAL_VERIFICATION} \
-    ${ISSUE_STATUS_MANUAL_VERIFICATION_OK} \
-    ${ISSUE_TRANSITION_START} \
-    ${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW} \
-    ${DOCKER_HOST}
+    "${ISSUE_STATUS_OPEN}" \
+    "${ISSUE_STATUS_IN_PROGRESS}" \
+    "${ISSUE_STATUS_CODE_APPROVED}" \
+    "${ISSUE_STATUS_CODE_REVIEW}" \
+    "${ISSUE_STATUS_MANUAL_VERIFICATION}" \
+    "${ISSUE_STATUS_MANUAL_VERIFICATION_OK}" \
+    "${ISSUE_TRANSITION_START}" \
+    "${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}" \
+    "${ISSUE_TRANSITION_RESUME_WORK}"
 createJobs ${REPOSITORIES} || exit 1
 createCredentials || exit 1
 createDockerCredentials || exit 1
