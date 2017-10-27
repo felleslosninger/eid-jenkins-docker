@@ -59,6 +59,7 @@ services:
         eid-test01.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKjTYi07cANNMTe0SwFEk6bq5VIp1inb2k1bUnL3bodhwUny9yG1amchjgvgmTol84niKETBOYVnGBqDh9UUNIs=
         eid-test-docker01.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIYFaQAAGYZMGs2nuTF1kSvU43HQk759zCbU4SMKr1je08/6AfgRmQ8MwVGb+glKplAOP4mD1La92Ltj2DjamNo=
         eid-prod-docker01.dmz.local ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCQ1MR4RdFoP7lNSI6sJW4b1p6+6GrCl5mUTQ4Fyqhsj7e8IFKyZS5/cUqhgu+z69y0d+5ZdZoy9gcnx1iDZCW0=      uid: '${uid}'
+      uid: '${uid}'
       gid: '${gid}'
     deploy:
       placement:
