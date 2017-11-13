@@ -47,16 +47,18 @@ run() {
     local version=$4
     workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     stackFile="${workDir}/stack.yml"
-    docker login $(__registry) -u ${registryUser} -p ${registryPassword}
-    VERSION=${version} uid=1797 gid=503 docker stack deploy --prune --with-registry-auth -c ${stackFile} ${stackName}
-    docker logout $(__registry)
+    [[ ${version} != 'DEV-SNAPSHOT' ]] && \
+        echo ${registryPassword} | docker login $(__registry) -u ${registryUser} --password-stdin
+    VERSION=${version} uid=1797 gid=503 docker stack deploy --prune --with-registry-auth --resolve-image never -c ${stackFile} ${stackName}
+    [[ ${version} != 'DEV-SNAPSHOT' ]] && \
+        docker logout $(__registry)
 }
 
 __registry() {
     echo -n 'eid-jenkins02.dmz.local:8081'
 }
 
-run ${@}
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && run ${@}
 
 #createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
 #createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases

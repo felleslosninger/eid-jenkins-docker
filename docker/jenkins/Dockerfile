@@ -1,10 +1,11 @@
 ARG PLUGINS_VERSION
 FROM eid-jenkins02.dmz.local:8081/jenkins-plugins:${PLUGINS_VERSION} AS plugins
-FROM openjdk:8u111-jdk-alpine
+FROM groovy:2.4.12-jre8-alpine AS groovy
+FROM openjdk:8u131-jdk-alpine
 
 ARG JENKINS_VERSION=2.85
 ARG JENKINS_SHA=edddc60e143727e0eb392767a200807d40891772
-ARG MAVEN_VERSION=3.5.0
+ARG MAVEN_VERSION=3.5.2
 ARG DOCKER_VERSION=17.06.1-ce
 ARG DOCKER_SHA=e35fe12806eadbb7eb8aa63e3dfb531bda5f901cd2c14ac9cdcd54df6caed697
 ARG DOCKER_MACHINE_VERSION=0.12.2
@@ -43,11 +44,15 @@ RUN curl -fSL https://github.com/docker/machine/releases/download/v${DOCKER_MACH
 # Install AWS CLI
 RUN pip install awscli && apk --purge -v del py-pip
 
-ENV PATH=/usr/local/maven/bin:$PATH
+# Install Groovy
+ENV GROOVY_HOME /opt/groovy
+COPY --from=groovy $GROOVY_HOME $GROOVY_HOME
+
+ENV PATH=/usr/local/maven/bin:$GROOVY_HOME/bin:$PATH
 ENV DOCKER_TLS_VERIFY 1
 ENV DOCKER_CERT_PATH /docker
 
-COPY files/ files/
+COPY files/ /files/
 RUN chmod +x /files/init.sh
 
 COPY --from=plugins /files/plugins /plugins

@@ -6,7 +6,7 @@ Dette er en prekonfigurert Jenkins-instans som benytter pipeline-as-code-konsept
 
 Følgende verktøy er tilgjengelig for byggejobber direkte fra `PATH`:
 * Java Development Kit 8 (`java`)
-* Maven 3.5.0 (`mvn`)
+* Maven 3.5.2 (`mvn`)
 * Docker klient 17.06.1-ce (`docker`)
 * Docker Machine 0.12.2 (`docker-machine`)
 * AWS CLI (`aws`)
@@ -14,25 +14,39 @@ Følgende verktøy er tilgjengelig for byggejobber direkte fra `PATH`:
 ## Hvordan kjøre applikasjonen
 
 Følgende krav stilles til vertsmaskinen:
-* Docker Engine (17.06 eller nyere) er installert.
-* Det finnes en bruker `jenkins`.
+* Docker Engine (17.09 eller nyere) er installert.
+* Det finnes en bruker med uid 1797.
+* Docker Engine kjører i sverm-modus
+* En node i svermen er merket _jenkins-master=true_
+* Svermen har en [konfigurasjon](https://docs.docker.com/engine/reference/commandline/config/) som heter _pipeline-jobs_,
+som definerer hvilke jobber som skal kjøres (beskrevet under).
+* Svermen har definert de hemmelighetene som kreves i `docker/jenkins/stack.yaml`. For lokal testing kan skriptet
+  `utils/create-dummy-secrets` benyttes.
 
-For byggejobber som trenger Docker:
-* En Docker Engine, enten den samme som Jenkins kjører i, eller en fjern, som er konfigurert for [toveis TLS-aksess](https://docs.docker.com/engine/security/https/).
-* Brukeren `jenkins` har en `.docker`-katalog med nødvendige PEM-filer for å aksessere en Docker Engine via TLS.
+Applikasjonen kan kjøres som et sett tjenester (en _stack_) på en Docker-sverm:
+```
+$ docker/run USERNAME PASSWORD STACK_NAME VERSION
+```
 
-For byggejobber som trenger SSH-aksess til tjenere:
-* Brukeren `jenkins` har en fil `.ssh/known_hosts` med fingeravtrykkene til de tjenerne Jenkins vil kontakte med SSH.
-* Miljøvariabelen `SSH_AUTH_SOCK` inneholder stien til en Unix-socket for en kjørende
-  [ssh-agent](https://wiki.archlinux.org/index.php/SSH_keys#SSH_agents) som holder autentiseringsnøkler for de tjenerne
-  Jenkins vil kontakte med SSH.
-  
-For byggejobber som trenger AWS:
-* Brukeren `jenkins` har en `.aws`-katalog med nødvendig legitimasjon og innstillinger. Legitimasjonen må peke til
-  en AWS-bruker som har nødvendige rettigheter til å utføre det byggejobbene trenger
-  (f.eks. en IAM-bruker med sikkerhetspolicien `AmazonEC2FullAccess`).
+På en utvikler-maskin kan applikasjonen kjøres opp slik:
+```
+$ docker/build verify
+$ docker/run-local
+```
 
-Applikasjonen kan kjøres som et sett tjenester (en _stack_) på en Docker-sverm. `docker/run` gjør dette for deg.
+## Jobb-definisjoner
+
+Applikasjonen krever at Docker-svermen har en konfigurasjon som heter _pipeline-jobs_. Denne er på følgende format (yaml):
+```
+jobs:
+  jenkins-docker:
+    repository: git@github.com:difi/jenkins-docker
+    sshKey: difi-ssh-key
+  another-job-name:
+    repository: git@mygithost.example.com:another-job
+    sshKey: another-ssh-key
+  [...]    
+```
 
 ## Hvordan vedlikeholde bildet
 
@@ -49,16 +63,16 @@ På http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/[versjon]/
 
 ### Oppgradere tillegg
 
-Det kjøres en rekke `RUN install-plugin.sh <navn> <versjon>` for de tilleggene som er i bruk. Her kan versjoner oppdateres, og nye tillegg kan også eventuelt legges til.
+TODO
 
 ### Bygge bildet
 
 ```
-$ docker build -t docker-registry.dmz.local/eid-jenkins .
+$ docker/build verify
 ```
 
 ### Publisere bildet
 
 ```
-$ docker push docker-registry.dmz.local/eid-jenkins
+$ docker/build deliver VERSION REGISTRY_USERNAME REGISTRY_PASSWORD
 ```

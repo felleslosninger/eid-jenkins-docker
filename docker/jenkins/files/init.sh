@@ -14,35 +14,6 @@ createConfiguration() {
     sed -i "s|\${ISSUE_TRANSITION_RESUME_WORK}|${1}|g" ${file} && shift
 }
 
-createJob() {
-    local name=${1}
-    local repo=${2}
-    local credentialId=${3}
-    local jobDir=$(jobDir ${name})
-    echo "Creating job '${name}' from repository '${repo}' with SSH credential '${credentialId}'..."
-    mkdir -p ${jobDir}
-    cp /files/template-job-config.xml ${jobDir}/config.xml
-    sed -i "s|REPO|${repo}|g" ${jobDir}/config.xml
-    sed -i "s|CREDENTIAL_ID|${credentialId}|g" ${jobDir}/config.xml
-}
-
-jobDir() {
-    local name=${1}
-    local jobDir="${JENKINS_HOME}/jobs/${name}"
-    echo -n ${jobDir}
-}
-
-createJobs() {
-    local repositories=${1}
-    local name url credentialId
-    for repository in ${repositories}; do
-        name=$(echo ${repository} | cut -d';' -f1)
-        url=$(echo ${repository} | cut -d';' -f2)
-        credentialId=$(echo ${repository} | cut -d';' -f3)
-        createJob "${name}" "${url}" "${credentialId}"
-    done
-}
-
 createUserPassCredential() {
     local id=${1}
     local filePrefix=${2-${id}}
@@ -136,7 +107,7 @@ createConfiguration \
     "${ISSUE_TRANSITION_START}" \
     "${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}" \
     "${ISSUE_TRANSITION_RESUME_WORK}"
-createJobs ${REPOSITORIES} || exit 1
+groovy /files/create-jobs.groovy /jobs.yaml || exit 1
 createCredentials || exit 1
 createDockerCredentials || exit 1
 createJiraConfiguration || exit 1

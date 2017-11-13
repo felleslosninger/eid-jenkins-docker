@@ -6,9 +6,12 @@ import static java.time.ZonedDateTime.now
 
 def buildHostUser = 'jenkins'
 def buildHostName = 'eid-jenkins03.dmz.local'
+def buildHostSshKey = 'ssh.git.difi.local'
 def deployStackName = 'pipeline'
 def deployHostName = 'eid-jenkins02.dmz.local'
 def deployHostUser = 'jenkins'
+def deployHostSshKey = 'ssh.git.difi.local'
+def gitSshKey = 'ssh.github.com'
 
 pipeline {
     agent none
@@ -16,12 +19,15 @@ pipeline {
         timeout(time: 5, unit: 'DAYS')
         disableConcurrentBuilds()
         ansiColor('xterm')
+        timestamps()
     }
     stages {
         stage('Check build') {
             when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) } }
             agent any
             steps {
+                transitionIssue env.ISSUE_STATUS_OPEN, env.ISSUE_TRANSITION_START
+                ensureIssueStatusIs env.ISSUE_STATUS_IN_PROGRESS
                 script {
                     currentBuild.description = "Building from commit " + readCommitId()
                     if (readCommitMessage() == "ready!") {
@@ -31,34 +37,31 @@ pipeline {
                 sh "docker/build verify"
             }
         }
-        stage('Wait for code reviewer to start') {
+        stage('Wait for verification to start') {
             when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             steps {
-                script {
-                    retry(count: 1000000) {
-                        if (issueStatus(issueId(env.BRANCH_NAME)) != env.ISSUE_STATUS_CODE_REVIEW) {
-                            sleep 10
-                            error("Issue is not yet under code review")
-                        }
-                    }
-                }
+                transitionIssue env.ISSUE_TRANSITION_READY_FOR_CODE_REVIEW
+                waitUntilIssueStatusIs env.ISSUE_STATUS_CODE_REVIEW
             }
         }
         stage('Wait for verification slot') {
             when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             agent any
             steps {
-                script {
-                    sshagent(['ssh.github.com']) {
-                        retry(count: 1000000) {
-                            sleep 10
-                            sh 'pipeline/git/available-verification-slot'
-                        }
+                failIfJobIsAborted()
+                sshagent([gitSshKey]) {
+                    retry(count: 1000000) {
+                        sleep 10
+                        sh 'pipeline/git/available-verification-slot'
                     }
                 }
             }
+            post {
+                failure { transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK }
+                aborted { transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK }
+            }
         }
-        stage('Create code review') {
+        stage('Prepare verification') {
             when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             environment {
                 crucible = credentials('crucible')
@@ -66,16 +69,23 @@ pipeline {
             agent any
             steps {
                 script {
-                    version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC'))) + "-" + readCommitId()
-                    sshagent(['ssh.github.com']) {
-                        verifyRevision = sh returnStdout: true, script: "pipeline/git/create-verification-revision ${version}"
+                    env.version = DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm').format(now(ZoneId.of('UTC'))) + "-" + readCommitId()
+                    commitMessage = "${env.version}|" + issueId() + ": " + issueSummary()
+                    sshagent([gitSshKey]) {
+                        verifyRevision = sh returnStdout: true, script: "pipeline/git/create-verification-revision \"${commitMessage}\""
                     }
                     sh "pipeline/create-review ${verifyRevision} ${env.crucible_USR} ${env.crucible_PSW}"
                 }
             }
             post {
-                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
-                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
+                failure {
+                    deleteVerificationBranch(gitSshKey)
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
+                aborted {
+                    deleteVerificationBranch(gitSshKey)
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
             }
         }
         stage('Deliver artifacts') {
@@ -91,18 +101,23 @@ pipeline {
             }
             steps {
                 script {
-                    sh "git checkout verify/\${BRANCH_NAME}"
-                    version = versionFromCommitMessage()
+                    checkoutVerificationBranch()
                     DOCKER_HOST = sh(returnStdout: true, script: 'pipeline/docker/define-docker-host-for-ssh-tunnel')
-                    sshagent(['ssh.git.difi.local']) {
+                    sshagent([buildHostSshKey]) {
                         sh "DOCKER_HOST=${DOCKER_HOST} pipeline/docker/create-ssh-tunnel-for-docker-host ${buildHostUser}@${buildHostName}"
                     }
-                    sh "DOCKER_TLS_VERIFY= DOCKER_HOST=${DOCKER_HOST} docker/build deliver ${version} ${env.nexus_USR} ${env.nexus_PSW}"
+                    sh "DOCKER_TLS_VERIFY= DOCKER_HOST=${DOCKER_HOST} docker/build deliver ${env.version} ${env.nexus_USR} ${env.nexus_PSW}"
                 }
             }
             post {
-                failure { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
-                aborted { sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
+                failure {
+                    deleteVerificationBranch(gitSshKey)
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
+                aborted {
+                    deleteVerificationBranch(gitSshKey)
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
             }
         }
         stage('Deploy for verification') {
@@ -117,6 +132,34 @@ pipeline {
         }
         stage('Verify behaviour') {
             when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
+            agent any
+            steps {
+                echo "Verification not implemented"
+            }
+            post {
+                failure {
+                    deleteVerificationBranch(gitSshKey)
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
+                aborted {
+                    deleteVerificationBranch(gitSshKey)
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
+            }
+        }
+        stage('Wait for code review to finish') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
+            steps {
+                waitUntilIssueStatusIsNot env.ISSUE_STATUS_CODE_REVIEW
+                script {
+                    env.codeApproved = "false"
+                    if (issueStatusIs(env.ISSUE_STATUS_CODE_APPROVED))
+                        env.codeApproved = "true"
+                }
+            }
+        }
+        stage('Integrate code') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
             agent {
                 dockerfile {
                     dir 'docker'
@@ -124,57 +167,46 @@ pipeline {
                 }
             }
             steps {
-                echo "Verification not implemented"
-            }
-            post {
-                failure { sshagent([gitSshKey]) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
-                aborted { sshagent([gitSshKey]) { sh "git push origin --delete verify/\${BRANCH_NAME}" }}
-            }
-        }
-        stage('Wait for code reviewer to finish') {
-            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
-            steps {
-                script {
-                    env.codeApproved = "false"
-                    env.jobAborted = "false"
-                    try {
-                        retry(count: 1000000) {
-                            if (issueStatus(issueId(env.BRANCH_NAME)) == env.ISSUE_STATUS_CODE_REVIEW) {
-                                sleep 10
-                                error("Issue is still under code review")
-                            }
-                        }
-                        if (issueStatus(issueId(env.BRANCH_NAME)) == env.ISSUE_STATUS_CODE_APPROVED)
-                            env.codeApproved = "true"
-                    } catch (FlowInterruptedException e) {
-                        env.jobAborted = "true"
-                    }
-                }
-            }
-        }
-        stage('Integrate code') {
-            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
-            agent any
-            steps {
-                script {
-                    if (env.jobAborted == "true") {
-                        error("Job was aborted")
-                    } else if (env.codeApproved == "false") {
-                        error("Code was not approved")
-                    }
-
-                    sshagent(['ssh.github.com']) {
-                        sh "git push origin verify/\${BRANCH_NAME}:master"
-                    }
-                }
+                failIfJobIsAborted()
+                failIfCodeNotApproved()
+                checkoutVerificationBranch()
+                integrateCode(gitSshKey)
             }
             post {
                 always {
-                    sshagent(['ssh.github.com']) { sh "git push origin --delete verify/\${BRANCH_NAME}" }
+                    deleteVerificationBranch(gitSshKey)
                 }
                 success {
-                    sshagent(['ssh.github.com']) { sh "git push origin --delete \${BRANCH_NAME}" }
+                    deleteWorkBranch(gitSshKey)
                 }
+                failure {
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
+                aborted {
+                    transitionIssue env.ISSUE_STATUS_CODE_REVIEW, env.ISSUE_TRANSITION_RESUME_WORK
+                }
+            }
+        }
+        stage('Wait for manual verification to start') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
+            steps {
+                waitUntilIssueStatusIs env.ISSUE_STATUS_MANUAL_VERIFICATION
+            }
+        }
+        stage('Deploy for manual verification') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
+            agent any
+            steps {
+                failIfJobIsAborted()
+                echo "Deploy for manual verification not implemented"
+            }
+        }
+        stage('Wait for manual verification to finish') {
+            when { expression { env.BRANCH_NAME.matches(/(work|feature|bugfix)\/(\w+-\w+)/) && env.verification == 'true' } }
+            steps {
+                waitUntilIssueStatusIsNot env.ISSUE_STATUS_MANUAL_VERIFICATION
+                failIfJobIsAborted()
+                ensureIssueStatusIs env.ISSUE_STATUS_MANUAL_VERIFICATION_OK
             }
         }
         stage('Deploy for production') {
@@ -185,12 +217,10 @@ pipeline {
             agent any
             steps {
                 script {
-                    sh "git checkout verify/\${BRANCH_NAME}"
-                    version = versionFromCommitMessage()
-                    sshagent(['ssh.git.difi.local']) {
+                    sshagent([deployHostSshKey]) {
                         sh "ssh ${deployHostUser}@${deployHostName} mkdir -p /tmp/${env.BRANCH_NAME}"
                         sh "scp docker/stack.yml docker/run ${deployHostUser}@${deployHostName}:/tmp/${env.BRANCH_NAME}"
-                        sh "ssh ${deployHostUser}@${deployHostName} /tmp/${env.BRANCH_NAME}/run ${env.nexus_USR} ${env.nexus_PSW} ${deployStackName} ${version}"
+                        sh "ssh ${deployHostUser}@${deployHostName} /tmp/${env.BRANCH_NAME}/run ${env.nexus_USR} ${env.nexus_PSW} ${deployStackName} ${env.version}"
                     }
                 }
             }
@@ -219,8 +249,65 @@ pipeline {
     }
 }
 
-String versionFromCommitMessage() {
-    return readCommitMessage().tokenize(':')[0]
+def integrateCode(def sshKey) {
+    sshagent([sshKey]) { sh 'git push origin HEAD:master' }
+}
+
+def checkoutVerificationBranch() {
+    sh "git checkout verify/\${BRANCH_NAME}"
+    sh "git reset --hard origin/verify/\${BRANCH_NAME}"
+}
+
+def deleteVerificationBranch(def sshKey) {
+    echo "Deleting verification branch"
+    sshagent([sshKey]) { sh "git push origin --delete verify/\${BRANCH_NAME}" }
+    echo "Verification branch deleted"
+}
+
+def deleteWorkBranch(def sshKey) {
+    sshagent([sshKey]) { sh "git push origin --delete \${BRANCH_NAME}" }
+}
+
+def failIfJobIsAborted() {
+    if (env.jobAborted == 'true')
+        error('Job was aborted')
+}
+
+def failIfCodeNotApproved() {
+    if (env.codeApproved == 'false')
+        error('Code was not approved')
+}
+
+boolean issueStatusIs(def targetStatus) {
+    return issueStatus() == targetStatus
+}
+
+def waitUntilIssueStatusIs(def targetStatus) {
+    env.jobAborted = 'false'
+    try {
+        retry(count: 1000000) {
+            if (!issueStatusIs(targetStatus)) {
+                sleep 10
+                error "Waiting until issue status is ${targetStatus}..."
+            }
+        }
+    } catch (FlowInterruptedException ignored) {
+        env.jobAborted = "true"
+    }
+}
+
+def waitUntilIssueStatusIsNot(def targetStatus) {
+    env.jobAborted = 'false'
+    try {
+        retry(count: 1000000) {
+            if (issueStatusIs(targetStatus)) {
+                sleep 10
+                error "Waiting until issue status is not ${targetStatus}..."
+            }
+        }
+    } catch (FlowInterruptedException ignored) {
+        env.jobAborted = "true"
+    }
 }
 
 def notifyFailed() {
@@ -260,12 +347,30 @@ boolean isPreviousBuildFailOrUnstable() {
     return false
 }
 
-static def issueId(def branchName) {
-    return branchName.tokenize('/')[-1]
+def issueId() {
+    return env.BRANCH_NAME.tokenize('/')[-1]
 }
 
-String issueStatus(def issueId) {
-    return jiraGetIssue(idOrKey: issueId, site: 'jira').data.fields['status']['id']
+def transitionIssue(def transitionId) {
+    jiraTransitionIssue idOrKey: issueId(), input: [transition: [id: transitionId]]
+}
+
+def transitionIssue(def sourceStatus, def transitionId) {
+    if (issueStatusIs(sourceStatus))
+        transitionIssue transitionId
+}
+
+def ensureIssueStatusIs(def issueStatus) {
+    if (!issueStatusIs(issueStatus))
+        error "Issue status is not ${issueStatus}"
+}
+
+String issueStatus() {
+    return jiraGetIssue(idOrKey: issueId()).data.fields['status']['id']
+}
+
+String issueSummary() {
+    return jiraGetIssue(idOrKey: issueId()).data.fields['summary']
 }
 
 def readCommitId() {
