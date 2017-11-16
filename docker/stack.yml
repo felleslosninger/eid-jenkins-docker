@@ -146,6 +146,8 @@ services:
         gid: '${gid}'
     volumes:
       - jenkins-data:/var/jenkins_home
+      - jenkins-workspaces:/workspaces
+      - jenkins-builds:/builds
     networks:
       - pipeline
   nexus:
@@ -176,6 +178,10 @@ volumes:
   nexus-data:
     external: true
   jenkins-data:
+    external: true
+  jenkins-workspaces:
+    external: true
+  jenkins-builds:
     external: true
 
 configs:

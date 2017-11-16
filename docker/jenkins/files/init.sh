@@ -89,6 +89,12 @@ createSshKnownHosts() {
     chmod 600 ${JENKINS_HOME}/.ssh/known_hosts
 }
 
+migrateLegacyBuildDirectories() {
+    local sources
+    sources=$(find ${JENKINS_HOME}/jobs/ -path "*/branches/*/builds" -type d) || return 1
+    for source in ${sources}; do target=/builds/$(echo "${source}" | cut -d/ -f5,7) && echo "Migrating legacy build location ${source} to ${target}" && mkdir -p ${target} && mv -n ${source}/{.,}* ${target}; rm -rf ${source}; done
+}
+
 addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins -s /bin/bash -D jenkins
 
 cp /files/scriptApproval.xml ${JENKINS_HOME}
@@ -113,4 +119,6 @@ createDockerCredentials || exit 1
 createJiraConfiguration || exit 1
 createSshKnownHosts || exit 1
 chown -R ${uid}:${gid} ${JENKINS_HOME}
-
+chown ${uid}:${gid} /workspaces
+chown ${uid}:${gid} /builds
+migrateLegacyBuildDirectories || exit 1
