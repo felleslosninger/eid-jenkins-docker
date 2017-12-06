@@ -3,4 +3,4 @@
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/run
 source run 2>/dev/null # Kun for at IntelliJ skal kunne linke funksjoner (hack!)
 
-run not_used not_used pipeline DEV-SNAPSHOT
+run pipeline DEV-SNAPSHOT

@@ -40,22 +40,12 @@ createMavenRepositoryGroup() {
 }
 
 run() {
-    [[ $# -eq 4 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD STACK_NAME VERSION"; return 1; }
-    local registryUser=$1
-    local registryPassword=$2
-    local stackName=$3
-    local version=$4
+    [[ $# -eq 2 ]] || { >&2 echo "Usage: $0 STACK_NAME VERSION"; return 1; }
+    local stackName=$1
+    local version=$2
     workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     stackFile="${workDir}/stack.yml"
-    [[ ${version} != 'DEV-SNAPSHOT' ]] && \
-        echo ${registryPassword} | docker login $(__registry) -u ${registryUser} --password-stdin
-    VERSION=${version} uid=1797 gid=503 docker stack deploy --prune --with-registry-auth --resolve-image never -c ${stackFile} ${stackName}
-    [[ ${version} != 'DEV-SNAPSHOT' ]] && \
-        docker logout $(__registry)
-}
-
-__registry() {
-    echo -n 'eid-jenkins02.dmz.local:8081'
+    VERSION=${version} uid=1797 gid=503 docker stack deploy --prune --resolve-image never -c ${stackFile} ${stackName}
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && run ${@}
