@@ -3,12 +3,12 @@ FROM eid-jenkins02.dmz.local:8081/jenkins-plugins:${PLUGINS_VERSION} AS plugins
 FROM groovy:2.4.12-jre8-alpine AS groovy
 FROM openjdk:8u131-jdk-alpine
 
-ARG JENKINS_VERSION=2.85
-ARG JENKINS_SHA=edddc60e143727e0eb392767a200807d40891772
+ARG JENKINS_WAR_URL=http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war
+ARG JENKINS_VERSION=2.93
+ARG JENKINS_SHA=bdd13054c2a96e8c35733cb6256d85da640fee77
 ARG MAVEN_VERSION=3.5.2
-ARG DOCKER_VERSION=17.06.1-ce
-ARG DOCKER_SHA=e35fe12806eadbb7eb8aa63e3dfb531bda5f901cd2c14ac9cdcd54df6caed697
-ARG DOCKER_MACHINE_VERSION=0.12.2
+ARG DOCKER_VERSION=17.09.0-ce
+ARG DOCKER_SHA=a9e90a73c3cdfbf238f148e1ec0eaff5eb181f92f35bdd938fd7dab18e1c4647
 ENV uid 1000
 ENV gid 1000
 
@@ -19,7 +19,7 @@ ENV JENKINS_HOME /var/jenkins_home
 RUN mkdir -p /usr/share/jenkins/
 
 # Install Jenkins
-RUN curl -fsSL http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war -o /usr/share/jenkins/jenkins.war \
+RUN curl -fsSL ${JENKINS_WAR_URL}/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war -o /usr/share/jenkins/jenkins.war \
   && echo "$JENKINS_SHA  /usr/share/jenkins/jenkins.war" | sha1sum -c -
 
 # Install Maven
@@ -28,7 +28,6 @@ RUN cd /usr/local && \
     ln -sv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven
 
 # Install Docker (client)
-
 RUN curl -fSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-$DOCKER_VERSION.tgz" -o docker.tgz \
 	&& echo "${DOCKER_SHA} *docker.tgz" | sha256sum -c - \
 	&& tar -xzvf docker.tgz \
@@ -36,13 +35,6 @@ RUN curl -fSL "https://download.docker.com/linux/static/stable/$(uname -m)/docke
 	&& rmdir docker \
 	&& rm docker.tgz \
 	&& docker -v
-
-# Install Docker Machine
-RUN curl -fSL https://github.com/docker/machine/releases/download/v${DOCKER_MACHINE_VERSION}/docker-machine-$(uname -s)-$(uname -m) >/usr/local/bin/docker-machine \
-    && chmod +x /usr/local/bin/docker-machine
-
-# Install AWS CLI
-RUN pip install awscli && apk --purge -v del py-pip
 
 # Install Groovy
 ENV GROOVY_HOME /opt/groovy
@@ -58,5 +50,6 @@ RUN chmod +x /files/init.sh
 COPY --from=plugins /files/plugins /plugins
 
 EXPOSE 8080
+HEALTHCHECK CMD curl -f -sS http://localhost:8080 || exit 1
 
 ENTRYPOINT /files/init.sh && su $(id -nu ${uid}) -c "java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins"

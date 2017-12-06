@@ -4,7 +4,7 @@ name=$1
 version=$2
 
 installDir=/files/plugins
-downloadBaseUrl=https://updates.jenkins.io/download/plugins
+downloadBaseUrl=http://ftp-nyc.osuosl.org/pub/jenkins/plugins
 
 mkdir -p ${installDir}
 
