@@ -2,7 +2,7 @@
 <slave>
     <name>SLAVE_NAME</name>
     <description></description>
-    <remoteFS>/tmp</remoteFS>
+    <remoteFS>/workspaces</remoteFS>
     <numExecutors>2</numExecutors>
     <mode>NORMAL</mode>
     <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
