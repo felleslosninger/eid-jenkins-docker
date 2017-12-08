@@ -10,7 +10,7 @@ jobs.each {
     def jobName = it.key
     def repository = it.value.repository
     def sshKey = it.value.sshKey
-    Path jobDir = Paths.get(System.getenv().get("JENKINS_HOME") + "/jobs/" + jobName)
+    Path jobDir = Paths.get(System.getenv("JENKINS_HOME") + "/jobs/" + jobName)
     println "Creating job '${jobName}' from repository '${repository}' with SSH credential '${sshKey}'..."
     Files.createDirectories(jobDir)
     new File(jobDir.toString(), 'config.xml').withWriter { w ->

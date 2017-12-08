@@ -100,6 +100,7 @@ addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins 
 cp /files/scriptApproval.xml ${JENKINS_HOME}
 cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
 cp /files/jenkins.model.JenkinsLocationConfiguration.xml ${JENKINS_HOME}
+cp /files/org.jenkinsci.plugins.workflow.libs.GlobalLibraries.xml ${JENKINS_HOME}
 ln -s /plugins ${JENKINS_HOME}/plugins
 chown -R ${uid}:${gid} /plugins
 
@@ -114,6 +115,7 @@ createConfiguration \
     "${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}" \
     "${ISSUE_TRANSITION_RESUME_WORK}"
 groovy /files/create-jobs.groovy /jobs.yaml || exit 1
+groovy /files/create-slaves.groovy ${JENKINS_SLAVES} || exit 1
 createCredentials || exit 1
 createDockerCredentials || exit 1
 createJiraConfiguration || exit 1

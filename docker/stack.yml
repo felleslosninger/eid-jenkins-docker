@@ -1,6 +1,18 @@
 version: '3.4'
 
 services:
+  jenkins-slave-1:
+    image: eid-jenkins02.dmz.local:8081/jenkins-slave:${VERSION}
+    environment:
+      SERVICE: jenkins-slave-1
+    networks:
+      - pipeline
+  jenkins-slave-2:
+    image: eid-jenkins02.dmz.local:8081/jenkins-slave:${VERSION}
+    environment:
+      SERVICE: jenkins-slave-2
+    networks:
+      - pipeline
   jenkins:
     image: eid-jenkins02.dmz.local:8081/jenkins:${VERSION}
     ports:
@@ -9,6 +21,7 @@ services:
       - source: pipeline-jobs
         target: /jobs.yaml
     environment:
+      JENKINS_SLAVES: jenkins-slave-1,jenkins-slave-2
       JIRA_URL: http://jira.difi.local
       ISSUE_STATUS_OPEN: 1
       ISSUE_STATUS_IN_PROGRESS: 3

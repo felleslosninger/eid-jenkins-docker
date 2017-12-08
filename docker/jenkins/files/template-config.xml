@@ -2,7 +2,7 @@
 <hudson>
     <disabledAdministrativeMonitors/>
     <numExecutors>4</numExecutors>
-    <mode>NORMAL</mode>
+    <mode>EXCLUSIVE</mode>
     <useSecurity>true</useSecurity>
     <authorizationStrategy class="hudson.security.AuthorizationStrategy$Unsecured"/>
     <securityRealm class="hudson.security.SecurityRealm$None"/>

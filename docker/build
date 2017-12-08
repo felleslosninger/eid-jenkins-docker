@@ -8,6 +8,7 @@ __buildImages() {
     [[ $# -eq 1 ]] || { >&2 echo "Usage: $0 $FUNCNAME VERSION"; return 1; }
     local version=$1
     buildImage jenkins-plugins ${version} || return 1
+    buildImage jenkins-slave ${version} || return 1
     buildImage jenkins ${version} "--build-arg PLUGINS_VERSION=${version}" || return 1
     buildImage nexus ${version} || return 1
 }
@@ -23,6 +24,7 @@ deliver() {
     local password=$3
     __buildImages ${version} || return 1
     pushImage jenkins-plugins ${version} "${username}" "${password}" || return 1
+    pushImage jenkins-slave ${version} "${username}" "${password}" || return 1
     pushImage jenkins ${version} "${username}" "${password}" || return 1
     pushImage nexus ${version} "${username}" "${password}" || return 1
 }
