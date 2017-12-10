@@ -169,8 +169,6 @@ services:
       - jenkins-builds:/builds
     networks:
       pipeline:
-        aliases:
-          - eid-jenkins02.dmz.local
   nexus:
     image: eid-jenkins02.dmz.local:8081/nexus:2017-09-29
     ports:
