@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+
+__scriptUrl() {
+    echo -n 'http://eid-jenkins02.dmz.local:8080/service/siesta/rest/v1/script'
+}
+
+__addScript() {
+    [[ $# -eq 3 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD SCRIPT"; return 1; }
+    local username=$1
+    local password=$2
+    local script=$3
+    curl -fv -u ${username}:${password} -H 'Content-Type: application/json' "$(__scriptUrl)" -d "${script}" || { >&2 echo "Failed to upload Nexus script"; return 1; }
+}
+
+__runScript() {
+    [[ $# -ge 3 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD SCRIPT_NAME [ARGUMENTS]"; return 1; }
+    local username=$1
+    local password=$2
+    local scriptName=$3
+    local arguments=$4
+    curl -f -XPOST -u ${username}:${password} -H 'Content-Type: text/plain' "$(__scriptUrl)/${scriptName}/run" -d "${arguments}" || { >&2 echo "Failed to run Nexus script"; return 1; }
+}
+
+addCreateMavenRepositoryProxyScript() {
+    [[ $# -eq 2 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD"; return 1; }
+    local username=$1
+    local password=$2
+    read -r -d '' script << EOF
+{
+    "name": "create-maven-repository-proxy",
+    "type": "groovy",
+    "content": "repository.createMavenProxy(args.split(',')[0], args.split(',')[1], 'default', false)"
+}
+EOF
+    __addScript "${username}" "${password}" "${script}"
+}
+
+addCreateMavenRepositoryGroupScript() {
+    [[ $# -eq 2 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD"; return 1; }
+    local username=$1
+    local password=$2
+    read -r -d '' script << EOF
+{
+    "name": "create-maven-repository-group",
+    "type": "groovy",
+    "content": "repository.createMavenGroup(args.split(',')[0], args.split(',')[1..-1].toList())"
+}
+EOF
+    __addScript "${username}" "${password}" "${script}"
+}
+
+addCreateDockerRegistryScript() {
+    [[ $# -eq 2 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD"; return 1; }
+    username=$1
+    password=$2
+    read -r -d '' script << EOF
+{
+    "name": "create-docker-registry",
+    "type": "groovy",
+    "content": "repository.createDockerHosted(args.split(',')[0], Integer.parseInt(args.split(',')[1]), Integer.parseInt(args.split(',')[2]))"
+}
+EOF
+    __addScript "${username}" "${password}" "${script}"
+}
+
+createMavenRepositoryProxy() {
+    [[ $# -eq 4 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD REPOSITORY_NAME REPOSITORY_URL"; return 1; }
+    local username=$1
+    local password=$2
+    local repositoryName=$3
+    local repositoryUrl=$4
+    __runScript "${username}" "${password}" create-maven-repository-proxy "${repositoryName},${repositoryUrl}"
+}
+
+createMavenRepositoryGroup() {
+    [[ $# -eq 4 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD REPOSITORY_NAME REPOSITORY_LIST"; return 1; }
+    local username=$1
+    local password=$2
+    local repositoryName=$3
+    local repositoryList=$4
+    __runScript "${username}" "${password}" create-maven-repository-group "${repositoryName},${repositoryList}"
+}
+
+createDockerRegistry() {
+    [[ $# -eq 5 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD REGISTRY_NAME HTTP_PORT HTTPS_PORT"; return 1; }
+    username=$1
+    password=$2
+    registryName=$3
+    httpPort=$4
+    httpsPort=$5
+    __runScript "${username}" "${password}" create-docker-registry "${registryName},${httpPort},${httpsPort}"
+}
+
+[[ $# -eq 2 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD"; exit 1; }
+
+username=$1
+password=$2
+
+addCreateMavenRepositoryProxyScript "${username}" "${password}"
+addCreateMavenRepositoryGroupScript "${username}" "${password}"
+addCreateDockerRegistryScript "${username}" "${password}"
+createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
+createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases
+createDockerRegistry "${username}" "${password}" docker 8082 8083
