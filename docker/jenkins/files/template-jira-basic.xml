@@ -3,11 +3,11 @@
     <sites>
         <org.thoughtslive.jenkins.plugins.jira.Site>
             <name>jira</name>
-            <url>URL</url>
+            <url>${url}</url>
             <loginType>BASIC</loginType>
             <timeout>10000</timeout>
-            <userName>USERNAME</userName>
-            <password>PASSWORD</password>
+            <userName>${username}</userName>
+            <password>${password}</password>
         </org.thoughtslive.jenkins.plugins.jira.Site>
     </sites>
 </org.thoughtslive.jenkins.plugins.jira.Config_-ConfigDescriptorImpl>

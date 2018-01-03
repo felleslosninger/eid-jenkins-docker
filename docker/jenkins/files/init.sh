@@ -1,19 +1,5 @@
 #!/usr/bin/env bash
 
-createConfiguration() {
-    local file=${JENKINS_HOME}/config.xml
-    cp /files/template-config.xml ${file}
-    sed -i "s|\${ISSUE_STATUS_OPEN}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_STATUS_IN_PROGRESS}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_STATUS_CODE_APPROVED}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_STATUS_CODE_REVIEW}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_STATUS_MANUAL_VERIFICATION_OK}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_TRANSITION_START}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}|${1}|g" ${file} && shift
-    sed -i "s|\${ISSUE_TRANSITION_RESUME_WORK}|${1}|g" ${file} && shift
-}
-
 createUserPassCredential() {
     local id=${1}
     local filePrefix=${2-${id}}
@@ -104,16 +90,8 @@ cp /files/org.jenkinsci.plugins.workflow.libs.GlobalLibraries.xml ${JENKINS_HOME
 ln -s /plugins ${JENKINS_HOME}/plugins
 chown -R ${uid}:${gid} /plugins
 
-createConfiguration \
-    "${ISSUE_STATUS_OPEN}" \
-    "${ISSUE_STATUS_IN_PROGRESS}" \
-    "${ISSUE_STATUS_CODE_APPROVED}" \
-    "${ISSUE_STATUS_CODE_REVIEW}" \
-    "${ISSUE_STATUS_MANUAL_VERIFICATION}" \
-    "${ISSUE_STATUS_MANUAL_VERIFICATION_OK}" \
-    "${ISSUE_TRANSITION_START}" \
-    "${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}" \
-    "${ISSUE_TRANSITION_RESUME_WORK}"
+groovy /files/create-config.groovy /config.yaml /files/template-config.xml || exit 1
+groovy /files/create-jira-config.groovy /config.yaml /files/template-jira-basic.xml || exit 1
 groovy /files/create-jobs.groovy /jobs.yaml || exit 1
 groovy /files/create-slaves.groovy ${JENKINS_SLAVES} || exit 1
 createCredentials || exit 1

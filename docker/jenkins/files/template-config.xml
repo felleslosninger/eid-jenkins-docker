@@ -4,12 +4,12 @@
     <numExecutors>4</numExecutors>
     <mode>EXCLUSIVE</mode>
     <useSecurity>true</useSecurity>
-    <authorizationStrategy class="hudson.security.AuthorizationStrategy$Unsecured"/>
-    <securityRealm class="hudson.security.SecurityRealm$None"/>
+    <authorizationStrategy class="hudson.security.AuthorizationStrategy\$Unsecured"/>
+    <securityRealm class="hudson.security.SecurityRealm\$None"/>
     <disableRememberMe>false</disableRememberMe>
-    <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
-    <workspaceDir>/workspaces/${ITEM_FULLNAME}</workspaceDir>
-    <buildsDir>/builds/${ITEM_FULLNAME}</buildsDir>
+    <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy\$DefaultProjectNamingStrategy"/>
+    <workspaceDir>/workspaces/\${ITEM_FULLNAME}</workspaceDir>
+    <buildsDir>/builds/\${ITEM_FULLNAME}</buildsDir>
     <jdks/>
     <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
     <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
@@ -22,7 +22,7 @@
             <name>all</name>
             <filterExecutors>false</filterExecutors>
             <filterQueue>false</filterQueue>
-            <properties class="hudson.model.View$PropertyList"/>
+            <properties class="hudson.model.View\$PropertyList"/>
         </hudson.model.AllView>
     </views>
     <primaryView>all</primaryView>
@@ -37,7 +37,7 @@
                     <default>
                         <comparator class="hudson.util.CaseInsensitiveComparator"/>
                     </default>
-                    <int>10</int>
+                    <int>12</int>
                     <string>JIRA_SITE</string>
                     <string>jira</string>
                     <string>ISSUE_STATUS_OPEN</string>
@@ -58,6 +58,10 @@
                     <string>${ISSUE_TRANSITION_READY_FOR_CODE_REVIEW}</string>
                     <string>ISSUE_TRANSITION_RESUME_WORK</string>
                     <string>${ISSUE_TRANSITION_RESUME_WORK}</string>
+                    <string>CRUCIBLE_URL</string>
+                    <string>${CRUCIBLE_URL}</string>
+                    <string>CRUCIBLE_PROJECT_KEY</string>
+                    <string>${CRUCIBLE_PROJECT_KEY}</string>
                 </tree-map>
             </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>
