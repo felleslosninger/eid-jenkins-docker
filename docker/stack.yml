@@ -26,6 +26,8 @@ services:
     configs:
       - source: pipeline-jobs
         target: /jobs.yaml
+      - source: pipeline-config
+        target: /config.yaml
     environment:
       JENKINS_SLAVES: jenkins-slave-1,jenkins-slave-2
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
@@ -195,6 +197,8 @@ volumes:
 
 configs:
   pipeline-jobs:
+    external: true
+  pipeline-config:
     external: true
 
 networks:

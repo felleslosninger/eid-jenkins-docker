@@ -8,7 +8,7 @@ RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-deja
 
 # Install Maven
 RUN cd /usr/local && \
-    curl -fSL "http://mirrors.ibiblio.org/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" | tar xvzf - && \
+    curl -fSL "http://apache.uib.no/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" | tar xvzf - && \
     ln -sv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven
 
 # Install Docker (client)

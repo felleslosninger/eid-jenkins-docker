@@ -96,7 +96,6 @@ groovy /files/create-jobs.groovy /jobs.yaml || exit 1
 groovy /files/create-slaves.groovy ${JENKINS_SLAVES} || exit 1
 createCredentials || exit 1
 createDockerCredentials || exit 1
-createJiraConfiguration || exit 1
 createSshKnownHosts || exit 1
 chown -R ${uid}:${gid} ${JENKINS_HOME}
 chown ${uid}:${gid} /workspaces
