@@ -4,7 +4,7 @@
     <description></description>
     <remoteFS>/workspaces</remoteFS>
     <numExecutors>2</numExecutors>
-    <mode>NORMAL</mode>
+    <mode>EXCLUSIVE</mode>
     <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
     <launcher class="hudson.slaves.JNLPLauncher">
         <workDirSettings>

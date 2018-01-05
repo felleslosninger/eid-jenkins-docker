@@ -5,6 +5,10 @@ services:
     image: eid-jenkins02.dmz.local:8081/jenkins-slave:${VERSION}
     environment:
       SERVICE: jenkins-slave-1
+    deploy:
+      placement:
+        constraints:
+          - node.labels.jenkins-slave == true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-workspaces:/workspaces
@@ -14,6 +18,10 @@ services:
     image: eid-jenkins02.dmz.local:8081/jenkins-slave:${VERSION}
     environment:
       SERVICE: jenkins-slave-2
+    deploy:
+      placement:
+        constraints:
+          - node.labels.jenkins-slave == true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-workspaces:/workspaces
