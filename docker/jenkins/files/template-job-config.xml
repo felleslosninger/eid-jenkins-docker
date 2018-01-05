@@ -3,53 +3,57 @@
     <actions/>
     <description></description>
     <properties>
-        <com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider_-FolderCredentialsProperty plugin="cloudbees-folder@6.1.2">
+        <com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider_-FolderCredentialsProperty plugin="cloudbees-folder@6.2.1">
             <domainCredentialsMap class="hudson.util.CopyOnWriteMap$Hash">
                 <entry>
-                    <com.cloudbees.plugins.credentials.domains.Domain plugin="credentials@2.1.15">
+                    <com.cloudbees.plugins.credentials.domains.Domain plugin="credentials@2.1.16">
                         <specifications/>
                     </com.cloudbees.plugins.credentials.domains.Domain>
                     <java.util.concurrent.CopyOnWriteArrayList/>
                 </entry>
             </domainCredentialsMap>
         </com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider_-FolderCredentialsProperty>
-        <org.jenkinsci.plugins.pipeline.modeldefinition.config.FolderConfig plugin="pipeline-model-definition@1.1.9">
+        <org.jenkinsci.plugins.pipeline.modeldefinition.config.FolderConfig plugin="pipeline-model-definition@1.2.5">
             <dockerLabel></dockerLabel>
-            <registry plugin="docker-commons@1.8"/>
+            <registry plugin="docker-commons@1.9"/>
         </org.jenkinsci.plugins.pipeline.modeldefinition.config.FolderConfig>
     </properties>
-    <folderViews class="jenkins.branch.MultiBranchProjectViewHolder" plugin="branch-api@2.0.11">
+    <folderViews class="jenkins.branch.MultiBranchProjectViewHolder" plugin="branch-api@2.0.16">
         <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
     </folderViews>
     <healthMetrics>
-        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric plugin="cloudbees-folder@6.1.2">
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric plugin="cloudbees-folder@6.2.1">
             <nonRecursive>false</nonRecursive>
         </com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
     </healthMetrics>
-    <icon class="jenkins.branch.MetadataActionFolderIcon" plugin="branch-api@2.0.11">
+    <icon class="jenkins.branch.MetadataActionFolderIcon" plugin="branch-api@2.0.16">
         <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
     </icon>
-    <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy" plugin="cloudbees-folder@6.1.2">
+    <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy" plugin="cloudbees-folder@6.2.1">
         <pruneDeadBranches>true</pruneDeadBranches>
         <daysToKeep>5</daysToKeep>
         <numToKeep>-1</numToKeep>
     </orphanedItemStrategy>
     <triggers>
-        <com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger plugin="cloudbees-folder@6.1.2">
+        <com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger plugin="cloudbees-folder@6.2.1">
             <spec>* * * * *</spec>
             <interval>60000</interval>
         </com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger>
     </triggers>
     <disabled>false</disabled>
-    <sources class="jenkins.branch.MultiBranchProject$BranchSourceList" plugin="branch-api@2.0.11">
+    <sources class="jenkins.branch.MultiBranchProject$BranchSourceList" plugin="branch-api@2.0.16">
         <data>
             <jenkins.branch.BranchSource>
-                <source class="jenkins.plugins.git.GitSCMSource" plugin="git@3.5.1">
+                <source class="jenkins.plugins.git.GitSCMSource" plugin="git@3.6.4">
                     <id>692aa3fb-06df-4e06-891f-8f3d854b6606</id>
                     <remote>REPO</remote>
                     <credentialsId>CREDENTIAL_ID</credentialsId>
                     <traits>
                         <jenkins.plugins.git.traits.BranchDiscoveryTrait/>
+                        <jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait plugin="scm-api@2.2.5">
+                            <includes>work/*</includes>
+                            <excludes></excludes>
+                        </jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait>
                         <jenkins.plugins.git.traits.LocalBranchTrait>
                             <extension class="hudson.plugins.git.extensions.impl.LocalBranch">
                                 <localBranch>**</localBranch>
@@ -78,4 +82,3 @@
         <scriptPath>Jenkinsfile</scriptPath>
     </factory>
 </org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject>
-
