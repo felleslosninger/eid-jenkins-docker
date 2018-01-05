@@ -6,10 +6,10 @@ import java.nio.file.Files
 
 String jobsFile = this.args[0]
 Map jobs = new Yaml().load((jobsFile as File).text).jobs
-jobs.each {
-    def jobName = it.key
-    def repository = it.value.repository
-    def sshKey = it.value.sshKey
+jobs.each { job ->
+    def jobName = job.key
+    def repository = job.value.repository
+    def sshKey = job.value.sshKey
     Path jobDir = Paths.get(System.getenv("JENKINS_HOME") + "/jobs/" + jobName)
     println "Creating job '${jobName}' from repository '${repository}' with SSH credential '${sshKey}'..."
     Files.createDirectories(jobDir)

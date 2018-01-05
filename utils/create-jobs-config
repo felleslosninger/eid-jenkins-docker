@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+echo "
+jobs:
+    jenkins-docker:
+        repository: git@github.com:difi/jenkins-docker
+        sshKey: ssh.github.com
+" | docker config create pipeline-jobs -

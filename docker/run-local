@@ -3,4 +3,28 @@
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/run
 source run 2>/dev/null # Kun for at IntelliJ skal kunne linke funksjoner (hack!)
 
+docker node ls 2>&1 >/dev/null || {
+    read -p "Enable swarm mode in Docker? [Y/n] " answer
+    [[ -z ${answer} ]] && answer='y'
+    [[ ${answer} =~ [yY] ]] && { docker swarm init; } || { exit 1; }
+}
+
+[[ -z $(docker secret ls -q) ]] && {
+    read -p "No secrets found in Docker's vault. Create dummy secrets? [Y/n] " answer
+    [[ -z ${answer} ]] && answer='y'
+    [[ ${answer} =~ [yY] ]] && { utils/create-dummy-secrets; } || { exit 1; }
+}
+
+[[ -z $(docker config ls -qf name=pipeline-jobs) ]] && {
+    read -p "Configuration 'pipeline-jobs' not found in Docker. Create config with job for this project? [Y/n] " answer
+    [[ -z ${answer} ]] && answer='y'
+    [[ ${answer} =~ [yY] ]] && { utils/create-jobs-config; } || { exit 1; }
+}
+
+[[ -z $(docker config ls -qf name=pipeline-config) ]] && {
+    read -p "Configuration 'pipeline-config' not found in Docker. Create dummy config? [Y/n] " answer
+    [[ -z ${answer} ]] && answer='y'
+    [[ ${answer} =~ [yY] ]] && { utils/create-config; } || { exit 1; }
+}
+
 run pipeline DEV-SNAPSHOT
