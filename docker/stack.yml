@@ -15,6 +15,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-workspaces:/workspaces
+      - jenkins-ssh-settings:/etc/ssh
     networks:
       - pipeline
   jenkins-slave-2:
@@ -31,6 +32,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-workspaces:/workspaces
+      - jenkins-ssh-settings:/etc/ssh
     networks:
       - pipeline
   jenkins:
