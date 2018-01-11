@@ -5,6 +5,4 @@ pipelineWithDocker {
     stackName = 'pipeline'
     gitSshKey = 'ssh.github.com'
     dockerRegistry = 'nexus'
-    crucibleUrl = 'http://fisheye.difi.local:8060'
-    crucibleProjectKey = 'CR'
 }

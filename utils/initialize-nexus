@@ -100,5 +100,7 @@ addCreateMavenRepositoryProxyScript "${username}" "${password}"
 addCreateMavenRepositoryGroupScript "${username}" "${password}"
 addCreateDockerRegistryScript "${username}" "${password}"
 createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
-createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,maven-releases
-createDockerRegistry "${username}" "${password}" docker 8082 8083
+createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy-ext http://eid-artifactory:8080/artifactory/ext-release-local
+createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,artifactory-proxy-ext,maven-releases
+createDockerRegistry "${username}" "${password}" docker 8082
+createDockerRegistry "${username}" "${password}" docker-stage 8083

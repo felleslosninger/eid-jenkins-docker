@@ -171,6 +171,7 @@ services:
     ports:
       - "8080:8081"
       - "8081:8082"
+      - "8082:8083"
     volumes:
       - nexus-data:/nexus-data
     networks:
@@ -179,16 +180,6 @@ services:
       placement:
         constraints:
           - node.labels.nexus == true
-  selenium_host:
-    image: selenium/standalone-firefox-debug:3.5.0
-    ports:
-      - "4444:4444"
-    networks:
-      - pipeline
-    deploy:
-      placement:
-        constraints:
-          - node.labels.jenkins-master != true
 
 volumes:
   nexus-data:
