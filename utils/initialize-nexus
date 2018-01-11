@@ -69,6 +69,7 @@ createMavenRepositoryProxy() {
     local password=$2
     local repositoryName=$3
     local repositoryUrl=$4
+    echo "Creating Maven repository proxy $repositoryName"
     __runScript "${username}" "${password}" create-maven-repository-proxy "${repositoryName},${repositoryUrl}"
 }
 
@@ -78,6 +79,7 @@ createMavenRepositoryGroup() {
     local password=$2
     local repositoryName=$3
     local repositoryList=$4
+    echo "Creating Maven repository group $repositoryName"
     __runScript "${username}" "${password}" create-maven-repository-group "${repositoryName},${repositoryList}"
 }
 
@@ -86,6 +88,7 @@ createDockerRegistry() {
     username=$1
     password=$2
     registryName=$3
+    echo "Creating Docker registry $registryName"
     httpPort=$4
     httpsPort=$5
     __runScript "${username}" "${password}" create-docker-registry "${registryName},${httpPort},${httpsPort}"
@@ -102,5 +105,5 @@ addCreateDockerRegistryScript "${username}" "${password}"
 createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy http://eid-artifactory:8080/artifactory/libs-release-local
 createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy-ext http://eid-artifactory:8080/artifactory/ext-release-local
 createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,artifactory-proxy-ext,maven-releases
-createDockerRegistry "${username}" "${password}" docker 8082
-createDockerRegistry "${username}" "${password}" docker-stage 8083
+createDockerRegistry "${username}" "${password}" docker 8082 18082
+createDockerRegistry "${username}" "${password}" docker-stage 8083 18083

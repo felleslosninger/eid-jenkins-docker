@@ -39,6 +39,7 @@ createCredentials() {
     local credentialFile=${JENKINS_HOME}/credentials.xml
     cat /files/credentials-header.xml > ${credentialFile} || return 1
     for sshKeyFile in $(find /run/secrets -type f -name ssh.*); do createSshKeyCredential ${sshKeyFile}; done
+    for f in $(find /run/secrets -type f -name docker_registry_*_username); do createUserPassCredential $(basename ${f//_username}); done
     createUserPassCredential 'crucible'
     createUserPassCredential 'nexus'
     createUserPassCredential 'jira'

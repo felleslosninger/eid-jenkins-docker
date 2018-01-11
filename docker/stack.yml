@@ -54,6 +54,36 @@ services:
         constraints:
           - node.labels.jenkins-master == true
     secrets:
+      - source: docker_registry_local_username
+        target: docker_registry_local_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker_registry_local_password
+        target: docker_registry_local_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker_registry_staging_username
+        target: docker_registry_staging_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker_registry_staging_password
+        target: docker_registry_staging_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker_registry_public_username
+        target: docker_registry_public_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker_registry_public_password
+        target: docker_registry_public_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
       - source: ssh.git.difi.local
         target: ssh.git.difi.local
         mode: 0400
@@ -205,6 +235,18 @@ networks:
     attachable: true
 
 secrets:
+  docker_registry_local_username:
+    external: true
+  docker_registry_local_password:
+    external: true
+  docker_registry_staging_username:
+    external: true
+  docker_registry_staging_password:
+    external: true
+  docker_registry_public_username:
+    external: true
+  docker_registry_public_password:
+    external: true
   ssh.git.difi.local:
     external: true
   ssh.github.com:
