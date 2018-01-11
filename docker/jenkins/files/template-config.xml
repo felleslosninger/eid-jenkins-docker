@@ -37,7 +37,7 @@
                     <default>
                         <comparator class="hudson.util.CaseInsensitiveComparator"/>
                     </default>
-                    <int>12</int>
+                    <int>15</int>
                     <string>JIRA_SITE</string>
                     <string>jira</string>
                     <string>ISSUE_STATUS_OPEN</string>
@@ -62,6 +62,12 @@
                     <string>${CRUCIBLE_URL}</string>
                     <string>CRUCIBLE_PROJECT_KEY</string>
                     <string>${CRUCIBLE_PROJECT_KEY}</string>
+                    <string>dockerRegistryStagingAddress</string>
+                    <string>${dockerRegistryStagingAddress}</string>
+                    <string>dockerRegistryLocalAddress</string>
+                    <string>${dockerRegistryLocalAddress}</string>
+                    <string>dockerRegistryPublicAddress</string>
+                    <string>${dockerRegistryPublicAddress}</string>
                 </tree-map>
             </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>
