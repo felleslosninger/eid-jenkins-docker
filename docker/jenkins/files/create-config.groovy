@@ -20,9 +20,14 @@ Map binding = [
         'ISSUE_TRANSITION_RESUME_WORK': config.jira.transitions.resumeWork,
         'CRUCIBLE_URL': config.crucible.url,
         'CRUCIBLE_PROJECT_KEY': config.crucible.projectKey,
-        'dockerRegistryStagingAddress': config.docker.registries.staging,
-        'dockerRegistryLocalAddress': config.docker.registries.local,
-        'dockerRegistryPublicAddress': config.docker.registries.public
+        'dockerRegistryStagingLocalAddress': config.docker.registries['StagingLocal'].address,
+        'dockerRegistryStagingLocalApiUrl': config.docker.registries['StagingLocal'].apiUrl ?: '',
+        'dockerRegistryStagingPublicAddress': config.docker.registries['StagingPublic'].address,
+        'dockerRegistryStagingPublicApiUrl': config.docker.registries['StagingPublic'].apiUrl ?: '',
+        'dockerRegistryProductionLocalAddress': config.docker.registries['ProductionLocal'].address,
+        'dockerRegistryProductionLocalApiUrl': config.docker.registries['ProductionLocal'].apiUrl ?: '',
+        'dockerRegistryProductionPublicAddress': config.docker.registries['ProductionPublic'].address,
+        'dockerRegistryProductionPublicApiUrl': config.docker.registries['ProductionPublic'].apiUrl ?: ''
 ]
 Path homeDir = Paths.get(System.getenv("JENKINS_HOME"))
 println "Creating Jenkins configuration..."

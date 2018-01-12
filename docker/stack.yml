@@ -54,33 +54,43 @@ services:
         constraints:
           - node.labels.jenkins-master == true
     secrets:
-      - source: docker_registry_local_username
-        target: docker_registry_local_username
+      - source: docker_registry_StagingLocal_username
+        target: docker_registry_StagingLocal_username
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker_registry_local_password
-        target: docker_registry_local_password
+      - source: docker_registry_StagingLocal_password
+        target: docker_registry_StagingLocal_password
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker_registry_staging_username
-        target: docker_registry_staging_username
+      - source: docker_registry_StagingPublic_username
+        target: docker_registry_StagingPublic_username
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker_registry_staging_password
-        target: docker_registry_staging_password
+      - source: docker_registry_StagingPublic_password
+        target: docker_registry_StagingPublic_password
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker_registry_public_username
-        target: docker_registry_public_username
+      - source: docker_registry_ProductionLocal_username
+        target: docker_registry_ProductionLocal_username
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
-      - source: docker_registry_public_password
-        target: docker_registry_public_password
+      - source: docker_registry_ProductionLocal_password
+        target: docker_registry_ProductionLocal_password
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker_registry_ProductionPublic_username
+        target: docker_registry_ProductionPublic_username
+        mode: 0400
+        uid: '${uid}'
+        gid: '${gid}'
+      - source: docker_registry_ProductionPublic_password
+        target: docker_registry_ProductionPublic_password
         mode: 0400
         uid: '${uid}'
         gid: '${gid}'
@@ -235,17 +245,21 @@ networks:
     attachable: true
 
 secrets:
-  docker_registry_local_username:
+  docker_registry_StagingLocal_username:
     external: true
-  docker_registry_local_password:
+  docker_registry_StagingLocal_password:
     external: true
-  docker_registry_staging_username:
+  docker_registry_StagingPublic_username:
     external: true
-  docker_registry_staging_password:
+  docker_registry_StagingPublic_password:
     external: true
-  docker_registry_public_username:
+  docker_registry_ProductionLocal_username:
     external: true
-  docker_registry_public_password:
+  docker_registry_ProductionLocal_password:
+    external: true
+  docker_registry_ProductionPublic_username:
+    external: true
+  docker_registry_ProductionPublic_password:
     external: true
   ssh.git.difi.local:
     external: true

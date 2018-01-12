@@ -37,7 +37,7 @@
                     <default>
                         <comparator class="hudson.util.CaseInsensitiveComparator"/>
                     </default>
-                    <int>15</int>
+                    <int>20</int>
                     <string>JIRA_SITE</string>
                     <string>jira</string>
                     <string>ISSUE_STATUS_OPEN</string>
@@ -62,12 +62,22 @@
                     <string>${CRUCIBLE_URL}</string>
                     <string>CRUCIBLE_PROJECT_KEY</string>
                     <string>${CRUCIBLE_PROJECT_KEY}</string>
-                    <string>dockerRegistryStagingAddress</string>
-                    <string>${dockerRegistryStagingAddress}</string>
-                    <string>dockerRegistryLocalAddress</string>
-                    <string>${dockerRegistryLocalAddress}</string>
-                    <string>dockerRegistryPublicAddress</string>
-                    <string>${dockerRegistryPublicAddress}</string>
+                    <string>dockerRegistryStagingLocalAddress</string>
+                    <string>${dockerRegistryStagingLocalAddress}</string>
+                    <string>dockerRegistryStagingPublicAddress</string>
+                    <string>${dockerRegistryStagingPublicAddress}</string>
+                    <string>dockerRegistryProductionLocalAddress</string>
+                    <string>${dockerRegistryProductionLocalAddress}</string>
+                    <string>dockerRegistryProductionPublicAddress</string>
+                    <string>${dockerRegistryProductionPublicAddress}</string>
+                    <string>dockerRegistryStagingLocalApiUrl</string>
+                    <string>${dockerRegistryStagingLocalApiUrl}</string>
+                    <string>dockerRegistryStagingPublicApiUrl</string>
+                    <string>${dockerRegistryStagingPublicApiUrl}</string>
+                    <string>dockerRegistryProductionLocalApiUrl</string>
+                    <string>${dockerRegistryProductionLocalApiUrl}</string>
+                    <string>dockerRegistryProductionPublicApiUrl</string>
+                    <string>${dockerRegistryProductionPublicApiUrl}</string>
                 </tree-map>
             </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>
