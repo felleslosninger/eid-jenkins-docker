@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+build() {
+    [[ $# -le 2 ]] || { >&2 echo "Usage: $0 [REGISTRY [VERSION]]"; return 1; }
+    local registry=$1
+    local version=$2
+    local pluginsImage=${registry:+${registry}/}jenkins-plugins${version:+:${version}}
+    local slaveImage=${registry:+${registry}/}jenkins-slave${version:+:${version}}
+    local jenkinsImage=${registry:+${registry}/}jenkins${version:+:${version}}
+    local nexusImage=${registry:+${registry}/}nexus${version:+:${version}}
+    docker build -t ${pluginsImage} docker/jenkins-plugins || return 1
+    docker build -t ${slaveImage} docker/jenkins-slave || return 1
+    docker build --build-arg PLUGINS_IMAGE=${pluginsImage} -t ${jenkinsImage} docker/jenkins || return 1
+    docker build -t ${nexusImage} docker/nexus || return 1
+}
+
+build "${@}" || exit 1

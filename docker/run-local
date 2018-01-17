@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/run
-source run 2>/dev/null # Kun for at IntelliJ skal kunne linke funksjoner (hack!)
-
 docker node ls 2>&1 >/dev/null || {
     read -p "Enable swarm mode in Docker? [Y/n] " answer
     [[ -z ${answer} ]] && answer='y'
@@ -27,4 +24,6 @@ docker node ls 2>&1 >/dev/null || {
     [[ ${answer} =~ [yY] ]] && { utils/create-config; } || { exit 1; }
 }
 
-run pipeline DEV-SNAPSHOT
+docker/build-images local || exit 1
+stackFile="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/stack.yml"
+REGISTRY=local VERSION=latest uid=1797 gid=503 docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline

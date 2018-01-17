@@ -4,5 +4,5 @@ pipelineWithDocker {
     productionHostSshKey = 'ssh.git.difi.local'
     stackName = 'pipeline'
     gitSshKey = 'ssh.github.com'
-    dockerRegistry = 'nexus'
+    dockerRegistry = 'ProductionLocal'
 }

@@ -1,5 +1,5 @@
-ARG PLUGINS_VERSION
-FROM eid-jenkins02.dmz.local:8081/jenkins-plugins:${PLUGINS_VERSION} AS plugins
+ARG PLUGINS_IMAGE
+FROM ${PLUGINS_IMAGE} AS plugins
 FROM groovy:2.4.12-jre8-alpine AS groovy
 FROM openjdk:8u131-jdk-alpine
 

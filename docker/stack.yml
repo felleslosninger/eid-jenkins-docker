@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   jenkins-slave-1:
-    image: eid-jenkins02.dmz.local:8081/jenkins-slave:${VERSION}
+    image: ${REGISTRY}/jenkins-slave:${VERSION}
     configs:
       - source: pipeline-config
         target: /config.yaml
@@ -19,7 +19,7 @@ services:
     networks:
       - pipeline
   jenkins-slave-2:
-    image: eid-jenkins02.dmz.local:8081/jenkins-slave:${VERSION}
+    image: ${REGISTRY}/jenkins-slave:${VERSION}
     configs:
       - source: pipeline-config
         target: /config.yaml
@@ -36,7 +36,7 @@ services:
     networks:
       - pipeline
   jenkins:
-    image: eid-jenkins02.dmz.local:8081/jenkins:${VERSION}
+    image: ${REGISTRY}/jenkins:${VERSION}
     ports:
       - "80:8080"
     configs:

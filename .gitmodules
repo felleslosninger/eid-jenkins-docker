@@ -1,3 +1,0 @@
-[submodule "pipeline"]
-	path = pipeline
-	url = git@git.difi.local:eid-pipeline
