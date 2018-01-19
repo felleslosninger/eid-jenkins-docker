@@ -1,1 +1,1 @@
-FROM sonatype/nexus3:3.6.0
+FROM sonatype/nexus3:3.7.1@sha256:1b1a581c76bf2a43112d4eea0077a73aadf234bb34a7b56f76fd5f3c1634dcaf

@@ -1,31 +1,16 @@
 version: '3.4'
 
 services:
-  jenkins-slave-1:
+  jenkins-slave:
     image: ${REGISTRY}/jenkins-slave:${VERSION}
     configs:
       - source: pipeline-config
         target: /config.yaml
     environment:
-      SERVICE: jenkins-slave-1
+      SLAVE_NAME: "{{.Service.Name}}-{{.Task.Slot}}"
     deploy:
-      placement:
-        constraints:
-          - node.labels.jenkins-slave == true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - jenkins-workspaces:/workspaces
-      - jenkins-ssh-settings:/etc/ssh
-    networks:
-      - pipeline
-  jenkins-slave-2:
-    image: ${REGISTRY}/jenkins-slave:${VERSION}
-    configs:
-      - source: pipeline-config
-        target: /config.yaml
-    environment:
-      SERVICE: jenkins-slave-2
-    deploy:
+      mode: replicated
+      replicas: 2
       placement:
         constraints:
           - node.labels.jenkins-slave == true
