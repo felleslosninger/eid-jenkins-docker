@@ -7,6 +7,7 @@
     <mode>EXCLUSIVE</mode>
     <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
     <launcher class="hudson.slaves.JNLPLauncher">
+        <tunnel>jenkins:</tunnel>
         <workDirSettings>
             <disabled>false</disabled>
             <internalDir>remoting</internalDir>

@@ -59,8 +59,6 @@ createDockerCredentials() {
     chmod -R a+r /docker || return 1
 }
 
-addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins -s /bin/bash -D jenkins
-
 cp /files/scriptApproval.xml ${JENKINS_HOME}
 cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
 cp /files/org.jenkinsci.plugins.workflow.libs.GlobalLibraries.xml ${JENKINS_HOME}
