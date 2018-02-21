@@ -8,7 +8,7 @@ slaves.tokenize(',').each { String slaveName ->
     println "Creating slave '${slaveName}'..."
     Files.createDirectories(slaveDir)
     new File(slaveDir.toString(), 'config.xml').withWriter { w ->
-        new File('/files/template-slave-config.xml').eachLine { line ->
+        new File('/templates/slave-config.xml').eachLine { line ->
             w << line.replaceAll('SLAVE_NAME', slaveName) + System.getProperty('line.separator')
     }}
 }

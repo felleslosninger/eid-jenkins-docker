@@ -6,7 +6,7 @@ createUserPassCredential() {
     local username password
     local credentialFile=${JENKINS_HOME}/credentials.xml
     echo "Adding username/password credential '${id}'"
-    cat /files/template-credentials-userpass-entry.xml >> ${credentialFile} || return 1
+    cat /templates/credentials-userpass-entry.xml >> ${credentialFile} || return 1
     sed -i "s|CREDENTIAL_ID|${id}|g" ${credentialFile} || return 1
     username=$(cat /run/secrets/${filePrefix}_username) || return 1
     password=$(cat /run/secrets/${filePrefix}_password) || return 1
@@ -20,7 +20,7 @@ createSecretStringCredential() {
     local secret
     local credentialFile=${JENKINS_HOME}/credentials.xml
     echo "Adding secret string credential '${id}'"
-    cat /files/template-credentials-secretstring-entry.xml >> ${credentialFile} || return 1
+    cat /templates/credentials-secretstring-entry.xml >> ${credentialFile} || return 1
     sed -i "s|CREDENTIAL_ID|${id}|g" ${credentialFile} || return 1
     secret=$(cat /run/secrets/${fileName}) || return 1
     sed -i "s|SECRET_STRING|${secret}|g" ${credentialFile} || return 1
@@ -30,14 +30,14 @@ createSshKeyCredential() {
     local keyFile=${1}
     local credentialFile=${JENKINS_HOME}/credentials.xml
     echo "Adding SSH key credential '${keyFile}'"
-    cat /files/template-credentials-sshkey-entry.xml >> ${credentialFile} || return 1
+    cat /templates/credentials-sshkey-entry.xml >> ${credentialFile} || return 1
     sed -i "s|CREDENTIAL_ID|${keyFile##*/}|g" ${credentialFile} || return 1
     sed -i "s|CREDENTIAL_FILE|${keyFile}|g" ${credentialFile} || return 1
 }
 
 createCredentials() {
     local credentialFile=${JENKINS_HOME}/credentials.xml
-    cat /files/credentials-header.xml > ${credentialFile} || return 1
+    cat /templates/credentials-header.xml > ${credentialFile} || return 1
     for sshKeyFile in $(find /run/secrets -type f -name ssh.*); do createSshKeyCredential ${sshKeyFile}; done
     for f in $(find /run/secrets -type f -name docker_registry_*_username); do createUserPassCredential $(basename ${f//_username}); done
     createUserPassCredential 'crucible'
@@ -47,7 +47,7 @@ createCredentials() {
     createUserPassCredential 'aws'
     createUserPassCredential 'dockerHub'
     createSecretStringCredential 'artifactory' 'artifactory-cleaner'
-    cat /files/credentials-footer.xml >> ${credentialFile} || return 1
+    cat /templates/credentials-footer.xml >> ${credentialFile} || return 1
 }
 
 createDockerCredentials() {
@@ -63,18 +63,18 @@ addgroup -g ${gid} jenkins && adduser -h "${JENKINS_HOME}" -u ${uid} -G jenkins 
 
 cp /files/scriptApproval.xml ${JENKINS_HOME}
 cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
-cp /files/jenkins.model.JenkinsLocationConfiguration.xml ${JENKINS_HOME}
 cp /files/org.jenkinsci.plugins.workflow.libs.GlobalLibraries.xml ${JENKINS_HOME}
 ln -s /plugins ${JENKINS_HOME}/plugins
 chown -R ${uid}:${gid} /plugins
 
-groovy /files/create-config.groovy /config.yaml /files/template-config.xml || exit 1
-groovy /files/create-jira-config.groovy /config.yaml /files/template-jira-basic.xml || exit 1
-groovy /files/create-jobs.groovy /jobs.yaml || exit 1
-groovy /files/create-slaves.groovy ${JENKINS_SLAVES} || exit 1
+groovy /scripts/create-config /config.yaml /templates/config.xml || exit 1
+groovy /scripts/create-location-configuration /config.yaml /templates/jenkins.model.JenkinsLocationConfiguration.xml || exit 1
+groovy /scripts/create-jira-config /config.yaml /templates/jira-basic.xml || exit 1
+groovy /scripts/create-jobs /jobs.yaml /templates/job-config.xml || exit 1
+groovy /scripts/create-slaves ${JENKINS_SLAVES} || exit 1
 createCredentials || exit 1
 createDockerCredentials || exit 1
-groovy /files/create-ssh-known-hosts /config.yaml || exit 1
+groovy /scripts/create-ssh-known-hosts /config.yaml || exit 1
 chown -R ${uid}:${gid} ${JENKINS_HOME}
 chown ${uid}:${gid} /workspaces
 chown ${uid}:${gid} /builds

@@ -1,19 +1,34 @@
 #!/usr/bin/env bash
 
 echo "
+jenkins:
+  url: http://jenkins
+  adminAddress: Jenkins &lt;utvtest@difi.no&gt;
+
 jira:
   url: http://jira
   statuses:
     open: 1
     inProgress: 3
+    readyForVerification: 10717
     codeApproved: 10005
     codeReview: 10012
     manualVerification: 10009
     manualVerificationOk: 10010
+    manualVerificationFailed: 10917
   transitions:
     start: 371
     readyForCodeReview: 391
+    startVerification: 291
+    cancelVerification: 401
     resumeWork: 301
+    resumeWorkFromApprovedCode: 331
+    startManualVerification: 311
+    approveManualVerification: 51
+    retryManualVerificationFromSuccess: 441
+    retryManualVerificationFromFailure: 421
+    closeWithoutStaging: 361
+    close: 341
 
 crucible:
   url: http://crucible

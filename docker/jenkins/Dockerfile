@@ -26,6 +26,8 @@ COPY --from=groovy $GROOVY_HOME $GROOVY_HOME
 ENV PATH=$GROOVY_HOME/bin:$PATH
 
 COPY files/ /files/
+COPY scripts /scripts/
+COPY templates /templates/
 RUN chmod +x /files/init.sh
 
 COPY --from=plugins /files/plugins /plugins

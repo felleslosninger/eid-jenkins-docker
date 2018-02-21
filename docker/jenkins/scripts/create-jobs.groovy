@@ -4,8 +4,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.Files
 
-String jobsFile = this.args[0]
-Map jobs = new Yaml().load((jobsFile as File).text).jobs
+File jobsFile = this.args[0] as File
+File templateFile = this.args[1] as File
+Map jobs = new Yaml().load((jobsFile).text).jobs
 jobs.each { job ->
     def jobName = job.key
     def repository = job.value.repository
@@ -14,7 +15,7 @@ jobs.each { job ->
     println "Creating job '${jobName}' from repository '${repository}' with SSH credential '${sshKey}'..."
     Files.createDirectories(jobDir)
     new File(jobDir.toString(), 'config.xml').withWriter { w ->
-        new File('/files/template-job-config.xml').eachLine { line ->
+        templateFile.eachLine { line ->
             w << line
                     .replaceAll('REPO', repository)
                     .replaceAll('CREDENTIAL_ID', sshKey) + System.getProperty("line.separator")
