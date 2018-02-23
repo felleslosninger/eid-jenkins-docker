@@ -32,8 +32,6 @@ services:
     environment:
       JENKINS_SLAVES: jenkins-slave-1,jenkins-slave-2
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
-      uid: '${uid}'
-      gid: '${gid}'
     deploy:
       placement:
         constraints:
@@ -41,149 +39,62 @@ services:
     secrets:
       - source: docker_registry_StagingLocal_username
         target: docker_registry_StagingLocal_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker_registry_StagingLocal_password
         target: docker_registry_StagingLocal_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker_registry_StagingPublic_username
         target: docker_registry_StagingPublic_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker_registry_StagingPublic_password
         target: docker_registry_StagingPublic_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker_registry_ProductionLocal_username
         target: docker_registry_ProductionLocal_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker_registry_ProductionLocal_password
         target: docker_registry_ProductionLocal_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker_registry_ProductionPublic_username
         target: docker_registry_ProductionPublic_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker_registry_ProductionPublic_password
         target: docker_registry_ProductionPublic_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: ssh.git.difi.local
         target: ssh.git.difi.local
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: ssh.github.com
         target: ssh.github.com
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: artifactory_username
         target: artifactory_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: artifactory_password
         target: artifactory_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: artifactory-cleaner
         target: artifactory-cleaner
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: crucible_username
         target: crucible_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: crucible_password
         target: crucible_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: nexus_username
         target: nexus_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: nexus_password
         target: nexus_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: jira_username
         target: jira_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: jira_password
         target: jira_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: aws_username
         target: aws_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: aws_password
         target: aws_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: dockerHub_username
         target: dockerHub_username
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: dockerHub_password
         target: dockerHub_password
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker-ca.eid-jenkins02.dmz.local
         target: docker-ca.agent
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker-cert.eid-jenkins02.dmz.local
         target: docker-cert.agent
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker-key.eid-jenkins02.dmz.local
         target: docker-key.agent
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker-ca.eid-jenkins03.dmz.local
         target: docker-ca.build
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker-cert.eid-jenkins03.dmz.local
         target: docker-cert.build
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
       - source: docker-key.eid-jenkins03.dmz.local
         target: docker-key.build
-        mode: 0400
-        uid: '${uid}'
-        gid: '${gid}'
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-workspaces:/workspaces
@@ -192,7 +103,7 @@ services:
     networks:
       pipeline:
   nexus:
-    image: eid-jenkins02.dmz.local:8081/nexus:2017-09-29
+    image: ${REGISTRY}/nexus:${VERSION}
     ports:
       - "8080:8081"
       - "8081:8082"

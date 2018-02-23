@@ -26,4 +26,4 @@ docker node ls 2>&1 >/dev/null || {
 
 docker/build-images local || exit 1
 stackFile="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/stack.yml"
-REGISTRY=local VERSION=latest uid=1797 gid=503 docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline
+REGISTRY=local VERSION=latest docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline
