@@ -102,6 +102,21 @@ services:
       - jenkins-ssh-settings:/etc/ssh
     networks:
       pipeline:
+  polling-agent:
+    image: ${REGISTRY}/polling-agent:${VERSION}
+    secrets:
+      - source: jira_username
+        target: jira.username
+      - source: jira_password
+        target: jira.password
+    volumes:
+      - polling-job-repository:/data
+    networks:
+      - pipeline
+    deploy:
+      placement:
+        constraints:
+          - node.labels.jenkins-master == true
   nexus:
     image: ${REGISTRY}/nexus:${VERSION}
     ports:
@@ -127,6 +142,8 @@ volumes:
   jenkins-builds:
     external: true
   jenkins-ssh-settings:
+    external: true
+  polling-job-repository:
     external: true
 
 configs:

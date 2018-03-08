@@ -24,6 +24,7 @@ docker node ls 2>&1 >/dev/null || {
     [[ ${answer} =~ [yY] ]] && { utils/create-config; } || { exit 1; }
 }
 
+mvn package || exit 1
 docker/build-images local || exit 1
 stackFile="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/stack.yml"
 REGISTRY=local VERSION=latest docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline

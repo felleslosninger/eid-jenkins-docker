@@ -6,7 +6,11 @@ jenkins:
   adminAddress: Jenkins &lt;utvtest@difi.no&gt;
 
 jira:
-  url: http://jira
+  url: http://jira.difi.local
+  issues:
+    bug: 11
+  fields:
+    sourceCodeRepository: 12380
   statuses:
     open: 1
     inProgress: 3

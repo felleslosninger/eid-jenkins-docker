@@ -1,3 +1,4 @@
-jenkins-docker.iml
+*.iml
 .idea
+target
 
