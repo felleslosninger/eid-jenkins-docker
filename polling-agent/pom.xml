@@ -10,10 +10,10 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.0.RELEASE</version>
-        <relativePath/>
+        <groupId>no.difi.pipeline</groupId>
+        <artifactId>jenkins-docker</artifactId>
+        <version>DEV-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <properties>
