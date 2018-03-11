@@ -107,3 +107,4 @@ createMavenRepositoryProxy "${username}" "${password}" artifactory-proxy-ext htt
 createMavenRepositoryGroup "${username}" "${password}" pipeline artifactory-proxy,artifactory-proxy-ext,maven-releases
 createDockerRegistry "${username}" "${password}" docker 8082 18082
 createDockerRegistry "${username}" "${password}" docker-stage 8083 18083
+createDockerRegistry "${username}" "${password}" docker-verification 8084 18084

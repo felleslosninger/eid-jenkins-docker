@@ -81,7 +81,7 @@ public class JiraStatusJob implements Job {
         if (positiveTargetStatus != null) {
             logger.info("Polling Jira for status equal to {} on issue {} succeeded", positiveTargetStatus, issue);
         } else if (negativeTargetStatus != null) {
-            logger.info("Polling Jira for status different than {} on issue {} succeeded", positiveTargetStatus, issue);
+            logger.info("Polling Jira for status different than {} on issue {} succeeded", negativeTargetStatus, issue);
         }
         Job callbackJob = jobFactory.callbackRequest().onBehalfOf(id()).to(callbackAddress);
         pollQueue.add(callbackJob, now());

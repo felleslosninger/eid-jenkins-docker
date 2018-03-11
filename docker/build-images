@@ -8,7 +8,7 @@ build() {
     local slaveImage=${registry:+${registry}/}jenkins-slave${version:+:${version}}
     local jenkinsImage=${registry:+${registry}/}jenkins${version:+:${version}}
     local nexusImage=${registry:+${registry}/}nexus${version:+:${version}}
-    local pollingAgentImage=${registry:+${registry}/}polling-agent${version:+${version}}
+    local pollingAgentImage=${registry:+${registry}/}polling-agent${version:+:${version}}
     docker build -t ${pluginsImage} docker/jenkins-plugins || return 1
     docker build -t ${slaveImage} docker/jenkins-slave || return 1
     docker build --build-arg PLUGINS_IMAGE=${pluginsImage} -t ${jenkinsImage} docker/jenkins || return 1
