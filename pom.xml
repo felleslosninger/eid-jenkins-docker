@@ -8,6 +8,10 @@
     <version>DEV-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <java.version>1.9</java.version>
+    </properties>
+
     <modules>
         <module>polling-agent</module>
     </modules>

@@ -5,6 +5,7 @@ import no.difi.pipeline.service.PollingAgentService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 
@@ -42,52 +43,21 @@ public class PollingAgentController {
         service.deleteJob(id);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class JiraStatusPoll {
-        @NotNull URL jiraAddress;
-        @NotNull String issue;
-        String positiveTargetStatus;
-        String negativeTargetStatus;
-        @NotNull URL callbackAddress;
 
-        public URL getJiraAddress() {
-            return jiraAddress;
+        @NotNull public URL jiraAddress;
+        @NotNull public String issue;
+        @NotNull public URL callbackAddress;
+        public String positiveTargetStatus;
+        public String negativeTargetStatus;
+
+        @AssertTrue
+        @SuppressWarnings("unused")
+        private boolean isTargetStatusNotNull() {
+            return (positiveTargetStatus != null && negativeTargetStatus == null) || (positiveTargetStatus == null && negativeTargetStatus != null);
         }
 
-        public void setJiraAddress(URL jiraAddress) {
-            this.jiraAddress = jiraAddress;
-        }
-
-        public String getIssue() {
-            return issue;
-        }
-
-        public void setIssue(String issue) {
-            this.issue = issue;
-        }
-
-        public String getPositiveTargetStatus() {
-            return positiveTargetStatus;
-        }
-
-        public void setPositiveTargetStatus(String positiveTargetStatus) {
-            this.positiveTargetStatus = positiveTargetStatus;
-        }
-
-        public String getNegativeTargetStatus() {
-            return negativeTargetStatus;
-        }
-
-        public void setNegativeTargetStatus(String negativeTargetStatus) {
-            this.negativeTargetStatus = negativeTargetStatus;
-        }
-
-        public URL getCallbackAddress() {
-            return callbackAddress;
-        }
-
-        public void setCallbackAddress(URL callbackAddress) {
-            this.callbackAddress = callbackAddress;
-        }
     }
 
 }

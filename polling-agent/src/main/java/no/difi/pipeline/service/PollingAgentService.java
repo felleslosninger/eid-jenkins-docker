@@ -16,14 +16,14 @@ public class PollingAgentService {
     public PollingAgentService(PollQueue pollQueue, JobRepository jobRepository) {
         this.pollQueue = pollQueue;
         this.jobRepository = jobRepository;
-        jobRepository.load().forEach(j -> pollQueue.add(j, now()));
+        jobRepository.load().forEach(j -> pollQueue.add(j, 0));
         new PollingWorker().start();
     }
 
     public String addJob(Job job) {
         logger.info("Adding job " + job.id());
         jobRepository.save(job);
-        pollQueue.add(job, now());
+        pollQueue.add(job, 0);
         return job.id();
     }
 
@@ -43,7 +43,7 @@ public class PollingAgentService {
         @Override
         public void run() {
             while (true) {
-                pollQueue.executeNext();
+                pollQueue.next().execute();
             }
         }
 

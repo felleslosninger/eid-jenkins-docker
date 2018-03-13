@@ -15,6 +15,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,16 +62,24 @@ public class PollingAgentTest {
     }
 
     @Test
+    public void whenSendingAJiraStatusPollRequestWithoutTargetStatusThenRequestIsRejected() throws Exception {
+        sendJiraStatusPollRequest(aJiraStatusPollRequestWithoutTargetStatus("ABC-123")).andExpect(status().is(400));
+    }
+
+    @Test
+    public void whenSendingAJiraStatusPollRequestWithoutCallbackAddressThenRequestIsRejected() throws Exception {
+        sendJiraStatusPollRequest(aJiraStatusPollRequestWithoutCallbackAddress("ABC-123", "5")).andExpect(status().is(400));
+    }
+
+    @Test
     public void givenIssueStatusIsEqualToPositiveTargetStatusWhenSendingAJiraStatusPollRequestThenJiraAndCallbackIsCalled() throws Exception {
         String anIssue = "ABC-123";
         String anIssueStatus = "5";
         CountDownLatch callbackLatch = callbackStubWithListener(anIssue);
         CountDownLatch jiraLatch = jiraRespondsWithStatusEqualTo(anIssue, anIssueStatus);
-        sendToJira(aJiraStatusPollRequestForPositiveStatus(anIssue, anIssueStatus));
+        sendJiraStatusPollRequest(aJiraStatusPollRequestForPositiveStatus(anIssue, anIssueStatus)).andExpect(status().is(200));
         assertCall(jiraLatch);
-        jira.verify(getRequestedFor(urlEqualTo(jiraStatusPollURLPath(anIssue))));
         assertCall(callbackLatch);
-        callback.verify(postRequestedFor(urlEqualTo(callbackURLPath(anIssue))));
     }
 
     @Test
@@ -79,11 +89,9 @@ public class PollingAgentTest {
         String aDifferentIssueStatus = "6";
         CountDownLatch callbackLatch = callbackStubWithListener(anIssue);
         CountDownLatch jiraLatch = jiraRespondsWithStatusEqualTo(anIssue, aDifferentIssueStatus);
-        sendToJira(aJiraStatusPollRequestForNegativeStatus(anIssue, anIssueStatus));
+        sendJiraStatusPollRequest(aJiraStatusPollRequestForNegativeStatus(anIssue, anIssueStatus)).andExpect(status().is(200));
         assertCall(jiraLatch);
-        jira.verify(getRequestedFor(urlEqualTo(jiraStatusPollURLPath(anIssue))));
         assertCall(callbackLatch);
-        callback.verify(postRequestedFor(urlEqualTo(callbackURLPath(anIssue))));
     }
 
     @Test
@@ -92,9 +100,8 @@ public class PollingAgentTest {
         String anIssueStatus = "10041";
         CountDownLatch callbackLatch = callbackStubWithListenerAfterFirstCall();
         jiraRespondsWithStatusEqualTo(anIssue, anIssueStatus);
-        sendToJira(aJiraStatusPollRequestForPositiveStatus(anIssue, anIssueStatus));
+        sendJiraStatusPollRequest(aJiraStatusPollRequestForPositiveStatus(anIssue, anIssueStatus)).andExpect(status().is(200));
         assertCall(callbackLatch);
-        callback.verify(postRequestedFor(urlEqualTo(callbackURLPath(anIssue))));
     }
 
     @Test
@@ -104,7 +111,7 @@ public class PollingAgentTest {
         String anIssueStatus = "10041";
         CountDownLatch callbackLatch = callbackStubWithListenerAfterFirstCall();
         jiraRespondsWithStatusEqualTo(anIssue, anIssueStatus);
-        sendToJira(aJiraStatusPollRequestForPositiveStatus(anIssue, anIssueStatus));
+        sendJiraStatusPollRequest(aJiraStatusPollRequestForPositiveStatus(anIssue, anIssueStatus)).andExpect(status().is(200));
         assertCall(callbackLatch);
         Thread.sleep(15000);
         callbackLatch = callbackStubWithListener(anIssue);
@@ -119,12 +126,11 @@ public class PollingAgentTest {
         assertFalse(latch.await(10, SECONDS));
     }
 
-    private void sendToJira(String request) throws Exception {
-        mockMvc.perform(
+    private ResultActions sendJiraStatusPollRequest(String request) throws Exception {
+        return mockMvc.perform(
                 post("/jiraStatusPolls")
                         .contentType("application/json")
-                        .content(request))
-                .andExpect(status().is(200));
+                        .content(request));
     }
 
     private CountDownLatch jiraRespondsWithStatusEqualTo(String issue, String status) {
@@ -182,6 +188,26 @@ public class PollingAgentTest {
 
     private String callbackURLPath(String issue) {
         return String.format("/job/dummy-project/job/work-%s/13/input/blahblah/proceedEmpty", issue);
+    }
+
+    private String aJiraStatusPollRequestWithoutTargetStatus(String issue) throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        objectMapper.writeValue(stringWriter, Map.of(
+                "jiraAddress", jiraAddress(),
+                "callbackAddress", "http://localhost:" + callback.port() + callbackURLPath(issue),
+                "issue",issue
+        ));
+        return stringWriter.toString();
+    }
+
+    private String aJiraStatusPollRequestWithoutCallbackAddress(String issue, String targetStatus) throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        objectMapper.writeValue(stringWriter, Map.of(
+                "jiraAddress", jiraAddress(),
+                "issue",issue,
+                "positiveTargetStatus", targetStatus
+        ));
+        return stringWriter.toString();
     }
 
     private String aJiraStatusPollRequestForPositiveStatus(String issue, String status) throws IOException {

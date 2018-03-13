@@ -39,28 +39,31 @@ public class PollingAgentApplication {
     private Environment environment;
 
     @Bean
-    public HttpClient jiraClient() {
-        return HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .authenticator(
-                        new Authenticator() {
-                            @Override
-                            protected PasswordAuthentication getPasswordAuthentication() {
-                                return new PasswordAuthentication(
-                                        environment.getRequiredProperty("jiraUsername"),
-                                        environment.getRequiredProperty("jiraPassword").toCharArray()
-                                );
-                            }
-                        })
-                .build();
+    public JiraClient jiraClient() {
+        String username = environment.getRequiredProperty("jira.username");
+        String password = environment.getRequiredProperty("jira.password");
+        return new JiraClient(
+                HttpClient.newBuilder()
+                        .version(HttpClient.Version.HTTP_1_1)
+                        .followRedirects(HttpClient.Redirect.ALWAYS)
+                        .authenticator(
+                                new Authenticator() {
+                                    @Override
+                                    protected PasswordAuthentication getPasswordAuthentication() {
+                                        return new PasswordAuthentication(username, password.toCharArray());
+                                    }
+                                })
+                        .build()
+        );
     }
 
     @Bean
-    public HttpClient callbackClient() {
-        return HttpClient.newBuilder()
+    public CallbackClient callbackClient() {
+        return new CallbackClient(
+                HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
-                .build();
+                .build()
+        );
     }
 
     @Bean
@@ -81,8 +84,6 @@ public class PollingAgentApplication {
     public JiraStatusJob.Builder jiraStatusJobBuilder(PollQueue pollQueue, JobRepository jobRepository, JobFactory jobFactory) throws IOException {
         return new JiraStatusJob.Builder(
                 jiraClient(),
-                environment.getRequiredProperty("jira.username"),
-                environment.getRequiredProperty("jira.password"),
                 pollQueue,
                 jobFactory,
                 jobRepository

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -20,12 +21,12 @@ public class PollQueue {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final DelayQueue<PollCommand> queue = new DelayQueue<>();
 
-    public void add(Job job, ZonedDateTime executeTime) {
+    public void add(Job job, int secondsToDelay) {
         List<PollCommand> oldCommands = queue.stream().filter(e -> e.job.id().equals(job.id())).collect(toList());
         if (!oldCommands.isEmpty()) {
             logger.info("Removing {} obsolete command(s) from poll queue", oldCommands.size());
         }
-        queue.add(new PollCommand(job, executeTime));
+        queue.add(new PollCommand(job, now().plus(Duration.ofSeconds(secondsToDelay))));
         queue.removeAll(oldCommands);
     }
 
@@ -33,9 +34,9 @@ public class PollQueue {
         queue.removeIf(c -> c.job.id().equals(jobId));
     }
 
-    public void executeNext() {
+    public Job next() {
         try {
-            queue.take().execute();
+            return queue.take().job;
         } catch (InterruptedException e) {
             throw new RuntimeException("Failed to take on queue", e);
         }
@@ -49,10 +50,6 @@ public class PollQueue {
         PollCommand(Job job, ZonedDateTime executeTime) {
             this.job = job;
             this.executeTime = executeTime;
-        }
-
-        void execute() {
-            job.execute();
         }
 
         @Override
