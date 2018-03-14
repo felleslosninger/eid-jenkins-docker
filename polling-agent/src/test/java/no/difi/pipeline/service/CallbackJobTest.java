@@ -61,6 +61,7 @@ public class CallbackJobTest {
     private void givenCallbackRequestFails() {
         CallbackClient.Response response = mock(CallbackClient.Response.class);
         when(response.ok()).thenReturn(false);
+        when(response.notFound()).thenReturn(false);
         when(response.errorDetails()).thenReturn("Some failure");
         givenCallbackResponse(response);
     }

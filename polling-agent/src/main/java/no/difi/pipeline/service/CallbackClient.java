@@ -64,15 +64,17 @@ public class CallbackClient {
         }
 
         public String errorDetails() {
-            if (httpResponse != null) {
+            if (exception != null) {
+                return format("Exception: %s [%d]", exception.toString(), requestDuration);
+            } else if (httpResponse != null) {
                 return format("HTTP status %s [%d]", httpResponse.statusCode(), requestDuration);
             } else {
-                return format("Exception: %s [%d]", exception.toString(), requestDuration);
+                return null;
             }
         }
 
         public boolean notFound() {
-            return httpResponse.statusCode() == 404;
+            return httpResponse != null && httpResponse.statusCode() == 404;
         }
 
     }

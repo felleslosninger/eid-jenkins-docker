@@ -58,11 +58,17 @@ public class JiraClient {
 
         private HttpResponse<String> httpResponse;
         private Exception exception;
+        private String issueStatus;
         private long requestDuration;
 
         Response(HttpResponse<String> httpResponse, long requestTime) {
             this.httpResponse = httpResponse;
             this.requestDuration = System.currentTimeMillis() - requestTime;
+            try {
+                issueStatus = parseIssueStatus();
+            } catch (RuntimeException e) {
+                this.exception = e;
+            }
         }
 
         Response(Exception exception, long requestTime) {
@@ -71,10 +77,14 @@ public class JiraClient {
         }
 
         public boolean ok() {
-            return httpResponse != null && httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300;
+            return httpResponse != null && httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300 && issueStatus != null;
         }
 
         public String issueStatus() {
+            return issueStatus;
+        }
+
+        private String parseIssueStatus() {
             if (httpResponse.body().isEmpty())
                 throw new RuntimeException("Jira response is empty");
             JsonValue jsonResponse = Json.createReader(new StringReader(httpResponse.body())).readValue();
@@ -88,10 +98,12 @@ public class JiraClient {
         }
 
         public String errorDetails() {
-            if (httpResponse != null) {
+            if (exception != null) {
+                return format("Exception: %s [%d]", exception.toString(), requestDuration);
+            } else if (httpResponse != null) {
                 return format("HTTP status %s [%d]", httpResponse.statusCode(), requestDuration);
             } else {
-                return format("Exception: %s [%d]", exception.toString(), requestDuration);
+                return null;
             }
         }
     }
