@@ -47,13 +47,16 @@ public class PollingAgentApplication {
                         .version(HttpClient.Version.HTTP_1_1)
                         .followRedirects(HttpClient.Redirect.ALWAYS)
                         .authenticator(
+                            // TODO: Authenticator does not add Authorization header, so doing it explicitly in the client
                                 new Authenticator() {
                                     @Override
                                     protected PasswordAuthentication getPasswordAuthentication() {
                                         return new PasswordAuthentication(username, password.toCharArray());
                                     }
                                 })
-                        .build()
+                        .build(),
+                username,
+                password
         );
     }
 
@@ -92,7 +95,7 @@ public class PollingAgentApplication {
 
     @Bean
     @Scope("prototype")
-    public CallbackJob.Builder callbackJobBuilder(PollQueue pollQueue, JobRepository jobRepository, JobFactory jobFactory) {
+    public CallbackJob.Builder callbackJobBuilder(PollQueue pollQueue, JobRepository jobRepository) {
         return new CallbackJob.Builder(callbackClient(), pollQueue, jobRepository);
     }
 

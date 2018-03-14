@@ -7,8 +7,10 @@ import jdk.incubator.http.HttpResponse;
 import javax.json.Json;
 import javax.json.JsonValue;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Base64;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -17,9 +19,13 @@ import static jdk.incubator.http.HttpResponse.BodyHandler.asString;
 public class JiraClient {
 
     private HttpClient httpClient;
+    private String username;
+    private String password;
 
-    public JiraClient(HttpClient httpClient) {
+    public JiraClient(HttpClient httpClient, String username, String password) {
         this.httpClient = httpClient;
+        this.username = username;
+        this.password = password;
     }
 
     public Response requestIssueStatus(URL address, String issue) {
@@ -36,17 +42,17 @@ public class JiraClient {
     private HttpRequest request(URL address, String issue) {
         URI uri = URI.create(format("%s/rest/api/2/issue/%s?fields=status", address, issue));
         return HttpRequest.newBuilder(uri).GET()
-                //.setHeader("Authorization", "Basic " + auth())
+                .setHeader("Authorization", "Basic " + auth())
                 .build();
     }
 
-//    private String auth() {
-//        try {
-//            return Base64.getEncoder().encodeToString((username + ":" + password).getBytes("UTF-8"));
-//        } catch (UnsupportedEncodingException e) {
-//            throw new IllegalStateException(e);
-//        }
-//    }
+    private String auth() {
+        try {
+            return Base64.getEncoder().encodeToString((username + ":" + password).getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public static class Response {
 
@@ -65,7 +71,7 @@ public class JiraClient {
         }
 
         public boolean ok() {
-            return httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300;
+            return httpResponse != null && httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300;
         }
 
         public String issueStatus() {

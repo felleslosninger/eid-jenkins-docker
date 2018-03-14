@@ -56,7 +56,7 @@ public class CallbackClient {
         }
 
         public boolean ok() {
-            return httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300;
+            return httpResponse != null && httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300;
         }
 
         public long requestDuration() {
