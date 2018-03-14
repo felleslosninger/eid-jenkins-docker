@@ -5,11 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 import static java.time.ZonedDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
-import static jdk.incubator.http.HttpRequest.BodyProcessor.fromString;
-import static jdk.incubator.http.HttpResponse.BodyHandler.asString;
 
 public class CallbackJob implements Job {
 
@@ -25,10 +24,12 @@ public class CallbackJob implements Job {
         // Use builder
     }
 
+    @SuppressWarnings("unused")
     public URL getAddress() {
         return address;
     }
 
+    @SuppressWarnings("unused")
     public String getOnBehalfOf() {
         return onBehalfOf;
     }
@@ -93,4 +94,18 @@ public class CallbackJob implements Job {
             return instance;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CallbackJob that = (CallbackJob) o;
+        return Objects.equals(id(), that.id());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id());
+    }
+
 }

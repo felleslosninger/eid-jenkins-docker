@@ -2,8 +2,6 @@ package no.difi.pipeline.service;
 
 import org.junit.Test;
 
-import static java.time.ZonedDateTime.now;
-import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.junit.Assert.assertNotNull;
 
 public class PollQueueTest {

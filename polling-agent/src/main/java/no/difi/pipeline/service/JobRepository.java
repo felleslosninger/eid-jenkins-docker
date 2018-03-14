@@ -1,12 +1,18 @@
 package no.difi.pipeline.service;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +22,19 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class JobRepository {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private File directory;
-    private ObjectMapper objectMapper;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final File directory;
+    private final JobFactory jobFactory;
+    private final ObjectMapper objectMapper;
 
-    public JobRepository(File repositoryDirectory, ObjectMapper jobMapper) {
+    public JobRepository(File repositoryDirectory, JobFactory jobFactory) {
         this.directory = repositoryDirectory;
-        this.objectMapper = jobMapper;
+        this.jobFactory = jobFactory;
+        this.objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(JiraStatusJob.class, new JiraStatusJobDeserializer());
+        module.addDeserializer(CallbackJob.class, new CallbackJobDeserializer());
+        objectMapper.registerModule(module);
         if (!repositoryDirectory.exists()) {
             if (!repositoryDirectory.mkdirs())
                 throw new RuntimeException("Failed to create repository directory " + repositoryDirectory);
@@ -77,6 +89,61 @@ public class JobRepository {
             logger.warn("Failed to parse file " + file.getName() + ": " + e.toString());
         }
         return Optional.empty();
+    }
+
+    private class CallbackJobDeserializer extends JsonDeserializer<CallbackJob> {
+
+        @Override
+        public CallbackJob deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+            JsonNode node = parser.getCodec().readTree(parser);
+            return jobFactory.callbackRequest()
+                    .onBehalfOf(value("onBehalfOf", node))
+                    .to(new URL(value("address", node)));
+        }
+
+    }
+
+    private class JiraStatusJobDeserializer extends JsonDeserializer<JiraStatusJob> {
+
+        @Override
+        public JiraStatusJob deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+            JsonNode node = parser.getCodec().readTree(parser);
+            if (node.hasNonNull("positiveTargetStatus")) {
+                return jobFactory.jiraRequest()
+                        .to(address(node))
+                        .getStatusForIssue(issue(node))
+                        .andExpectStatusEqualTo(value("positiveTargetStatus", node))
+                        .andPostWhenReadyTo(callbackAddress(node));
+            } else {
+                return jobFactory.jiraRequest()
+                        .to(address(node))
+                        .getStatusForIssue(issue(node))
+                        .andExpectStatusNotEqualTo(value("negativeTargetStatus", node))
+                        .andPostWhenReadyTo(callbackAddress(node));
+            }
+        }
+
+        private URL address(JsonNode node) throws IOException {
+            return url("address", node);
+        }
+
+        private String issue(JsonNode node) throws IOException {
+            return value("issue", node);
+        }
+
+        private URL callbackAddress(JsonNode node) throws IOException {
+            return url("callbackAddress", node);
+        }
+
+        private URL url(String key, JsonNode node) throws IOException {
+            return new URL(value(key, node));
+        }
+
+    }
+
+    private static String value(String key, JsonNode node) throws IOException {
+        if (!node.has(key)) throw new IOException("Missing node \"" + key + "\"");
+        return node.get(key).asText();
     }
 
 }

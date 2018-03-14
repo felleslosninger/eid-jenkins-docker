@@ -10,7 +10,7 @@ import static org.junit.Assert.assertFalse;
 public class JiraClientTest {
 
     @Test
-    public void givenJiraDoesNotRespondWhenSendingARequestThenResponsIsNotOk() throws IOException {
+    public void givenJiraDoesNotRespondWhenSendingARequestThenResponseIsNotOk() throws IOException {
         JiraClient client = new JiraClient(
                 null, // Will trigger NPE when sending request and consequently no response
                 "aUser",

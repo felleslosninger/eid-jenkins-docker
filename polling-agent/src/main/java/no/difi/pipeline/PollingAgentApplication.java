@@ -1,7 +1,5 @@
 package no.difi.pipeline;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import jdk.incubator.http.HttpClient;
 import no.difi.pipeline.service.*;
 import org.slf4j.Logger;
@@ -14,11 +12,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static java.lang.Thread.setDefaultUncaughtExceptionHandler;
 
@@ -35,8 +30,12 @@ public class PollingAgentApplication {
         SpringApplication.run(PollingAgentApplication.class, args);
     }
 
+    private final Environment environment;
+
     @Autowired
-    private Environment environment;
+    public PollingAgentApplication(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean
     public JiraClient jiraClient() {
@@ -70,21 +69,8 @@ public class PollingAgentApplication {
     }
 
     @Bean
-    public ObjectMapper jobMapper(
-            JiraStatusJobDeserializer jiraStatusJobDeserializer,
-            CallbackJobDeserializer callbackJobDeserializer
-    ) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(JiraStatusJob.class, jiraStatusJobDeserializer);
-        module.addDeserializer(CallbackJob.class, callbackJobDeserializer);
-        mapper.registerModule(module);
-        return mapper;
-    }
-
-    @Bean
     @Scope("prototype")
-    public JiraStatusJob.Builder jiraStatusJobBuilder(PollQueue pollQueue, JobRepository jobRepository, JobFactory jobFactory) throws IOException {
+    public JiraStatusJob.Builder jiraStatusJobBuilder(PollQueue pollQueue, JobRepository jobRepository, JobFactory jobFactory) {
         return new JiraStatusJob.Builder(
                 jiraClient(),
                 pollQueue,
