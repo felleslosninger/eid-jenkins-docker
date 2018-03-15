@@ -108,4 +108,9 @@ public class CallbackJob implements Job {
         return Objects.hash(id());
     }
 
+    @Override
+    public String toString() {
+        return id();
+    }
+
 }

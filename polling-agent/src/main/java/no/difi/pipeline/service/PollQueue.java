@@ -42,6 +42,10 @@ public class PollQueue {
         }
     }
 
+    public int size() {
+        return queue.size();
+    }
+
     private class PollCommand implements Delayed {
 
         private Job job;
@@ -59,10 +63,8 @@ public class PollQueue {
 
         @Override
         public int compareTo(Delayed o) {
-            long delay = getDelay(TimeUnit.NANOSECONDS);
-            long otherDelay = o.getDelay(TimeUnit.NANOSECONDS);
-            if (delay < otherDelay) return -1;
-            if (otherDelay > delay) return 1;
+            if (executeTime.isBefore(((PollCommand)o).executeTime)) return -1;
+            if (executeTime.isAfter(((PollCommand)o).executeTime)) return 1;
             return 0;
         }
 
@@ -78,6 +80,14 @@ public class PollQueue {
         @Override
         public int hashCode() {
             return Objects.hash(job, executeTime);
+        }
+
+        @Override
+        public String toString() {
+            return "PollCommand{" +
+                    "job=" + job +
+                    ", executeTime=" + executeTime +
+                    '}';
         }
     }
 
