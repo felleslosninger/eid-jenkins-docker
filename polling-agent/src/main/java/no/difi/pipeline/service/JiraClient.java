@@ -1,8 +1,9 @@
 package no.difi.pipeline.service;
 
-import jdk.incubator.http.HttpClient;
-import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpResponse;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import javax.json.Json;
 import javax.json.JsonValue;
@@ -14,41 +15,48 @@ import java.util.Base64;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
-import static jdk.incubator.http.HttpResponse.BodyHandler.asString;
+import static org.springframework.http.HttpMethod.GET;
 
 public class JiraClient {
 
-    private HttpClient httpClient;
+    private RestTemplate httpClient;
     private String username;
     private String password;
 
-    public JiraClient(HttpClient httpClient, String username, String password) {
+    public JiraClient(RestTemplate httpClient, String username, String password) {
         this.httpClient = httpClient;
         this.username = username;
         this.password = password;
     }
 
     public Response requestIssueStatus(URL address, String issue) {
-        HttpRequest request = request(address, issue);
         final long t0 = currentTimeMillis();
         try {
-            HttpResponse<String> httpResponse = httpClient.send(request, asString());
+            ResponseEntity<String> httpResponse = httpClient.exchange(
+                    requestUri(address, issue),
+                    GET,
+                    new HttpEntity(requestHeaders()),
+                    String.class
+            );
             return new Response(httpResponse, t0);
         } catch (Exception e) {
             return new Response(e, t0);
         }
     }
 
-    private HttpRequest request(URL address, String issue) {
-        URI uri = URI.create(format("%s/rest/api/2/issue/%s?fields=status", address, issue));
-        return HttpRequest.newBuilder(uri).GET()
-                .setHeader("Authorization", "Basic " + auth())
-                .build();
+    private URI requestUri(URL address, String issue) {
+        return URI.create(format("%s/rest/api/2/issue/%s?fields=status", address, issue));
+    }
+
+    private HttpHeaders requestHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", auth());
+        return headers;
     }
 
     private String auth() {
         try {
-            return Base64.getEncoder().encodeToString((username + ":" + password).getBytes("UTF-8"));
+            return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
@@ -56,12 +64,12 @@ public class JiraClient {
 
     public static class Response {
 
-        private HttpResponse<String> httpResponse;
+        private ResponseEntity<String> httpResponse;
         private Exception exception;
         private String issueStatus;
         private long requestDuration;
 
-        Response(HttpResponse<String> httpResponse, long requestTime) {
+        Response(ResponseEntity<String> httpResponse, long requestTime) {
             this.httpResponse = httpResponse;
             this.requestDuration = System.currentTimeMillis() - requestTime;
             try {
@@ -77,7 +85,7 @@ public class JiraClient {
         }
 
         public boolean ok() {
-            return httpResponse != null && httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300 && issueStatus != null;
+            return httpResponse != null && httpResponse.getStatusCode().is2xxSuccessful() && issueStatus != null;
         }
 
         public String issueStatus() {
@@ -85,9 +93,9 @@ public class JiraClient {
         }
 
         private String parseIssueStatus() {
-            if (httpResponse.body().isEmpty())
+            if (!httpResponse.hasBody())
                 throw new RuntimeException("Jira response is empty");
-            JsonValue jsonResponse = Json.createReader(new StringReader(httpResponse.body())).readValue();
+            JsonValue jsonResponse = Json.createReader(new StringReader(httpResponse.getBody())).readValue();
             if (jsonResponse.getValueType() != JsonValue.ValueType.OBJECT)
                 throw new RuntimeException("Jira response contains no Json object");
             return jsonResponse.asJsonObject().getJsonObject("fields").getJsonObject("status").getString("id");
@@ -101,7 +109,7 @@ public class JiraClient {
             if (exception != null) {
                 return format("Exception: %s [%d]", exception.toString(), requestDuration);
             } else if (httpResponse != null) {
-                return format("HTTP status %s [%d]", httpResponse.statusCode(), requestDuration);
+                return format("HTTP status %s [%d]", httpResponse.getStatusCodeValue(), requestDuration);
             } else {
                 return null;
             }

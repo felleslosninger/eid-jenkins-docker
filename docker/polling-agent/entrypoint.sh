@@ -6,4 +6,4 @@
     done
 }
 
-java --add-modules jdk.incubator.httpclient -jar /polling-agent.jar --server.port=80
+java -jar /polling-agent.jar --server.port=80

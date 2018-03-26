@@ -1,28 +1,30 @@
 package no.difi.pipeline.service;
 
-import jdk.incubator.http.HttpClient;
-import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpMethod.POST;
 
 public class CallbackClientTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
-    private HttpClient httpClient;
+    private RestTemplate httpClient;
     private CallbackClient callbackClient;
 
     @Before
@@ -31,20 +33,20 @@ public class CallbackClientTest {
     }
 
     @Test
-    public void givenCallbackListenerDoesNotRespondWhenSendingARequestThenResponseIsNotOk() throws IOException, InterruptedException {
+    public void givenCallbackListenerDoesNotRespondWhenSendingARequestThenResponseIsNotOk() throws IOException {
         givenCallbackListenerDoesNotRespond();
         CallbackClient.Response response = callbackClient.callback(new URL("http://callback.example.com"));
         assertFalse(response.ok());
         assertFalse(response.notFound());
     }
 
-    private void givenCallbackListenerDoesNotRespond() throws IOException, InterruptedException {
+    private void givenCallbackListenerDoesNotRespond() {
         givenCallbackListenerRespondsWith();
     }
 
     @SuppressWarnings("unchecked")
-    private void givenCallbackListenerRespondsWith() throws IOException, InterruptedException {
-        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(null);
+    private void givenCallbackListenerRespondsWith() {
+        when(httpClient.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(null);
     }
 
 

@@ -1,6 +1,5 @@
 package no.difi.pipeline;
 
-import jdk.incubator.http.HttpClient;
 import no.difi.pipeline.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 
 import static java.lang.Thread.setDefaultUncaughtExceptionHandler;
 
@@ -42,18 +40,7 @@ public class PollingAgentApplication {
         String username = environment.getRequiredProperty("jira.username");
         String password = environment.getRequiredProperty("jira.password");
         return new JiraClient(
-                HttpClient.newBuilder()
-                        .version(HttpClient.Version.HTTP_1_1)
-                        .followRedirects(HttpClient.Redirect.ALWAYS)
-                        .authenticator(
-                            // TODO: Authenticator does not add Authorization header, so doing it explicitly in the client
-                                new Authenticator() {
-                                    @Override
-                                    protected PasswordAuthentication getPasswordAuthentication() {
-                                        return new PasswordAuthentication(username, password.toCharArray());
-                                    }
-                                })
-                        .build(),
+                restTemplate(),
                 username,
                 password
         );
@@ -61,11 +48,12 @@ public class PollingAgentApplication {
 
     @Bean
     public CallbackClient callbackClient() {
-        return new CallbackClient(
-                HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .build()
-        );
+        return new CallbackClient(restTemplate());
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean

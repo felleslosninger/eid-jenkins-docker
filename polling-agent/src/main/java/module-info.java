@@ -1,5 +1,4 @@
 module no.difi.pipeline {
-    requires jdk.incubator.httpclient;
     requires slf4j.api;
     requires java.json;
     requires spring.boot.autoconfigure;

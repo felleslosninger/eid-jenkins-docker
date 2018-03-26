@@ -1,39 +1,44 @@
 package no.difi.pipeline.service;
 
-import jdk.incubator.http.HttpClient;
-import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpResponse;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
-import static jdk.incubator.http.HttpRequest.BodyProcessor.fromString;
-import static jdk.incubator.http.HttpResponse.BodyHandler.asString;
+import static org.springframework.http.HttpMethod.POST;
 
 public class CallbackClient {
 
-    private HttpClient httpClient;
+    private RestTemplate httpClient;
 
-    public CallbackClient(HttpClient httpClient) {
+    public CallbackClient(RestTemplate httpClient) {
         this.httpClient = httpClient;
     }
 
     public CallbackClient.Response callback(URL address) {
-        HttpRequest request = request(address);
         final long t0 = currentTimeMillis();
         try {
-            HttpResponse<String> httpResponse = httpClient.send(request, asString());
+            ResponseEntity<String> httpResponse = httpClient.exchange(
+                    requestUri(address),
+                    POST,
+                    new HttpEntity<>(""),
+                    String.class
+            );
             return new Response(httpResponse, t0);
         } catch (Exception e) {
             return new Response(e, t0);
         }
     }
 
-    private HttpRequest request(URL url) {
+    private URI requestUri(URL url) {
         try {
-            return HttpRequest.newBuilder(url.toURI()).POST(fromString("")).build();
+            return url.toURI();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Invalid URI: " + url, e);
         }
@@ -41,11 +46,11 @@ public class CallbackClient {
 
     public static class Response {
 
-        private HttpResponse<String> httpResponse;
+        private ResponseEntity<String> httpResponse;
         private Exception exception;
         private long requestDuration;
 
-        Response(HttpResponse<String> httpResponse, long requestTime) {
+        Response(ResponseEntity<String> httpResponse, long requestTime) {
             this.httpResponse = httpResponse;
             this.requestDuration = System.currentTimeMillis() - requestTime;
         }
@@ -56,7 +61,7 @@ public class CallbackClient {
         }
 
         public boolean ok() {
-            return httpResponse != null && httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300;
+            return httpResponse != null && httpResponse.getStatusCode().is2xxSuccessful();
         }
 
         public long requestDuration() {
@@ -67,14 +72,16 @@ public class CallbackClient {
             if (exception != null) {
                 return format("Exception: %s [%d]", exception.toString(), requestDuration);
             } else if (httpResponse != null) {
-                return format("HTTP status %s [%d]", httpResponse.statusCode(), requestDuration);
+                return format("HTTP status %s [%d]", httpResponse.getStatusCodeValue(), requestDuration);
             } else {
                 return null;
             }
         }
 
         public boolean notFound() {
-            return httpResponse != null && httpResponse.statusCode() == 404;
+            return exception != null &&
+                    exception instanceof HttpClientErrorException &&
+                    ((HttpClientErrorException)exception).getRawStatusCode() == 404;
         }
 
     }
