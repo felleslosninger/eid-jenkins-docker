@@ -27,6 +27,8 @@ COPY --from=groovy $GROOVY_HOME $GROOVY_HOME
 
 ENV PATH=/usr/local/maven/bin:$GROOVY_HOME/bin:$PATH
 
+RUN grape install 'org.yaml' 'snakeyaml' '1.19'
+
 COPY files/ /files/
 COPY entrypoint.sh /entrypoint.sh
 

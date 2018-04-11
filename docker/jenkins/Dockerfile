@@ -29,6 +29,7 @@ COPY templates /templates/
 RUN chmod +x /files/init.sh
 
 COPY --from=plugins /files/plugins /plugins
+RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 
 EXPOSE 8080
 HEALTHCHECK CMD curl -f -sS http://localhost:8080 || exit 1
