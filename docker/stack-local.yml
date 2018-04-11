@@ -1,0 +1,46 @@
+version: '3.5'
+
+services:
+  jira:
+    image: ${REGISTRY}/jira-mock:${VERSION}
+    networks:
+      - pipeline
+    ports:
+      - "80"
+  git:
+    image: ${REGISTRY}/git:${VERSION}
+    networks:
+      - pipeline
+    ports:
+      - "22"
+    secrets:
+      - source: ssh.git.difi.local
+        target: ssh.git.difi.local
+      - source: ssh.github.com
+        target: ssh.github.com
+  verification:
+    image: ${REGISTRY}/verification:${VERSION}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - pipeline
+    secrets:
+      - source: ssh.git.difi.local
+        target: ssh.git.difi.local
+      - source: ssh.github.com
+        target: ssh.github.com
+    deploy:
+      restart_policy:
+        condition: none
+
+networks:
+  pipeline:
+    driver: overlay
+    attachable: true
+
+secrets:
+  ssh.git.difi.local:
+    external: true
+  ssh.github.com:
+    external: true
+

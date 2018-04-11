@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+  echo "Usage: create-repository <project.git>"
+  exit 1
+fi
+
+# Set the project name, adding .git if necessary
+extension=".git"
+project=$(echo "$*")
+
+if [ "${project/$extension}" = "$project" ]; then
+  project=${project}${extension}
+fi
+
+mkdir "$project" && \
+cd "$project" && \
+git --bare init
+echo "$project repository created."

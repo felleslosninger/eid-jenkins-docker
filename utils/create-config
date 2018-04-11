@@ -3,10 +3,10 @@
 echo "
 jenkins:
   url: http://jenkins
-  adminAddress: Jenkins &lt;utvtest@difi.no&gt;
+  adminAddress: Jenkins &lt;jenkins@example.com&gt;
 
 jira:
-  url: http://jira.difi.local
+  url: http://jira
   issues:
     bug: 11
   fields:

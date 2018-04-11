@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo "Shell access is not provided"
+exit 128

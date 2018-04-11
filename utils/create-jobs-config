@@ -2,10 +2,7 @@
 
 echo "
 jobs:
-    jenkins-docker:
-        repository: git@github.com:difi/jenkins-docker
-        sshKey: ssh.github.com
-    jenkins-pipeline:
-        repository: git@github.com:difi/jenkins-pipeline
+    verification:
+        repository: git@git:verification
         sshKey: ssh.github.com
 " | docker config create pipeline-jobs -

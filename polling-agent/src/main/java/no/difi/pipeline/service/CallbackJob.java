@@ -13,7 +13,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class CallbackJob implements Job {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final ZonedDateTime created = ZonedDateTime.now();
+    private ZonedDateTime firstNotFound;
     private URL address;
     private String onBehalfOf;
     private CallbackClient callbackClient;
@@ -39,17 +39,21 @@ public class CallbackJob implements Job {
         if (response.ok()) {
             logger.info("Callback to {} accepted [{} ms]", address, response.requestDuration());
             jobRepository.delete(this.id());
-        } else if (response.notFound() && SECONDS.between(created, now()) < 10L) {
-            logger.info(
-                    "Callback listener {} not found -- assuming it is not set up yet ({} seconds since job was registered) [{} ms]",
-                    address,
-                    SECONDS.between(created, now()),
-                    response.requestDuration()
-            );
-            newPollIn(2);
         } else if (response.notFound()) {
-            logger.info("Callback listener {} is gone [{} ms]", address, response.requestDuration());
-            jobRepository.delete(this.id());
+            if (firstNotFound == null)
+                firstNotFound = now();
+            if (SECONDS.between(firstNotFound, now()) < 180L) {
+                logger.info(
+                        "Callback listener {} not found -- assuming it is not set up yet ({} seconds since first time not found) [{} ms]",
+                        address,
+                        SECONDS.between(firstNotFound, now()),
+                        response.requestDuration()
+                );
+                newPollIn(2);
+            } else {
+                logger.info("Callback listener {} is gone [{} ms]", address, response.requestDuration());
+                jobRepository.delete(this.id());
+            }
         } else {
             logger.warn("Callback to {} failed: {} -- retrying in a minute", address, response.errorDetails());
             newPollIn(60);
