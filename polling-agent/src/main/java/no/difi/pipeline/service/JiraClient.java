@@ -59,6 +59,7 @@ public class JiraClient {
     private HttpHeaders requestHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", auth());
+        headers.add("Content-Type", "application/json");
         return headers;
     }
 
