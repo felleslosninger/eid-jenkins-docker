@@ -8,8 +8,11 @@ import org.mockito.junit.MockitoRule;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -50,7 +53,7 @@ public class LoadPersistentJobsTest {
         try {
             return jobBuilder()
                     .to(new URL("http://jira.example.com"))
-                    .getStatusForIssue("ABC-" + i)
+                    .getStatusForIssues(List.of("ABC-" + i))
                     .andExpectStatusEqualTo("3")
                     .andPostWhenReadyTo(new URL("http://callback.example.com"));
         } catch (MalformedURLException e) {
@@ -58,8 +61,9 @@ public class LoadPersistentJobsTest {
         }
     }
 
-    private JiraStatusJob.Builder jobBuilder() {
-        return new JiraStatusJob.Builder(jiraClient, pollQueue, jobFactory, jobRepository);
+    private JiraStatusJob.JiraAddress jobBuilder() {
+        return new JiraStatusJob.Builder(jiraClient, pollQueue, jobFactory, jobRepository)
+                .id(format("%s-%s", JiraStatusJob.class.getSimpleName(), UUID.randomUUID()));
     }
 
 }

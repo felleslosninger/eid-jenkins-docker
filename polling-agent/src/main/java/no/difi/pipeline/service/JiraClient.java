@@ -12,10 +12,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
+import static java.lang.String.join;
 import static java.lang.System.currentTimeMillis;
-import static org.springframework.http.HttpMethod.GET;
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.http.HttpMethod.POST;
 
 public class JiraClient {
 
@@ -29,13 +33,13 @@ public class JiraClient {
         this.password = password;
     }
 
-    public Response requestIssueStatus(URL address, String issue) {
+    public Response requestIssueStatus(URL address, List<String> issues) {
         final long t0 = currentTimeMillis();
         try {
             ResponseEntity<String> httpResponse = httpClient.exchange(
-                    requestUri(address, issue),
-                    GET,
-                    new HttpEntity(requestHeaders()),
+                    requestUri(address),
+                    POST,
+                    new HttpEntity<>(requestBody(issues), requestHeaders()),
                     String.class
             );
             return new Response(httpResponse, t0);
@@ -44,8 +48,12 @@ public class JiraClient {
         }
     }
 
-    private URI requestUri(URL address, String issue) {
-        return URI.create(format("%s/rest/api/2/issue/%s?fields=status", address, issue));
+    private String requestBody(List<String> issues) {
+        return format("{\"jql\": \"id in (%s)\", \"fields\": [ \"status\" ]}", join(",", issues));
+    }
+
+    private URI requestUri(URL address) {
+        return URI.create(format("%s/rest/api/2/search", address));
     }
 
     private HttpHeaders requestHeaders() {
@@ -66,14 +74,14 @@ public class JiraClient {
 
         private ResponseEntity<String> httpResponse;
         private Exception exception;
-        private String issueStatus;
+        private Map<String, String> issueStatuses;
         private long requestDuration;
 
         Response(ResponseEntity<String> httpResponse, long requestTime) {
             this.httpResponse = httpResponse;
             this.requestDuration = System.currentTimeMillis() - requestTime;
             try {
-                issueStatus = parseIssueStatus();
+                issueStatuses = parseIssueStatuses();
             } catch (RuntimeException e) {
                 this.exception = e;
             }
@@ -85,20 +93,30 @@ public class JiraClient {
         }
 
         public boolean ok() {
-            return httpResponse != null && httpResponse.getStatusCode().is2xxSuccessful() && issueStatus != null;
+            return httpResponse != null && httpResponse.getStatusCode().is2xxSuccessful() && issueStatuses != null;
         }
 
-        public String issueStatus() {
-            return issueStatus;
+        public Map<String, String> issueStatuses() {
+            return issueStatuses;
         }
 
-        private String parseIssueStatus() {
+        private Map<String, String> parseIssueStatuses() {
             if (!httpResponse.hasBody())
                 throw new RuntimeException("Jira response is empty");
             JsonValue jsonResponse = Json.createReader(new StringReader(httpResponse.getBody())).readValue();
             if (jsonResponse.getValueType() != JsonValue.ValueType.OBJECT)
                 throw new RuntimeException("Jira response contains no Json object");
-            return jsonResponse.asJsonObject().getJsonObject("fields").getJsonObject("status").getString("id");
+            if (jsonResponse.asJsonObject().getJsonArray("issues") == null)
+                throw new RuntimeException("Jira response contains no Json object with issues array");
+            return jsonResponse.asJsonObject()
+                    .getJsonArray("issues")
+                    .stream()
+                    .map(JsonValue::asJsonObject)
+                    .collect(toMap(
+                            issue -> issue.getString("key"),
+                            issue -> issue.getJsonObject("fields").getJsonObject("status").getString("id")
+                            )
+                    );
         }
 
         public long requestDuration() {

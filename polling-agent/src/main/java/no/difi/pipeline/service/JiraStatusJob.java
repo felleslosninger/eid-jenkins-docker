@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Objects;
+import java.util.*;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
@@ -12,9 +12,10 @@ import static java.util.Objects.requireNonNull;
 public class JiraStatusJob implements Job {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private String id;
     private URL address;
     private URL callbackAddress;
-    private String issue;
+    private List<String> issues;
     private String positiveTargetStatus;
     private String negativeTargetStatus;
     private JiraClient jiraClient;
@@ -33,8 +34,8 @@ public class JiraStatusJob implements Job {
     }
 
     @SuppressWarnings("unused")
-    public String getIssue() {
-        return issue;
+    public List<String> getIssues() {
+        return issues;
     }
 
     @SuppressWarnings("unused")
@@ -49,35 +50,37 @@ public class JiraStatusJob implements Job {
 
     @Override
     public void execute() {
-        JiraClient.Response response = jiraClient.requestIssueStatus(address, issue);
+        JiraClient.Response response = jiraClient.requestIssueStatus(address, issues);
         if (!response.ok()) {
-            logger.warn("Requesting status for issue {} failed: {}", issue, response.errorDetails());
+            logger.warn("Requesting statuses for issues {} failed: {}", issues, response.errorDetails());
             newPollIn(60);
         } else if (positiveTargetStatus != null) {
-            String issueStatus = response.issueStatus();
-            if (!positiveTargetStatus.equals(issueStatus)) {
-                logger.info("Status for issue {} is not yet {} (it is {}) [{} ms]", issue, positiveTargetStatus, issueStatus, response.requestDuration());
+            Map<String, String> issueStatuses = response.issueStatuses();
+            if (!issueStatuses.entrySet().stream().map(Map.Entry::getValue).allMatch(status -> status.equals(positiveTargetStatus))) {
+                logger.info("Statuses for issues {} are not yet {} (they are {}) [{} ms]", issues, positiveTargetStatus, issueStatuses, response.requestDuration());
                 newPollIn(10);
             } else {
-                logger.info("Success - status for issue {} is now {} [{} ms]", issue, issueStatus, response.requestDuration());
+                logger.info("Success - statuses for issues {} are now {} [{} ms]", issues, issueStatuses, response.requestDuration());
                 newCallbackJob();
             }
         } else if (negativeTargetStatus != null) {
-            String issueStatus = response.issueStatus();
-            if (negativeTargetStatus.equals(issueStatus)) {
-                logger.info("Status for issue {} is still {}) [{} ms]", issue, negativeTargetStatus, response.requestDuration());
+            Map<String, String> issueStatuses = response.issueStatuses();
+            if (issueStatuses.entrySet().stream().map(Map.Entry::getValue).anyMatch(status -> status.equals(negativeTargetStatus))) {
+                logger.info("Statuses for issues {} are still {}) [{} ms]", issues, negativeTargetStatus, response.requestDuration());
                 newPollIn(10);
             } else {
-                logger.info("Success - status for issue {} is now not {} (it is {}) [{} ms]", issue, negativeTargetStatus, issueStatus, response.requestDuration());
+                logger.info("Success - statuses for issues {} are now not {} (they are {}) [{} ms]", issues, negativeTargetStatus, issueStatuses, response.requestDuration());
                 newCallbackJob();
             }
         } else {
-            throw new IllegalStateException(format("No target status defined for issue %s", issue));
+            throw new IllegalStateException("No target status defined");
         }
     }
 
     private void newCallbackJob() {
-        Job callbackJob = jobFactory.callbackRequest().onBehalfOf(id()).to(callbackAddress);
+        Job callbackJob = jobFactory.callbackRequest()
+                .id(format("%s-%s", CallbackJob.class.getSimpleName(), UUID.randomUUID()))
+                .onBehalfOf(id()).to(callbackAddress);
         pollQueue.add(callbackJob, 0);
         jobRepository.save(callbackJob);
         jobRepository.delete(this.id());
@@ -89,9 +92,11 @@ public class JiraStatusJob implements Job {
 
     @Override
     public String id() {
-        return getClass().getSimpleName() + "-"
-                + ((positiveTargetStatus != null) ? positiveTargetStatus : "not" + negativeTargetStatus)
-                + "-" + issue;
+        return id;
+    }
+
+    public interface Id {
+        JiraAddress id(String id);
     }
 
     public interface JiraAddress {
@@ -99,7 +104,7 @@ public class JiraStatusJob implements Job {
     }
 
     public interface IssueId {
-        Status getStatusForIssue(String issueId);
+        Status getStatusForIssues(List<String> issueIds);
     }
 
     public interface Status {
@@ -111,7 +116,7 @@ public class JiraStatusJob implements Job {
         JiraStatusJob andPostWhenReadyTo(URL callbackAddress);
     }
 
-    public static class Builder implements JiraAddress, IssueId, Status, CallbackAddress {
+    public static class Builder implements Id, JiraAddress, IssueId, Status, CallbackAddress {
 
         private JiraStatusJob instance = new JiraStatusJob();
 
@@ -127,6 +132,13 @@ public class JiraStatusJob implements Job {
         }
 
         @Override
+        public JiraAddress id(String id) {
+            requireNonNull(id);
+            instance.id = id;
+            return this;
+        }
+
+        @Override
         public IssueId to(URL address) {
             requireNonNull(address);
             instance.address = address;
@@ -134,9 +146,10 @@ public class JiraStatusJob implements Job {
         }
 
         @Override
-        public Status getStatusForIssue(String issueId) {
-            requireNonNull(issueId);
-            instance.issue = issueId;
+        public Status getStatusForIssues(List<String> issueIds) {
+            if (instance.issues == null)
+                instance.issues = new ArrayList<>();
+            instance.issues.addAll(issueIds);
             return this;
         }
 
@@ -160,7 +173,6 @@ public class JiraStatusJob implements Job {
             instance.callbackAddress = callbackAddress;
             return instance;
         }
-
     }
 
     @Override

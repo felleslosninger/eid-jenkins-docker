@@ -43,6 +43,7 @@ buildAll() {
     build nexus ${registry} ${version} || return 1
     buildWithArtifact polling-agent ${registry} ${version} || return 1
     build jira-mock ${registry} ${version} || return 1
+    build crucible-mock ${registry} ${version} || return 1
     build git ${registry} ${version} || return 1
     build verification ${registry} ${version} || return 1
 }

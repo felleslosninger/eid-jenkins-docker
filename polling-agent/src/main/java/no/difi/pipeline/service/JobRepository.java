@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 @Repository
@@ -80,9 +81,9 @@ public class JobRepository {
         logger.info("Loading file " + file.getName() + "...");
         try {
             if (file.getName().startsWith(JiraStatusJob.class.getSimpleName()))
-                return Optional.of(objectMapper.readerFor(JiraStatusJob.class).readValue(file));
+                return Optional.of(objectMapper.readerFor(JiraStatusJob.class).withAttribute("fileName", file.getName()).readValue(file));
             else if (file.getName().startsWith(CallbackJob.class.getSimpleName()))
-                return Optional.of(objectMapper.readerFor(CallbackJob.class).readValue(file));
+                return Optional.of(objectMapper.readerFor(CallbackJob.class).withAttribute("fileName", file.getName()).readValue(file));
             else
                 logger.warn("Unrecognized file name for a job: " + file.getName());
         } catch (IOException e) {
@@ -94,9 +95,10 @@ public class JobRepository {
     private class CallbackJobDeserializer extends JsonDeserializer<CallbackJob> {
 
         @Override
-        public CallbackJob deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+        public CallbackJob deserialize(JsonParser parser, DeserializationContext context) throws IOException {
             JsonNode node = parser.getCodec().readTree(parser);
             return jobFactory.callbackRequest()
+                    .id((String)context.getAttribute("fileName"))
                     .onBehalfOf(value("onBehalfOf", node))
                     .to(new URL(value("address", node)));
         }
@@ -106,18 +108,21 @@ public class JobRepository {
     private class JiraStatusJobDeserializer extends JsonDeserializer<JiraStatusJob> {
 
         @Override
-        public JiraStatusJob deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+        public JiraStatusJob deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+
             JsonNode node = parser.getCodec().readTree(parser);
             if (node.hasNonNull("positiveTargetStatus")) {
                 return jobFactory.jiraRequest()
+                        .id((String)context.getAttribute("fileName"))
                         .to(address(node))
-                        .getStatusForIssue(issue(node))
+                        .getStatusForIssues(issues(node))
                         .andExpectStatusEqualTo(value("positiveTargetStatus", node))
                         .andPostWhenReadyTo(callbackAddress(node));
             } else {
                 return jobFactory.jiraRequest()
+                        .id((String)context.getAttribute("fileName"))
                         .to(address(node))
-                        .getStatusForIssue(issue(node))
+                        .getStatusForIssues(issues(node))
                         .andExpectStatusNotEqualTo(value("negativeTargetStatus", node))
                         .andPostWhenReadyTo(callbackAddress(node));
             }
@@ -127,8 +132,12 @@ public class JobRepository {
             return url("address", node);
         }
 
-        private String issue(JsonNode node) throws IOException {
-            return value("issue", node);
+        private List<String> issues(JsonNode node) throws IOException {
+            if (node.has("issue"))
+                // Backwards compatible
+                return singletonList(value("issue", node));
+            else
+                return values("issues", node);
         }
 
         private URL callbackAddress(JsonNode node) throws IOException {
@@ -144,6 +153,11 @@ public class JobRepository {
     private static String value(String key, JsonNode node) throws IOException {
         if (!node.has(key)) throw new IOException("Missing node \"" + key + "\"");
         return node.get(key).asText();
+    }
+
+    private static List<String> values(String key, JsonNode node) throws IOException {
+        if (!node.has(key)) throw new IOException("Missing node \"" + key + "\"");
+        return node.findValuesAsText(key);
     }
 
 }

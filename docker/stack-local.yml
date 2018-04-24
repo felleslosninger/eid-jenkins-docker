@@ -7,6 +7,12 @@ services:
       - pipeline
     ports:
       - "80"
+  crucible:
+    image: ${REGISTRY}/crucible-mock:${VERSION}
+    networks:
+      - pipeline
+    ports:
+      - "80"
   git:
     image: ${REGISTRY}/git:${VERSION}
     networks:

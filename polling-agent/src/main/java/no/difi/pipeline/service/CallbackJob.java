@@ -9,11 +9,13 @@ import java.util.Objects;
 
 import static java.time.ZonedDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.util.Objects.requireNonNull;
 
 public class CallbackJob implements Job {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private ZonedDateTime firstNotFound;
+    private String id;
     private URL address;
     private String onBehalfOf;
     private CallbackClient callbackClient;
@@ -66,7 +68,11 @@ public class CallbackJob implements Job {
 
     @Override
     public String id() {
-        return getClass().getSimpleName() + "-" + onBehalfOf;
+        return id;
+    }
+
+    public interface Id {
+        OnBehalfOf id(String id);
     }
 
     public interface OnBehalfOf {
@@ -77,7 +83,7 @@ public class CallbackJob implements Job {
         CallbackJob to(URL callbackAddress);
     }
 
-    public static class Builder implements OnBehalfOf, CallbackAddress {
+    public static class Builder implements Id, OnBehalfOf, CallbackAddress {
 
         private CallbackJob instance = new CallbackJob();
 
@@ -87,13 +93,23 @@ public class CallbackJob implements Job {
             instance.jobRepository = jobRepository;
         }
 
+        @Override
+        public OnBehalfOf id(String id) {
+            requireNonNull(id);
+            instance.id = id;
+            return this;
+        }
+
+        @Override
         public CallbackAddress onBehalfOf(String job) {
+            requireNonNull(job);
             instance.onBehalfOf = job;
             return this;
         }
 
         @Override
         public CallbackJob to(URL callbackAddress) {
+            requireNonNull(callbackAddress);
             instance.address = callbackAddress;
             return instance;
         }

@@ -11,49 +11,79 @@ checkLabel() {
     } || return 0
 }
 
-docker node ls 2>&1 >/dev/null || {
-    read -p "Enable swarm mode in Docker? [Y/n] " answer
-    [[ -z ${answer} ]] && answer='y'
-    [[ ${answer} =~ [yY] ]] && { docker swarm init; } || { exit 1; }
+checkLabels() {
+    nodeId=$(docker node inspect self | jq -r ".[].ID") || exit 1
+    checkLabel jenkins-slave ${nodeId} || exit 1
+    checkLabel jenkins-master ${nodeId} || exit 1
+    checkLabel nexus ${nodeId} || exit 1
 }
 
-nodeId=$(docker node inspect self | jq -r ".[].ID") || exit 1
-checkLabel jenkins-slave ${nodeId} || exit 1
-checkLabel jenkins-master ${nodeId} || exit 1
-checkLabel nexus ${nodeId} || exit 1
-
-if [[ pipeline == $(docker stack ls --format {{.Name}}) ]]; then
-    docker stack rm pipeline || exit 1
-fi
-
-[[ -z $(docker secret ls -q) ]] && {
-    read -p "No secrets found in Docker's vault. Create dummy secrets? [Y/n] " answer
-    [[ -z ${answer} ]] && answer='y'
-    [[ ${answer} =~ [yY] ]] && { utils/create-dummy-secrets; } || { exit 1; }
+checkSwarmMode() {
+    docker node ls 2>&1 >/dev/null || {
+        read -p "Enable swarm mode in Docker? [Y/n] " answer
+        [[ -z ${answer} ]] && answer='y'
+        [[ ${answer} =~ [yY] ]] && { docker swarm init; } || { exit 1; }
+    }
 }
 
-[[ ! -z $(docker config ls -qf name=pipeline-jobs) ]] && {
-    docker config rm pipeline-jobs || exit 1
-}
-utils/create-jobs-config || exit 1
-
-[[ -z $(docker config ls -qf name=pipeline-config) ]] && {
-    read -p "Configuration 'pipeline-config' not found in Docker. Create dummy config? [Y/n] " answer
-    [[ -z ${answer} ]] && answer='y'
-    [[ ${answer} =~ [yY] ]] && { utils/create-config; } || { exit 1; }
+removeOldStack() {
+    if [[ pipeline == $(docker stack ls --format {{.Name}}) ]]; then
+        docker stack rm pipeline || exit 1
+    fi
 }
 
-while [[ ! -z $(docker network ls -qf name=pipeline_pipeline) ]]; do
-    echo "Waiting for stack to be removed..."
-    sleep 1
-done
-
-[[ ! -z $(docker volume ls -qf name=jenkins-builds) ]] && {
-    echo "Removing volume jenkins-builds"
-    docker volume rm jenkins-builds || exit 1
+createSecrets() {
+    utils/create-secrets || exit 1
 }
 
-mvn package -DskipTests || exit 1
+removeAndCreateJobs() {
+    [[ ! -z $(docker config ls -qf name=pipeline-jobs) ]] && {
+        echo "Removing existing config pipeline-jobs"
+        docker config rm pipeline-jobs || exit 1
+    }
+    echo "Creating config pipeline-jobs"
+    utils/create-jobs-config || exit 1
+}
+
+removeAndCreateConfig() {
+    [[ ! -z $(docker config ls -qf name=pipeline-config) ]] && {
+        echo "Removing existing config pipeline-config"
+        docker config rm pipeline-config || exit 1
+    }
+    echo "Creating config pipeline-config"
+    utils/create-config || exit 1
+}
+
+waitForOldStackToBeRemoved() {
+    while [[ ! -z $(docker network ls -qf name=pipeline_pipeline) ]]; do
+        docker network rm pipeline_pipeline
+        echo "Waiting for stack to be removed..."
+        sleep 1
+    done
+}
+
+removeVolume() {
+    local volume=$1
+    while [[ ! -z $(docker volume ls -qf name=${volume}) ]]; do
+        echo "Removing volume ${volume}"
+        docker volume rm ${volume}
+        sleep 1
+    done
+}
+
+checkSwarmMode
+checkLabels
+removeOldStack
+createSecrets
+removeAndCreateJobs
+removeAndCreateConfig
+waitForOldStackToBeRemoved
+removeVolume jenkins-builds
+removeVolume jenkins-data
+removeVolume jenkins-workspaces
+removeVolume polling-job-repository
+
+#mvn package -DskipTests || exit 1
 docker/build-images local || exit 1
 stackFile="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/stack.yml"
 localStackFile="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/stack-local.yml"

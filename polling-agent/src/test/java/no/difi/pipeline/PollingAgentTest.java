@@ -134,9 +134,9 @@ public class PollingAgentTest {
 
     private CountDownLatch jiraRespondsWithStatusEqualTo(String issue, String status) {
         jira.stubFor(
-                get(jiraStatusPollURLPath(issue))
+                WireMock.post(jiraStatusPollURLPath())
                         .willReturn(aResponse()
-                                .withBody(statusResponseFromJira(status))
+                                .withBody(statusResponseFromJira(issue, status))
                                 .withStatus(200))
         );
         CountDownLatch latch = new CountDownLatch(1);
@@ -177,8 +177,8 @@ public class PollingAgentTest {
     }
 
 
-    private String jiraStatusPollURLPath(String issue) {
-        return "/rest/api/2/issue/" + issue + "?fields=status";
+    private String jiraStatusPollURLPath() {
+        return "/rest/api/2/search";
     }
 
     private String jiraAddress() {
@@ -231,8 +231,8 @@ public class PollingAgentTest {
         return stringWriter.toString();
     }
 
-    private String statusResponseFromJira(String status) {
-        return "{\"fields\":{\"status\":{\"id\":\"" + status + "\"}}}";
+    private String statusResponseFromJira(String issueId, String status) {
+        return "{\"issues\": [{\"key\": \"" + issueId + "\", \"fields\": {\"status\": {\"id\": \"" + status + "\"}}}]}";
     }
 
 }

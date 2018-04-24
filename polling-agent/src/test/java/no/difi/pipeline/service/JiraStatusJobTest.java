@@ -9,6 +9,9 @@ import org.mockito.junit.MockitoRule;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,32 +39,32 @@ public class JiraStatusJobTest {
 
     @Test
     public void givenIssueStatusIsDifferentThanRequestedWhenExecutingJobThenJobIsRescheduledInTenSeconds() throws Exception {
-        givenIssueStatusIs("3");
-        Job job = jiraStatusJob("7");
+        givenIssueStatusIs(anIssue(), "3");
+        Job job = jiraStatusJob(anIssue(), "7");
         job.execute();
         thenJobIsRescheduled(job, 10);
     }
 
     @Test
     public void givenIssueStatusIsSameAsRequestedWhenExecutingJobThenCallbackCommandIsScheduled() throws Exception {
-        givenIssueStatusIs("4");
-        Job job = jiraStatusJob("4");
+        givenIssueStatusIs(anIssue(), "4");
+        Job job = jiraStatusJob(anIssue(), "4");
         job.execute();
         thenCallbackJobIsScheduled();
     }
 
     @Test
     public void givenIssueStatusIsDifferentThanNegativeRequestedWhenExecutingJobThenCallbackCommandIsScheduled() throws Exception {
-        givenIssueStatusIs("3");
-        Job job = jiraNegativeStatusJob("7");
+        givenIssueStatusIs(anIssue(), "3");
+        Job job = jiraNegativeStatusJob(anIssue(), "7");
         job.execute();
         thenCallbackJobIsScheduled();
     }
 
     @Test
     public void givenIssueStatusIsSameAsNegativeRequestedWhenExecutingJobThenJobIsRescheduledInTenSeconds() throws Exception {
-        givenIssueStatusIs("8");
-        Job job = jiraNegativeStatusJob("8");
+        givenIssueStatusIs(anIssue(), "8");
+        Job job = jiraNegativeStatusJob(anIssue(), "8");
         job.execute();
         thenJobIsRescheduled(job, 10);
     }
@@ -69,28 +72,28 @@ public class JiraStatusJobTest {
     @Test
     public void givenJiraRequestFailsWhenExecutingJobThenNewCommandIsScheduledInSixtySeconds() throws MalformedURLException {
         givenJiraRequestFails();
-        Job job = jiraStatusJob("4");
+        Job job = jiraStatusJob(anIssue(), "4");
         job.execute();
         thenJobIsRescheduled(job, 60);
     }
 
-    private void givenIssueStatusIs(String issueStatus) {
+    private void givenIssueStatusIs(String issue, String issueStatus) {
         JiraClient.Response response = mock(JiraClient.Response.class);
         when(response.ok()).thenReturn(true);
-        when(response.issueStatus()).thenReturn(issueStatus);
+        when(response.issueStatuses()).thenReturn(Map.of(issue, issueStatus));
         givenJiraResponse(response);
     }
 
     private void givenJiraRequestFails() {
         JiraClient.Response response = mock(JiraClient.Response.class);
         when(response.ok()).thenReturn(false);
-        when(response.issueStatus()).thenReturn(null);
+        when(response.issueStatuses()).thenReturn(null);
         when(response.errorDetails()).thenReturn("Some failure");
         givenJiraResponse(response);
     }
 
     private void givenJiraResponse(JiraClient.Response response) {
-        when(jiraClient.requestIssueStatus(any(URL.class), any(String.class))).thenReturn(response);
+        when(jiraClient.requestIssueStatus(any(URL.class), anyList())).thenReturn(response);
     }
 
     private void thenJobIsRescheduled(Job job, int delaySeconds) {
@@ -101,24 +104,28 @@ public class JiraStatusJobTest {
         verify(pollQueue).add(any(CallbackJob.class), eq(0));
     }
 
-    private JiraStatusJob jiraStatusJob(String issueStatus) throws MalformedURLException {
+    private JiraStatusJob jiraStatusJob(String issue, String issueStatus) throws MalformedURLException {
         return jobBuilder()
                 .to(new URL("http://jira.example.com"))
-                .getStatusForIssue("ABC-123")
+                .getStatusForIssues(List.of(issue))
                 .andExpectStatusEqualTo(issueStatus)
                 .andPostWhenReadyTo(new URL("http://callback.example.com"));
     }
 
-    private JiraStatusJob jiraNegativeStatusJob(String issueStatus) throws MalformedURLException {
+    private JiraStatusJob jiraNegativeStatusJob(String issue, String issueStatus) throws MalformedURLException {
         return jobBuilder()
                 .to(new URL("http://jira.example.com"))
-                .getStatusForIssue("ABC-123")
+                .getStatusForIssues(List.of(issue))
                 .andExpectStatusNotEqualTo(issueStatus)
                 .andPostWhenReadyTo(new URL("http://callback.example.com"));
     }
 
-    private JiraStatusJob.Builder jobBuilder() {
-        return new JiraStatusJob.Builder(jiraClient, pollQueue, jobFactory, jobRepository);
+    private JiraStatusJob.JiraAddress jobBuilder() {
+        return new JiraStatusJob.Builder(jiraClient, pollQueue, jobFactory, jobRepository).id(UUID.randomUUID().toString());
+    }
+
+    private String anIssue() {
+        return "ABC-123";
     }
 
 }

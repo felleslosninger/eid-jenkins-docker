@@ -1,5 +1,6 @@
 package no.difi.pipeline.web;
 
+import no.difi.pipeline.service.JiraStatusJob;
 import no.difi.pipeline.service.JobFactory;
 import no.difi.pipeline.service.PollingAgentService;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
+import java.util.List;
+import java.util.UUID;
+
+import static java.lang.String.format;
 
 @RestController
 public class PollingAgentController {
@@ -25,14 +30,16 @@ public class PollingAgentController {
         return service.addJob(
                 poll.positiveTargetStatus != null ?
                         jobFactory.jiraRequest()
+                                .id(format("%s-%s", JiraStatusJob.class.getSimpleName(), UUID.randomUUID()))
                                 .to(poll.jiraAddress)
-                                .getStatusForIssue(poll.issue)
+                                .getStatusForIssues(poll.issues())
                                 .andExpectStatusEqualTo(poll.positiveTargetStatus)
                                 .andPostWhenReadyTo(poll.callbackAddress)
                         :
                         jobFactory.jiraRequest()
+                                .id(format("%s-%s", JiraStatusJob.class.getSimpleName(), UUID.randomUUID()))
                                 .to(poll.jiraAddress)
-                                .getStatusForIssue(poll.issue)
+                                .getStatusForIssues(poll.issues())
                                 .andExpectStatusNotEqualTo(poll.negativeTargetStatus)
                                 .andPostWhenReadyTo(poll.callbackAddress)
         );
@@ -47,15 +54,28 @@ public class PollingAgentController {
     public static class JiraStatusPoll {
 
         @NotNull public URL jiraAddress;
-        @NotNull public String issue;
+        public String issue;
+        public List<String> issues;
         @NotNull public URL callbackAddress;
         public String positiveTargetStatus;
         public String negativeTargetStatus;
+
+        public List<String> issues() {
+            if (issue != null)
+                return List.of(issue);
+            return issues;
+        }
 
         @AssertTrue
         @SuppressWarnings("unused")
         private boolean isTargetStatusNotNull() {
             return (positiveTargetStatus != null && negativeTargetStatus == null) || (positiveTargetStatus == null && negativeTargetStatus != null);
+        }
+
+        @AssertTrue
+        @SuppressWarnings("unused")
+        private boolean isIssuesNotNull() {
+            return (issues != null && !issues.isEmpty()) || issue != null;
         }
 
     }

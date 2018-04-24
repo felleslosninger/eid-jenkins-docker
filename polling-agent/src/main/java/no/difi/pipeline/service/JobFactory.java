@@ -10,11 +10,11 @@ public class JobFactory implements ApplicationContextAware{
 
     private ApplicationContext applicationContext;
 
-    public JiraStatusJob.JiraAddress jiraRequest() {
+    public JiraStatusJob.Id jiraRequest() {
         return applicationContext.getBean(JiraStatusJob.Builder.class);
     }
 
-    public CallbackJob.OnBehalfOf callbackRequest() {
+    public CallbackJob.Id callbackRequest() {
         return applicationContext.getBean(CallbackJob.Builder.class);
     }
 

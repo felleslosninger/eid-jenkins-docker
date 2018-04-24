@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -83,7 +84,7 @@ public class JiraClientTest {
     }
 
     private JiraClient.Response whenSendingARequest() throws MalformedURLException {
-        return jiraClient.requestIssueStatus(new URL("http://jira.example.com"), "5");
+        return jiraClient.requestIssueStatus(new URL("http://jira.example.com"), singletonList("ABC-123"));
     }
 
 
