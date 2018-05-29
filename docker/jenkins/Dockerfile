@@ -32,6 +32,7 @@ COPY --from=plugins /files/plugins /plugins
 RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 
 EXPOSE 8080
-HEALTHCHECK CMD curl -f -sS http://localhost:8080 || exit 1
+HEALTHCHECK --interval=10s --start-period=10s --retries=60 \
+    CMD curl -f -sS http://localhost:8080 || exit 1
 
 ENTRYPOINT /files/init.sh && java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins
