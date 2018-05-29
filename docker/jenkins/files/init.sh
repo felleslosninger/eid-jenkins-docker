@@ -50,15 +50,6 @@ createCredentials() {
     cat /templates/credentials-footer.xml >> ${credentialFile} || return 1
 }
 
-createDockerCredentials() {
-    echo "Adding Docker credentials for TLS"
-    mkdir /docker || return 1
-    cp /run/secrets/docker-ca.agent /docker/ca.pem || return 1
-    cp /run/secrets/docker-key.agent /docker/key.pem || return 1
-    cp /run/secrets/docker-cert.agent /docker/cert.pem || return 1
-    chmod -R a+r /docker || return 1
-}
-
 cp /files/scriptApproval.xml ${JENKINS_HOME}
 cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
 cp /files/org.jenkinsci.plugins.workflow.libs.GlobalLibraries.xml ${JENKINS_HOME}
@@ -70,5 +61,4 @@ groovy /scripts/create-jira-config /config.yaml /templates/jira-basic.xml || exi
 groovy /scripts/create-jobs /jobs.yaml /templates/job-config.xml || exit 1
 groovy /scripts/create-slaves ${JENKINS_SLAVES} || exit 1
 createCredentials || exit 1
-createDockerCredentials || exit 1
 groovy /scripts/create-ssh-known-hosts /config.yaml || exit 1

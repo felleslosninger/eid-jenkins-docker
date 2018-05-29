@@ -37,22 +37,6 @@ services:
         constraints:
           - node.labels.jenkins-master == true
     secrets:
-      - source: docker_registry_StagingLocal_username
-        target: docker_registry_StagingLocal_username
-      - source: docker_registry_StagingLocal_password
-        target: docker_registry_StagingLocal_password
-      - source: docker_registry_StagingPublic_username
-        target: docker_registry_StagingPublic_username
-      - source: docker_registry_StagingPublic_password
-        target: docker_registry_StagingPublic_password
-      - source: docker_registry_ProductionLocal_username
-        target: docker_registry_ProductionLocal_username
-      - source: docker_registry_ProductionLocal_password
-        target: docker_registry_ProductionLocal_password
-      - source: docker_registry_ProductionPublic_username
-        target: docker_registry_ProductionPublic_username
-      - source: docker_registry_ProductionPublic_password
-        target: docker_registry_ProductionPublic_password
       - source: ssh.git.difi.local
         target: ssh.git.difi.local
       - source: ssh.github.com
@@ -83,18 +67,6 @@ services:
         target: dockerHub_username
       - source: dockerHub_password
         target: dockerHub_password
-      - source: docker-ca.eid-jenkins02.dmz.local
-        target: docker-ca.agent
-      - source: docker-cert.eid-jenkins02.dmz.local
-        target: docker-cert.agent
-      - source: docker-key.eid-jenkins02.dmz.local
-        target: docker-key.agent
-      - source: docker-ca.eid-jenkins03.dmz.local
-        target: docker-ca.build
-      - source: docker-cert.eid-jenkins03.dmz.local
-        target: docker-cert.build
-      - source: docker-key.eid-jenkins03.dmz.local
-        target: docker-key.build
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-workspaces:/workspaces
@@ -159,22 +131,6 @@ networks:
     attachable: true
 
 secrets:
-  docker_registry_StagingLocal_username:
-    external: true
-  docker_registry_StagingLocal_password:
-    external: true
-  docker_registry_StagingPublic_username:
-    external: true
-  docker_registry_StagingPublic_password:
-    external: true
-  docker_registry_ProductionLocal_username:
-    external: true
-  docker_registry_ProductionLocal_password:
-    external: true
-  docker_registry_ProductionPublic_username:
-    external: true
-  docker_registry_ProductionPublic_password:
-    external: true
   ssh.git.difi.local:
     external: true
   ssh.github.com:
@@ -204,16 +160,4 @@ secrets:
   dockerHub_username:
     external: true
   dockerHub_password:
-    external: true
-  docker-ca.eid-jenkins02.dmz.local:
-    external: true
-  docker-cert.eid-jenkins02.dmz.local:
-    external: true
-  docker-key.eid-jenkins02.dmz.local:
-    external: true
-  docker-ca.eid-jenkins03.dmz.local:
-    external: true
-  docker-cert.eid-jenkins03.dmz.local:
-    external: true
-  docker-key.eid-jenkins03.dmz.local:
     external: true
