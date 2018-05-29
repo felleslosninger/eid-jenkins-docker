@@ -85,12 +85,41 @@ class Verification {
     }
 
     void execute() {
-        normalScenario()
+        cancelWaitForCodeReviewToFinishScenario()
+        //normalScenario()
     }
 
     private void normalScenario() {
         String scenario = "normal"
         String issue = 'TEST-1234'
+        mappings(scenario, issue)
+        startBuild(issue)
+        waitUntilJiraStatusIs(scenario, readyForVerification.state())
+        transitionIssue(issue, startVerification)
+        waitUntilJiraStatusIs(scenario, codeReview.state())
+        transitionIssue(issue, approveCode)
+        waitUntilJiraStatusIs(scenario, manualVerification.state())
+        String buildVersion = buildVersion(issue)
+        println "Current build version is ${buildVersion}"
+        newMapping(issueRequest(scenario, manualVerificationOk.state(), issue, manualVerificationOk, buildVersion))
+        transitionIssue(issue, approveManualVerification)
+        waitForBuildToComplete(issue)
+    }
+
+    private void cancelWaitForCodeReviewToFinishScenario() {
+        String scenario = "cancelWaitForCodeReviewToFinish"
+        String issue = 'TEST-1234'
+        mappings(scenario, issue)
+        startBuild(issue)
+        waitUntilJiraStatusIs(scenario, readyForVerification.state())
+        transitionIssue(issue, startVerification)
+        waitUntilJiraStatusIs(scenario, codeReview.state())
+            //waitUntilBuildStageIs("Wait for code review to finish")
+        cancelBuild(issue)
+        waitForBuildToComplete(issue)
+    }
+
+    private void mappings(String scenario, String issue) {
         newMapping(issueRequest(scenario, open.state(), issue, open))
         newMapping(issueStatusRequest(scenario, open.state(), issue, open))
         newMapping(issueTransitionRequest(scenario, open.state(), inProgress.state(), start))
@@ -133,22 +162,14 @@ class Verification {
 
         newMapping(issueRequest(scenario, closed.state(), issue, closed))
         newMapping(issueStatusRequest(scenario, closed.state(), issue, closed))
-
-        startBuild(issue)
-        waitUntilScenarioStateIs(scenario, readyForVerification.state())
-        transitionIssue(issue, startVerification)
-        waitUntilScenarioStateIs(scenario, codeReview.state())
-        transitionIssue(issue, approveCode)
-        waitUntilScenarioStateIs(scenario, manualVerification.state())
-        String buildVersion = buildVersion(issue)
-        println "Current build version is ${buildVersion}"
-        newMapping(issueRequest(scenario, manualVerificationOk.state(), issue, manualVerificationOk, buildVersion))
-        transitionIssue(issue, approveManualVerification)
-        waitForBuildToComplete(issue)
     }
 
     private void startBuild(String issueId) {
         post("${jobUrl(issueId)}/build?delay=0", "") // Avoid waiting the full minute until branch scanning
+    }
+
+    private void cancelBuild(String issueId) {
+        post("${jobUrl(issueId)}/stop", "")
     }
 
     private void transitionIssue(String issueId, Transition transition) {
@@ -157,7 +178,7 @@ class Verification {
         println("Transition ok")
     }
 
-    private void waitUntilScenarioStateIs(String scenarioName, String targetState) {
+    private void waitUntilJiraStatusIs(String scenarioName, String targetState) {
         println("Waiting until scenario \"${scenarioName}\" has state \"${targetState}\"")
         while (true) {
             String currentState = scenario(scenarioName).state

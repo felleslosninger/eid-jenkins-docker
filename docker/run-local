@@ -71,6 +71,10 @@ removeVolume() {
     done
 }
 
+taskState() {
+    docker inspect $(docker service ps -q pipeline_verification) --format "{{json .Status.State}}" || return 1
+}
+
 checkSwarmMode
 checkLabels
 removeOldStack
@@ -80,12 +84,14 @@ removeAndCreateConfig
 waitForOldStackToBeRemoved
 removeVolume jenkins-builds
 removeVolume jenkins-data
+removeVolume jenkins-ssh-settings
 removeVolume jenkins-workspaces
 removeVolume polling-job-repository
 
 #mvn package -DskipTests || exit 1
 docker/build-images local || exit 1
-stackFile="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/stack.yml"
-localStackFile="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/stack-local.yml"
-REGISTRY=local VERSION=latest docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline
-REGISTRY=local VERSION=latest docker stack deploy --resolve-image never -c ${localStackFile} pipeline
+stackFile=docker/stack.yml
+localStackFile=docker/stack-local.yml
+REGISTRY=local VERSION=latest docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline || exit 1
+REGISTRY=local VERSION=latest docker stack deploy --resolve-image never -c ${localStackFile} pipeline || exit 1
+taskState || exit 1

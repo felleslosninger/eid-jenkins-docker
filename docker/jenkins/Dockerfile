@@ -4,8 +4,8 @@ FROM groovy:2.4.12-jre8-alpine AS groovy
 FROM openjdk:8u131-jdk-alpine
 
 ARG JENKINS_WAR_URL=http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war
-ARG JENKINS_VERSION=2.108
-ARG JENKINS_SHA=396406c34da9d7f7710a1d5d60057a67c2e97b6ff77e1516585b4b40d9c566b6
+ARG JENKINS_VERSION=2.125
+ARG JENKINS_SHA=41ed68e0585221a859b836552c8f887a6d3c65ee68aa1d0d4463a4c0cf6391bc
 
 RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python jq
 
