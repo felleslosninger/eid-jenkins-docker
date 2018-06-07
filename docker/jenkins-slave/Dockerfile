@@ -1,16 +1,11 @@
 FROM groovy:2.4.12-jre8-alpine AS groovy
 FROM openjdk:8u131-jdk-alpine
 
-ARG MAVEN_VERSION=3.5.2
 ARG DOCKER_VERSION=17.09.0-ce
 ARG DOCKER_SHA=a9e90a73c3cdfbf238f148e1ec0eaff5eb181f92f35bdd938fd7dab18e1c4647
 
 RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python jq
 
-# Install Maven
-RUN cd /usr/local && \
-    curl -fSL "http://apache.uib.no/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" | tar xvzf - && \
-    ln -sv /usr/local/apache-maven-$MAVEN_VERSION /usr/local/maven
 
 # Install Docker (client)
 RUN curl -fSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-$DOCKER_VERSION.tgz" -o docker.tgz \
@@ -25,7 +20,7 @@ RUN curl -fSL "https://download.docker.com/linux/static/stable/$(uname -m)/docke
 ENV GROOVY_HOME /opt/groovy
 COPY --from=groovy $GROOVY_HOME $GROOVY_HOME
 
-ENV PATH=/usr/local/maven/bin:$GROOVY_HOME/bin:$PATH
+ENV PATH=$GROOVY_HOME/bin:$PATH
 
 RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 

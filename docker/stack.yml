@@ -4,6 +4,8 @@ services:
   jenkins-slave:
     image: ${REGISTRY}/jenkins-slave:${VERSION}
     configs:
+      - source: pipeline-jobs
+        target: /jobs.yaml
       - source: pipeline-config
         target: /config.yaml
     environment:

@@ -88,7 +88,7 @@ removeVolume jenkins-ssh-settings
 removeVolume jenkins-workspaces
 removeVolume polling-job-repository
 
-#mvn package -DskipTests || exit 1
+mvn package -DskipTests || exit 1
 docker/build-images local || exit 1
 stackFile=docker/stack.yml
 localStackFile=docker/stack-local.yml
