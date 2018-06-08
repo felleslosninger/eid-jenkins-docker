@@ -11,17 +11,17 @@ import static java.util.Objects.requireNonNull;
 
 public class JiraStatusJob implements Job {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
     private String id;
     private URL address;
     private URL callbackAddress;
     private List<String> issues;
     private String positiveTargetStatus;
     private String negativeTargetStatus;
-    private JiraClient jiraClient;
-    private PollQueue pollQueue;
-    private JobFactory jobFactory;
-    private JobRepository jobRepository;
+    private transient JiraClient jiraClient;
+    private transient PollQueue pollQueue;
+    private transient JobFactory jobFactory;
+    private transient JobRepository jobRepository;
 
     @SuppressWarnings("unused")
     public URL getAddress() {
@@ -180,17 +180,28 @@ public class JiraStatusJob implements Job {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JiraStatusJob that = (JiraStatusJob) o;
-        return Objects.equals(id(), that.id());
+        return Objects.equals(id, that.id) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(callbackAddress, that.callbackAddress) &&
+                Objects.equals(issues, that.issues) &&
+                Objects.equals(positiveTargetStatus, that.positiveTargetStatus) &&
+                Objects.equals(negativeTargetStatus, that.negativeTargetStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id());
+        return Objects.hash(id, address, callbackAddress, issues, positiveTargetStatus, negativeTargetStatus);
     }
 
     @Override
     public String toString() {
-        return id();
+        return "JiraStatusJob{" +
+                "id='" + id + '\'' +
+                ", address=" + address +
+                ", callbackAddress=" + callbackAddress +
+                ", issues=" + issues +
+                ", positiveTargetStatus='" + positiveTargetStatus + '\'' +
+                ", negativeTargetStatus='" + negativeTargetStatus + '\'' +
+                '}';
     }
-
 }

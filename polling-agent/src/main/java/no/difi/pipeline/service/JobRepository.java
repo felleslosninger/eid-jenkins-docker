@@ -157,7 +157,7 @@ public class JobRepository {
 
     private static List<String> values(String key, JsonNode node) throws IOException {
         if (!node.has(key)) throw new IOException("Missing node \"" + key + "\"");
-        return node.findValuesAsText(key);
+        return node.findValues(key).stream().map(e -> e.get(0).asText()).collect(toList());
     }
 
 }
