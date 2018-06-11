@@ -66,4 +66,8 @@ docker:
 ssh:
   knownHosts:
     - git ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAHJg2dXZC+cRBqryLjqr0rwkQnmWJzoMxePow/tbyJo5CIVVMFuagPT98UWM5tdnYkpKHoFjGrhotQF8MZApgo=
+
+git:
+  userName: Jenkins
+  userEmail: jenkins@example.com
 " | docker config create pipeline-config -

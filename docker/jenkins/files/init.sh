@@ -62,3 +62,4 @@ groovy /scripts/create-jobs /jobs.yaml /templates/job-config.xml || exit 1
 groovy /scripts/create-slaves ${JENKINS_SLAVES} || exit 1
 createCredentials || exit 1
 groovy /scripts/create-ssh-known-hosts /config.yaml || exit 1
+groovy /scripts/create-git-config /config.yaml || exit 1
