@@ -52,6 +52,7 @@ RUN install-plugin.sh jquery-detached 1.2.1
 RUN install-plugin.sh jsch 0.1.54.2
 RUN install-plugin.sh junit 1.24
 RUN install-plugin.sh lockable-resources 2.2
+RUN install-plugin.sh logfilesizechecker 1.3
 RUN install-plugin.sh mailer 1.21
 RUN install-plugin.sh mapdb-api 1.0.9.0
 RUN install-plugin.sh matrix-auth 2.2

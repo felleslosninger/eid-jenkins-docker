@@ -50,9 +50,7 @@ createCredentials() {
     cat /templates/credentials-footer.xml >> ${credentialFile} || return 1
 }
 
-cp /files/scriptApproval.xml ${JENKINS_HOME}
-cp /files/hudson.plugins.emailext.ExtendedEmailPublisher.xml ${JENKINS_HOME}
-cp /files/org.jenkinsci.plugins.workflow.libs.GlobalLibraries.xml ${JENKINS_HOME}
+cp /static/* ${JENKINS_HOME}
 ln -s /plugins ${JENKINS_HOME}/plugins
 
 groovy /scripts/create-config /config.yaml /templates/config.xml || exit 1
