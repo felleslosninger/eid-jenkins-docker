@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/rest/api/2/issue/.*/comment"
+  },
+  "response": {
+    "status": 200,
+    "body": "{}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
