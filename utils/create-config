@@ -20,11 +20,13 @@ jira:
     manualVerification: 10009
     manualVerificationOk: 10010
     manualVerificationFailed: 10917
+    closed: 6
   transitions:
     start: 371
     readyForCodeReview: 391
     startVerification: 291
     cancelVerification: 401
+    approveCode: 411
     resumeWork: 301
     resumeWorkFromApprovedCode: 331
     startManualVerification: 311

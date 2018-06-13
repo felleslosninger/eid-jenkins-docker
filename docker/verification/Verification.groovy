@@ -40,7 +40,7 @@ class Verification {
         startVerification(291),
         cancelVerification(401),
         resumeWork(301),
-        approveCode(1000001),
+        approveCode(411),
         resumeWorkFromApprovedCode(331),
         startManualVerification(311),
         approveManualVerification(51),
@@ -65,7 +65,7 @@ class Verification {
         manualVerification(10009),
         manualVerificationOk(10010),
         manualVerificationFailed(10917),
-        closed(1000001)
+        closed(6)
         int id
         Status(int id) {
             this.id = id
@@ -85,8 +85,8 @@ class Verification {
     }
 
     void execute() {
-        cancelWaitForCodeReviewToFinishScenario()
-        //normalScenario()
+        //cancelWaitForCodeReviewToFinishScenario()
+        normalScenario()
     }
 
     private void normalScenario() {
@@ -148,6 +148,8 @@ class Verification {
         newMapping(issuesWithStatusRequest(scenario, codeApproved.state(), manualVerificationOk))
         newMapping(issuesWithStatusRequest(scenario, codeApproved.state(), manualVerificationFailed))
 
+        newMapping(issueRequest(scenario, manualVerification.state(), issue, manualVerification))
+        newMapping(issueStatusRequest(scenario, manualVerification.state(), issue, manualVerification))
         newMapping(issueTransitionRequest(scenario, manualVerification.state(), manualVerificationFailed.state(), failManualVerification))
         newMapping(issueTransitionRequest(scenario, manualVerification.state(), manualVerificationOk.state(), approveManualVerification))
 
