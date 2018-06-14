@@ -50,7 +50,6 @@ cat > pom.xml << EOF
 </project>
 EOF
 cat > Jenkinsfile << EOF
-@Library('jenkins-pipeline@work/PBLEID-16362') _
 pipelineWithMavenAndDocker {
     gitSshKey = 'ssh.github.com'
     stagingEnvironment = 'staging'
