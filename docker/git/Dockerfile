@@ -9,4 +9,4 @@ RUN adduser -D -s /usr/bin/git-shell git \
 COPY git-shell-commands /home/git/git-shell-commands
 EXPOSE 22
 COPY entrypoint.sh /
-ENTRYPOINT /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

@@ -27,4 +27,4 @@ RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 COPY files/ /files/
 COPY entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

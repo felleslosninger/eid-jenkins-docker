@@ -23,17 +23,16 @@ COPY --from=groovy $GROOVY_HOME $GROOVY_HOME
 
 ENV PATH=$GROOVY_HOME/bin:$PATH
 
-COPY files/ /files/
 COPY static/ /static/
-COPY scripts /scripts/
-COPY templates /templates/
-RUN chmod +x /files/init.sh
+COPY scripts/ /scripts/
+COPY templates/ /templates/
 
-COPY --from=plugins /files/plugins /plugins
+COPY --from=plugins /plugins /plugins
 RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 
 EXPOSE 8080
 HEALTHCHECK --interval=10s --start-period=10s --retries=60 \
     CMD curl -f -sS http://localhost:8080 || exit 1
 
-ENTRYPOINT /files/init.sh && java -jar /usr/share/jenkins/jenkins.war --webroot=/tmp/jenkins/war --pluginroot=/tmp/jenkins/plugins
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

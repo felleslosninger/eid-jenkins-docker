@@ -6,4 +6,4 @@
     done
 }
 
-java -jar /polling-agent.jar --server.port=80
+exec java -jar /polling-agent.jar --server.port=80

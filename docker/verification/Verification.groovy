@@ -188,13 +188,12 @@ class Verification {
                 println("Scenario state is ${targetState}")
                 break
             }
-            println "${currentState} not equal to ${targetState}"
+            println "Waiting for issue status to be ${targetState} (it is currently ${currentState})..."
             sleep 1000
         }
     }
 
     private Map scenario(String name) {
-        println("Finding scenario \"${name}\"")
         json(get("${baseUrl()}/__admin/scenarios")).scenarios.find { scenario ->
             scenario.name == name
         }
@@ -267,7 +266,6 @@ class Verification {
     }
 
     private String sendRequest(HttpGet request) {
-        println "Sending request ${request}"
         def response = HttpClientBuilder.create().build().execute(request)
         def responseBody = response.entity.content.text
         if (!response.statusLine.statusCode in (200..299))
@@ -276,7 +274,6 @@ class Verification {
     }
 
     private String sendRequest(HttpPost request) {
-        println "Sending request ${request}"
         def response = HttpClientBuilder.create().build().execute(request)
         def responseBody = response.entity.content.text
         if (!response.statusLine.statusCode in (200..299))
