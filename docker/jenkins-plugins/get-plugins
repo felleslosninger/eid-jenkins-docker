@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+groupId() {
+    local artifactId=$1
+    groupId=org.jenkins-ci.plugins
+    [[ $artifactId == analysis-core ]] && groupId=org.jvnet.hudson.plugins
+    [[ $artifactId == favorite ]] && groupId=org.jvnet.hudson.plugins
+    [[ $artifactId == warnings ]] && groupId=org.jvnet.hudson.plugins
+    [[ $artifactId == icon-shim ]] && groupId=org.jenkins-ci.plugins.icon-shim
+    [[ $artifactId == ace-editor ]] && groupId=org.jenkins-ci.ui
+    [[ $artifactId == handlebars ]] && groupId=org.jenkins-ci.ui
+    [[ $artifactId == momentjs ]] && groupId=org.jenkins-ci.ui
+    [[ $artifactId == jquery-detached ]] && groupId=org.jenkins-ci.ui
+    [[ $artifactId =~ ^blueocean ]] && groupId=io.jenkins.blueocean
+    [[ $artifactId == jenkins-design-language ]] && groupId=io.jenkins.blueocean
+    [[ $artifactId == blueocean-autofavorite ]] && groupId=org.jenkins-ci.plugins
+    [[ $artifactId == blueocean-display-url ]] && groupId=org.jenkins-ci.plugins
+    [[ $artifactId == cucumber-reports ]] && groupId=net.masterthought.jenkins
+    [[ $artifactId == discard-old-build ]] && groupId=jp.shiftinc.jenkins.plugins
+    [[ $artifactId =~ ^workflow ]] && groupId=org.jenkins-ci.plugins.workflow
+    [[ $artifactId == github ]] && groupId=com.coravy.hudson.plugins.github
+    [[ $artifactId == lockable-resources ]] && groupId=org.6wind.jenkins
+    [[ $artifactId == maven-plugin ]] && groupId=org.jenkins-ci.main
+    [[ $artifactId =~ ^pipeline-model ]] && groupId=org.jenkinsci.plugins
+    [[ $artifactId == pipeline-stage-tags-metadata ]] && groupId=org.jenkinsci.plugins
+    [[ $artifactId == pipeline-rest-api ]] && groupId=org.jenkins-ci.plugins.pipeline-stage-view
+    [[ $artifactId == pipeline-stage-view ]] && groupId=org.jenkins-ci.plugins.pipeline-stage-view
+    echo -n ${groupId}
+}
+
+while read -r plugin; do
+    pa=(${plugin})
+    artifactId=${pa[0]}
+    version=${pa[1]}
+    groupId=$(groupId ${artifactId})
+    mvn dependency:copy -Dartifact=${groupId}:${artifactId}:${version}:hpi -DoutputDirectory=/plugins -Dmdep.stripVersion=true -Dsilent=true || exit 1
+done < /plugins.txt

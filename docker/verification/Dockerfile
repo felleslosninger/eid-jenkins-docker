@@ -9,6 +9,7 @@ ENV PATH=$GROOVY_HOME/bin:$PATH
 COPY --from=docker /usr/local/bin/docker /usr/bin/docker
 RUN grape install 'org.apache.httpcomponents' 'httpclient' '4.5.5'
 COPY *.groovy /
+COPY project /tmp/project
 COPY entrypoint.sh /
 
 ENTRYPOINT /entrypoint.sh

@@ -37,24 +37,8 @@ git config user.email "test@example.com"
 git commit -m initial
 git push origin master
 git checkout -b work/TEST-1234 || exit 1
-cat > pom.xml << EOF
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
-    <artifactId>test-app</artifactId>
-    <packaging>jar</packaging>
-    <version>DEV-SNAPSHOT</version>
-</project>
-EOF
-cat > Jenkinsfile << EOF
-pipelineWithMavenAndDocker {
-    stagingEnvironment = 'staging'
-}
-EOF
-git add pom.xml Jenkinsfile
+cp /tmp/project/* .
+git add *
 git commit -mready\! || exit 1
 git push -u origin work/TEST-1234 || exit 1
 

@@ -4,4 +4,4 @@
 jenkinsBaseUrl=$1
 
 curl -sSf "${jenkinsBaseUrl}/pluginManager/api/xml?depth=1&xpath=/*/*/shortName|/*/*/version&wrapper=plugins" | \
-    perl -pe 's/.*?<shortName>([\w-]+).*?<version>([^<]+)()(<\/\w+>)+/\1:\2\n/g' | sort
+    perl -pe 's/.*?<shortName>([\w-]+).*?<version>([^< ]+).*?(<\/\w+>)+/\1:\2\n/g' | sort

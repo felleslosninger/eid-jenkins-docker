@@ -1,0 +1,5 @@
+@Library('jenkins-pipeline@work/PBLEID-16413') _
+
+pipelineWithMavenAndDocker {
+    stagingEnvironment = 'staging'
+}
