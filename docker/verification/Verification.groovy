@@ -152,6 +152,7 @@ class Verification {
         newMapping(issueStatusRequest(scenario, manualVerification.state(), issue, manualVerification))
         newMapping(issueTransitionRequest(scenario, manualVerification.state(), manualVerificationFailed.state(), failManualVerification))
         newMapping(issueTransitionRequest(scenario, manualVerification.state(), manualVerificationOk.state(), approveManualVerification))
+        newMapping(issuesWithStatusRequest(scenario, manualVerification.state(), manualVerification, [issue]))
 
         newMapping(issueStatusRequest(scenario, manualVerificationOk.state(), issue, manualVerificationOk))
         newMapping(issueTransitionRequest(scenario, manualVerificationOk.state(), closed.state(), close))
