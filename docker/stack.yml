@@ -99,7 +99,7 @@ services:
       - "8082:8083"
       - "8083:8084"
     volumes:
-      - nexus-data:/nexus-data
+      - nexus-data-new:/nexus-data
     networks:
       - pipeline
     deploy:
@@ -108,7 +108,7 @@ services:
           - node.labels.nexus == true
 
 volumes:
-  nexus-data:
+  nexus-data-new:
     external: true
   jenkins-data:
     external: true
