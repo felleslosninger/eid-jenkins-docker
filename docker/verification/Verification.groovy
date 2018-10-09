@@ -5,6 +5,8 @@ import org.apache.http.entity.*
 import org.apache.http.impl.client.*
 import groovy.json.JsonSlurper
 
+import java.text.SimpleDateFormat
+
 import static groovy.json.JsonOutput.toJson
 
 import static Verification.Status.closed
@@ -76,12 +78,30 @@ class Verification {
         }
     }
 
+    enum CustomField{
+        buildVersion(12480)
+        int id
+        CustomField(int id){
+            this.id=id
+        }
+    }
+
     private String host;
     private int port;
+    private static File logFile = new File("/tmp/verification.log")
 
     Verification(String host, int port) {
         this.host = host
         this.port = port
+    }
+
+    private static void log(String messsage){
+        // if you need to log to file in verification docker container, use this.
+        // Otherwise docker logs <containerId> to display println console log.
+        String dateFormat = "dd.MM.yyyy;HH:mm:ss.SSS"
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat)
+        String date = formatter.format(new Date())
+        logFile << "${date} ${messsage}\n"
     }
 
     void execute() {
@@ -294,7 +314,7 @@ class Verification {
             },
             "response": {
                 "status": 200,
-                "body": "{\\"fields\\": {\\"status\\": {\\"id\\": \\"${status.id}\\"}, \\"summary\\": \\"This is a test issue\\", \\"project\\": {\\"key\\": \\"TEST\\"}, \\"fixVersions\\": [{\\"name\\": \\"${version}\\"}]}}",
+                "body": "{\\"fields\\": {\\"status\\": {\\"id\\": \\"${status.id}\\"}, \\"summary\\": \\"This is a test issue\\", \\"project\\": {\\"key\\": \\"TEST\\"}, \\"customfield_${CustomField.buildVersion.id}\\": \\"${version}\\", \\"fixVersions\\": [{\\"name\\": \\"Idporten\\"}] } }",
                 "headers": {
                   "Content-Type": "application/json"
                 }

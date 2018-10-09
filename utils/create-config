@@ -11,6 +11,7 @@ jira:
     bug: 11
   fields:
     sourceCodeRepository: 12380
+    buildVersion: 12480
   statuses:
     open: 1
     inProgress: 3
