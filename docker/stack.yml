@@ -69,6 +69,8 @@ services:
         target: dockerHub_username
       - source: dockerHub_password
         target: dockerHub_password
+      - source: gitlab-api
+        target: gitlab-api
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-workspaces:/workspaces
@@ -162,4 +164,6 @@ secrets:
   dockerHub_username:
     external: true
   dockerHub_password:
+    external: true
+  gitlab-api:
     external: true
