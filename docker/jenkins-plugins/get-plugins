@@ -13,6 +13,8 @@ groupId() {
     [[ $artifactId == jquery-detached ]] && groupId=org.jenkins-ci.ui
     [[ $artifactId =~ ^blueocean ]] && groupId=io.jenkins.blueocean
     [[ $artifactId == jenkins-design-language ]] && groupId=io.jenkins.blueocean
+    [[ $artifactId == analysis-model-api ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == warnings-ng ]] && groupId=io.jenkins.plugins
     [[ $artifactId == blueocean-autofavorite ]] && groupId=org.jenkins-ci.plugins
     [[ $artifactId == blueocean-display-url ]] && groupId=org.jenkins-ci.plugins
     [[ $artifactId == cucumber-reports ]] && groupId=net.masterthought.jenkins
