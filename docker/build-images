@@ -28,7 +28,7 @@ buildWithArtifact() {
     local name=$1
     local registry=$2
     local version=$3
-    cp ${name}/target/${name}-${version:-DEV-SNAPSHOT}.jar docker/${name}/${name}.jar
+    cp ${name}/target/${name}.jar docker/${name}/${name}.jar
     build ${name} ${registry} ${version} || return 1
     rm docker/${name}/${name}.jar
 }
