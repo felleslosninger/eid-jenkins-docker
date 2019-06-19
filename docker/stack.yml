@@ -69,6 +69,10 @@ services:
         target: dockerHub_username
       - source: dockerHub_password
         target: dockerHub_password
+      - source: dockerHubAzureRelease_username
+        target: dockerHubAzureRelease_username
+      - source: dockerHubAzureRelease_password
+        target: dockerHubAzureRelease_password
       - source: gitlab-api
         target: gitlab-api
     volumes:
@@ -164,6 +168,10 @@ secrets:
   dockerHub_username:
     external: true
   dockerHub_password:
+    external: true
+  dockerHubAzureRelease_username:
+    external: true
+  dockerHubAzureRelease_password:
     external: true
   gitlab-api:
     external: true

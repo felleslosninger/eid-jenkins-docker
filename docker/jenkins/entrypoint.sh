@@ -46,6 +46,7 @@ createCredentials() {
     createUserPassCredential 'artifactory-publish' 'artifactory'
     createUserPassCredential 'aws'
     createUserPassCredential 'dockerHub'
+    createUserPassCredential 'dockerHubAzureRelease'
     createSecretStringCredential 'artifactory' 'artifactory-cleaner'
     createSecretStringCredential 'gitlab-api'
     cat /templates/credentials-footer.xml >> ${credentialFile} || return 1
