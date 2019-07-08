@@ -98,7 +98,7 @@ services:
         constraints:
           - node.labels.jenkins-master == true
   nexus:
-    image: ${REGISTRY}/nexus:${VERSION}
+    image: sonatype/nexus3:3.16.1@sha256:664306d8b367ff2ebf7ff3272560404d34ec9b611826d9777c4fd5b3c8b79b7a
     ports:
       - "8080:8081"
       - "8081:8082"
