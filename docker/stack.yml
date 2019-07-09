@@ -112,9 +112,22 @@ services:
       placement:
         constraints:
           - node.labels.nexus == true
-
+  dependency-track:
+    image: owasp/dependency-track:3.5.0@sha256:b2340987aa82cf619930d2bded7d4d51b78a44abe63ea50174bdff8b68e4c9bc
+    ports:
+      - "10000:8080"
+    volumes:
+      - dependency-track-data:/data
+    networks:
+      - pipeline
+    deploy:
+      placement:
+        constraints:
+          - node.labels.nexus == true
 volumes:
   nexus-data-new:
+    external: true
+  dependency-track-data:
     external: true
   jenkins-data:
     external: true
@@ -174,4 +187,6 @@ secrets:
   dockerHubAzureRelease_password:
     external: true
   gitlab-api:
+    external: true
+  dependency-track-api:
     external: true

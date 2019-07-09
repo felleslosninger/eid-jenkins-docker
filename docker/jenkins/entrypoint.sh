@@ -49,6 +49,7 @@ createCredentials() {
     createUserPassCredential 'dockerHubAzureRelease'
     createSecretStringCredential 'artifactory' 'artifactory-cleaner'
     createSecretStringCredential 'gitlab-api'
+    createSecretStringCredential 'dependency-track-api'
     cat /templates/credentials-footer.xml >> ${credentialFile} || return 1
 }
 
@@ -58,6 +59,7 @@ ln -s /plugins ${JENKINS_HOME}/plugins
 groovy /scripts/create-config /config.yaml /templates/config.xml || exit 1
 groovy /scripts/create-location-configuration /config.yaml /templates/jenkins.model.JenkinsLocationConfiguration.xml || exit 1
 groovy /scripts/create-jira-config /config.yaml /templates/jira-basic.xml || exit 1
+groovy /scripts/create-dependency-track-config  /templates/dependency-track-basic.xml || exit 1
 groovy /scripts/create-jobs /jobs.yaml /templates/job-config.xml || exit 1
 groovy /scripts/create-slaves ${JENKINS_SLAVES} || exit 1
 createCredentials || exit 1
