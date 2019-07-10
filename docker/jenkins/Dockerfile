@@ -1,6 +1,6 @@
 ARG PLUGINS_IMAGE
 FROM ${PLUGINS_IMAGE} AS plugins
-FROM groovy:2.4.12-jre8-alpine AS groovy
+FROM groovy:2.5.7-jre8-alpine AS groovy
 FROM openjdk:8u131-jdk-alpine
 
 ARG JENKINS_WAR_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war
@@ -22,13 +22,13 @@ ENV GROOVY_HOME /opt/groovy
 COPY --from=groovy $GROOVY_HOME $GROOVY_HOME
 
 ENV PATH=$GROOVY_HOME/bin:$PATH
+RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 
 COPY static/ /static/
 COPY scripts/ /scripts/
 COPY templates/ /templates/
-
 COPY --from=plugins /plugins /plugins
-RUN grape install 'org.yaml' 'snakeyaml' '1.19'
+
 
 EXPOSE 8080
 HEALTHCHECK --interval=10s --start-period=10s --retries=60 \

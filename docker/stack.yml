@@ -75,6 +75,8 @@ services:
         target: dockerHubAzureRelease_password
       - source: gitlab-api
         target: gitlab-api
+      - source: dependency-track-api
+        target: dependency-track-api
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-workspaces:/workspaces
