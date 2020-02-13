@@ -3,6 +3,6 @@ pipelineWithMavenAndDocker {
     productionEnvironment = 'pipeline'
     productionEnvironmentType = 'docker'
     stackName = 'pipeline'
-    javaVersion = 9
+    javaVersion = 11
     parallelMavenDeploy = false
 }

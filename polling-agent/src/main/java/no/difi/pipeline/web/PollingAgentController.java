@@ -3,6 +3,7 @@ package no.difi.pipeline.web;
 import no.difi.pipeline.service.JiraStatusJob;
 import no.difi.pipeline.service.JobFactory;
 import no.difi.pipeline.service.PollingAgentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +21,7 @@ public class PollingAgentController {
     private PollingAgentService service;
     private JobFactory jobFactory;
 
+    @Autowired
     public PollingAgentController(PollingAgentService service, JobFactory jobFactory) {
         this.service = service;
         this.jobFactory = jobFactory;

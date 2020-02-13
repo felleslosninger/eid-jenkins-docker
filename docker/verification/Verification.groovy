@@ -107,6 +107,7 @@ class Verification {
     void execute() {
         //cancelWaitForCodeReviewToFinishScenario()
         normalScenario()
+       // waitForManuellVerificationScenario();
     }
 
     private void normalScenario() {
@@ -123,6 +124,23 @@ class Verification {
         println "Current build version is ${buildVersion}"
         newMapping(issueRequest(scenario, manualVerificationOk.state(), issue, manualVerificationOk, buildVersion))
         transitionIssue(issue, approveManualVerification)
+        waitForBuildToComplete(issue)
+    }
+
+    private void waitForManuellVerificationScenario() {
+        String scenario = "normal"
+        String issue = 'TEST-1234'
+        mappings(scenario, issue)
+        startBuild(issue)
+        waitUntilJiraStatusIs(scenario, readyForVerification.state())
+        transitionIssue(issue, startVerification)
+        waitUntilJiraStatusIs(scenario, codeReview.state())
+        transitionIssue(issue, approveCode)
+        waitUntilJiraStatusIs(scenario, manualVerification.state())
+        String buildVersion = buildVersion(issue)
+        println "Current build version is ${buildVersion}"
+        newMapping(issueRequest(scenario, manualVerificationOk.state(), issue, manualVerificationOk, buildVersion))
+        //transitionIssue(issue, approveManualVerification)
         waitForBuildToComplete(issue)
     }
 

@@ -1,4 +1,4 @@
-@Library('jenkins-pipeline@work/PBLEID-16835') _
+@Library('jenkins-pipeline@work/PBLEID-19571') _
 
 pipelineWithMavenAndDocker {
     stagingEnvironment = 'staging'

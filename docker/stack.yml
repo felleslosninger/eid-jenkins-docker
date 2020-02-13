@@ -88,9 +88,9 @@ services:
     image: ${REGISTRY}/polling-agent:${VERSION}
     secrets:
       - source: jira_username
-        target: jira.username
+        target: jiraUsername
       - source: jira_password
-        target: jira.password
+        target: jiraPassword
     volumes:
       - polling-job-repository:/data
     networks:

@@ -1,4 +1,4 @@
-FROM openjdk:9.0.4-12-jre
+FROM openjdk:11.0.6-jre
 
 ENV WIREMOCK_VERSION 2.15.0
 

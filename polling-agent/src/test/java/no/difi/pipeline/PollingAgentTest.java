@@ -3,6 +3,8 @@ package no.difi.pipeline;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import no.difi.pipeline.service.*;
+import no.difi.pipeline.web.PollingAgentController;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Ignore;
@@ -11,7 +13,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,7 +27,9 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -32,25 +38,32 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// TODO: skriv om SpringConfig
+// Det er noko feil med application-context her slik at ein må import alle klassar (alle med annotasjoner) via Contextconfiguration og Import.
+// Trur problemet er miksen av manuelt oppretting av bønner i SpringConfig og spring-konfig elles. Trur all beans i SpringConfig burde vore skriv om til "rein" spring konfig med annotasjoner.
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = {SpringConfig.class, EnvironmentConfig.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = PollingAgentApplication.class)
 @AutoConfigureMockMvc
+@Import({PollingAgentController.class, PollingAgentService.class, PollQueue.class, JobRepository.class, JobFactory.class, LoadPersistentJobs.class, PollQueueWorker.class}) // må importere alle classar med annotasjoner...
 @TestPropertySource(properties={
         "repositoryDirectory=target/data",
-        "jira.username=dummy",
-        "jira.password=dummy"
+        "jiraUsername=dummy",
+        "jiraPassword=dummy"
 })
 public class PollingAgentTest {
 
     @Autowired
     private MockMvc mockMvc;
     @ClassRule
-    public static WireMockRule jira = new WireMockRule(0);
+    public static WireMockRule jira = new WireMockRule(wireMockConfig().dynamicPort());
     @ClassRule
-    public static WireMockRule callback = new WireMockRule(0);
+    public static WireMockRule callback = new WireMockRule(wireMockConfig().dynamicPort());
     private ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private Environment environment;
+
 
     @After
     public void resetRules() {

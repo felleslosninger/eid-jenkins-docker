@@ -1,8 +1,9 @@
 FROM groovy:2.4.12-jre8-alpine AS groovy
 FROM openjdk:8u131-jdk-alpine
 
-ARG DOCKER_VERSION=17.09.0-ce
-ARG DOCKER_SHA=a9e90a73c3cdfbf238f148e1ec0eaff5eb181f92f35bdd938fd7dab18e1c4647
+ARG DOCKER_VERSION=18.06.3-ce
+ARG DOCKER_SHA=346f9394393ee8db5f8bd1e229ee9d90e5b36931bdd754308b2ae68884dd6822
+# https://hub.docker.com/_/docker?tab=tags&page=1&name=-ce
 
 RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python jq
 
