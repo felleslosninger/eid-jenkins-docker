@@ -100,7 +100,7 @@ services:
         constraints:
           - node.labels.jenkins-master == true
   nexus:
-    image: sonatype/nexus3:3.16.1@sha256:664306d8b367ff2ebf7ff3272560404d34ec9b611826d9777c4fd5b3c8b79b7a
+    image: sonatype/nexus3:3.20.1@sha256:6570855dfbc3eb094fe5cbbacec87aa8b91d16394dab627177e1deeebb5ac8ee
     ports:
       - "8080:8081"
       - "8081:8082"
@@ -115,7 +115,7 @@ services:
         constraints:
           - node.labels.nexus == true
   dependency-track:
-    image: owasp/dependency-track:3.5.0@sha256:b2340987aa82cf619930d2bded7d4d51b78a44abe63ea50174bdff8b68e4c9bc
+    image: owasp/dependency-track:3.7.1@sha256:a933632853d5c354f9ee95c4a43ae211531cbd4053b3ec034fb146f54b646986
     ports:
       - "10000:8080"
     volumes:
