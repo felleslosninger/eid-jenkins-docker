@@ -42,6 +42,7 @@ createCredentials() {
     for f in $(find /run/secrets -type f -name docker_registry_*_username); do createUserPassCredential $(basename ${f//_username}); done
     createUserPassCredential 'crucible'
     createUserPassCredential 'nexus'
+    createUserPassCredential 'nexus_jenkins'
     createUserPassCredential 'jira'
     createUserPassCredential 'artifactory-publish' 'artifactory'
     createUserPassCredential 'aws'

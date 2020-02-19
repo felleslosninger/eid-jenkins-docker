@@ -57,6 +57,10 @@ services:
         target: nexus_username
       - source: nexus_password
         target: nexus_password
+      - source: nexus_jenkins_username
+        target: nexus_jenkins_username
+      - source: nexus_jenkins_password
+        target: nexus_jenkins_password
       - source: jira_username
         target: jira_username
       - source: jira_password
@@ -171,6 +175,10 @@ secrets:
   nexus_username:
     external: true
   nexus_password:
+    external: true
+  nexus_jenkins_username:
+    external: true
+  nexus_jenkins_password:
     external: true
   jira_username:
     external: true
