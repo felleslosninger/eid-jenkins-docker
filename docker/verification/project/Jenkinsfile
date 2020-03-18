@@ -1,5 +1,6 @@
-@Library('jenkins-pipeline@work/PBLEID-19571') _
+@Library('jenkins-pipeline@master') _
 
 pipelineWithMavenAndDocker {
     stagingEnvironment = 'staging'
+    disableDependencyTrack = true
 }

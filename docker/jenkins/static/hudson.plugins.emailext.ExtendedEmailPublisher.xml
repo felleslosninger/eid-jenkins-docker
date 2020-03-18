@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.emailext.ExtendedEmailPublisherDescriptor plugin="email-ext@2.54">
-    <defaultSuffix>@difi.no</defaultSuffix>
-    <smtpHost>epostoppslag.difi.local</smtpHost>
+    <defaultSuffix>@digdir.no</defaultSuffix>
+    <smtpHost>lekex1.domain.local</smtpHost>
     <useSsl>false</useSsl>
     <charset>UTF-8</charset>
     <defaultContentType>text/html</defaultContentType>
