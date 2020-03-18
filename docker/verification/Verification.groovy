@@ -88,11 +88,14 @@ class Verification {
 
     private String host;
     private int port;
+    private String repository = "verification"
     private static File logFile = new File("/tmp/verification.log")
 
-    Verification(String host, int port) {
+
+    Verification(String host, int port, String repository) {
         this.host = host
         this.port = port
+        this.repository = repository
     }
 
     private static void log(String messsage){
@@ -104,15 +107,17 @@ class Verification {
         logFile << "${date} ${messsage}\n"
     }
 
-    void execute() {
-        //cancelWaitForCodeReviewToFinishScenario()
-        normalScenario()
-       // waitForManuellVerificationScenario();
+    void execute(String issue) {
+//        String issue = 'TEST-1234'
+        //cancelWaitForCodeReviewToFinishScenario(issue)
+        println "execute issue is ${issue}"
+        normalScenario(issue)
+       // waitForManuellVerificationScenario(issue);
     }
 
-    private void normalScenario() {
+    void normalScenario(String issue) {
         String scenario = "normal"
-        String issue = 'TEST-1234'
+        println "Scenario is ${scenario} and issue is ${issue}"
         mappings(scenario, issue)
         startBuild(issue)
         waitUntilJiraStatusIs(scenario, readyForVerification.state())
@@ -127,9 +132,9 @@ class Verification {
         waitForBuildToComplete(issue)
     }
 
-    private void waitForManuellVerificationScenario() {
-        String scenario = "normal"
-        String issue = 'TEST-1234'
+    void waitForManuellVerificationScenario(String issue) {
+        String scenario = "waitForManuellVerificationScenario"
+        println "Scenario is ${scenario} and issue is ${issue}"
         mappings(scenario, issue)
         startBuild(issue)
         waitUntilJiraStatusIs(scenario, readyForVerification.state())
@@ -144,9 +149,9 @@ class Verification {
         waitForBuildToComplete(issue)
     }
 
-    private void cancelWaitForCodeReviewToFinishScenario() {
+    void cancelWaitForCodeReviewToFinishScenario(String issue) {
         String scenario = "cancelWaitForCodeReviewToFinish"
-        String issue = 'TEST-1234'
+        println "Scenario is ${scenario} and issue is ${issue}"
         mappings(scenario, issue)
         startBuild(issue)
         waitUntilJiraStatusIs(scenario, readyForVerification.state())
@@ -244,6 +249,11 @@ class Verification {
         println("Mapping added")
     }
 
+    private String repository() {
+        println("Use repository ${repository}")
+        "${repository}"
+    }
+
     private String baseUrl() {
         "http://${host}:${port}"
     }
@@ -280,12 +290,12 @@ class Verification {
         new JsonSlurper().parseText(data)
     }
 
-    private static String buildUrl(String issueId) {
+    private String buildUrl(String issueId) {
         "${jobUrl(issueId)}/1"
     }
 
-    private static String jobUrl(String issueId) {
-        "${jenkinsBaseUrl()}/job/verification/job/work%252F${issueId}"
+    private String jobUrl(String issueId) {
+        "${jenkinsBaseUrl()}/job/${repository()}/job/work%252F${issueId}"
     }
 
     private static String jenkinsBaseUrl() {

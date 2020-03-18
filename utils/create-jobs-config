@@ -2,7 +2,10 @@
 
 echo "
 jobs:
-    verification:
-        repository: git@git:verification
+    verification1:
+        repository: git@git:verification1
+        sshKey: ssh.github.com
+    verification2:
+        repository: git@git:verification2
         sshKey: ssh.github.com
 " | docker config create pipeline-jobs -
