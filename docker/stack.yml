@@ -119,7 +119,7 @@ services:
         constraints:
           - node.labels.nexus == true
   dependency-track:
-    image: owasp/dependency-track:3.7.1@sha256:a933632853d5c354f9ee95c4a43ae211531cbd4053b3ec034fb146f54b646986
+    image: owasp/dependency-track:latest@sha256:efc65e702ee1691bd9e04bf30a89cae0ee12ec77e9601e9e46b2bcc625e60c0a
     ports:
       - "10000:8080"
     volumes:
@@ -127,6 +127,9 @@ services:
     networks:
       - pipeline
     deploy:
+      resources:
+        limits:
+          memory: 8G
       placement:
         constraints:
           - node.labels.nexus == true
