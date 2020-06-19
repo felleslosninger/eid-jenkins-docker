@@ -95,6 +95,10 @@ services:
         target: jiraUsername
       - source: jira_password
         target: jiraPassword
+      - source: polling_agent_jenkins_username
+        target: jenkinsUsername
+      - source: polling_agent_jenkins_password
+        target: jenkinsPassword
     volumes:
       - polling-job-repository:/data
     networks:
@@ -186,6 +190,10 @@ secrets:
   jira_username:
     external: true
   jira_password:
+    external: true
+  polling_agent_jenkins_username:
+    external: true
+  polling_agent_jenkins_password:
     external: true
   aws_username:
     external: true

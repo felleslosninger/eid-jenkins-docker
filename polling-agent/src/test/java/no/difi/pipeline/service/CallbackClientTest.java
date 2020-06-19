@@ -29,7 +29,7 @@ public class CallbackClientTest {
 
     @Before
     public void init() {
-        callbackClient = new CallbackClient(httpClient);
+        callbackClient = new CallbackClient(httpClient,"username","password");
     }
 
     @Test

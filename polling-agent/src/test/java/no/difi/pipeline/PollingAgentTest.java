@@ -49,7 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties={
         "repositoryDirectory=target/data",
         "jiraUsername=dummy",
-        "jiraPassword=dummy"
+        "jiraPassword=dummy",
+        "jenkinsUsername=dummy",
+        "jenkinsPassword=dummy",
 })
 public class PollingAgentTest {
 

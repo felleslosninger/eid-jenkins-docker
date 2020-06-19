@@ -1,13 +1,16 @@
 package no.difi.pipeline.service;
 
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Base64;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -16,9 +19,18 @@ import static org.springframework.http.HttpMethod.POST;
 public class CallbackClient {
 
     private RestTemplate httpClient;
+    private String username;
+    private String password;
 
     public CallbackClient(RestTemplate httpClient) {
         this.httpClient = httpClient;
+    }
+
+    public CallbackClient(RestTemplate httpClient, String username, String password) {
+        this.httpClient = httpClient;
+        this.password = password;
+        this.username = username;
+
     }
 
     public CallbackClient.Response callback(URL address) {
@@ -27,7 +39,7 @@ public class CallbackClient {
             ResponseEntity<String> httpResponse = httpClient.exchange(
                     requestUri(address),
                     POST,
-                    new HttpEntity<>(""),
+                    new HttpEntity<>("", requestHeaders()),
                     String.class
             );
             return new Response(httpResponse, t0);
@@ -43,7 +55,19 @@ public class CallbackClient {
             throw new RuntimeException("Invalid URI: " + url, e);
         }
     }
+    private HttpHeaders requestHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", auth());
+        return headers;
+    }
 
+    private String auth() {
+        try {
+            return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
     public static class Response {
 
         private ResponseEntity<String> httpResponse;

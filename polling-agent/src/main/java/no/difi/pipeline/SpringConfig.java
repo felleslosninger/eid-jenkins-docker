@@ -36,7 +36,9 @@ public class SpringConfig {
 
     @Bean
     public CallbackClient callbackClient() {
-        return new CallbackClient(restTemplate());
+        String username = environmentConfig.getJenkinsUsername();
+        String password = environmentConfig.getJenkinsPassword();
+        return new CallbackClient(restTemplate(),username,password);
     }
 
     @Bean
