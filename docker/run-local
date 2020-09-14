@@ -87,6 +87,7 @@ removeVolume jenkins-data
 removeVolume jenkins-ssh-settings
 removeVolume jenkins-workspaces
 removeVolume polling-job-repository
+removeVolume nexus-data-new
 
 mvn package -DskipTests || exit 1
 docker/build-images local || exit 1

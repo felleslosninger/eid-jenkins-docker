@@ -32,10 +32,11 @@ jira:
     resumeWorkFromApprovedCode: 331
     startManualVerification: 311
     approveManualVerification: 51
-    failManualVerification: 61
+    failManualVerification: 431
     failStagingDeploy: 451
     retryManualVerificationFromSuccess: 441
     retryManualVerificationFromFailure: 421
+    closeWithoutTesting: 461
     closeWithoutStaging: 361
     close: 341
 

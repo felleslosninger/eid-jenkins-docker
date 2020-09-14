@@ -1,37 +1,18 @@
+import groovy.json.JsonSlurper
+@Grab(group = 'org.apache.httpcomponents', module = 'httpclient', version = '4.5.5')
+
+import org.apache.http.client.methods.*
 @Grab(group = 'org.apache.httpcomponents', module = 'httpclient', version = '4.5.5')
 
 import org.apache.http.client.methods.*
 import org.apache.http.entity.*
 import org.apache.http.impl.client.*
-import groovy.json.JsonSlurper
 
 import java.text.SimpleDateFormat
 
+import static Verification.Status.*
+import static Verification.Transition.*
 import static groovy.json.JsonOutput.toJson
-
-import static Verification.Status.closed
-import static Verification.Status.codeApproved
-import static Verification.Status.codeReview
-import static Verification.Status.inProgress
-import static Verification.Status.manualVerification
-import static Verification.Status.manualVerificationFailed
-import static Verification.Status.manualVerificationOk
-import static Verification.Status.open
-import static Verification.Status.readyForVerification
-import static Verification.Transition.approveCode
-import static Verification.Transition.approveManualVerification
-import static Verification.Transition.cancelVerification
-import static Verification.Transition.close
-import static Verification.Transition.closeWithoutStaging
-import static Verification.Transition.failManualVerification
-import static Verification.Transition.failStagingDeploy
-import static Verification.Transition.readyForCodeReview
-import static Verification.Transition.resumeWork
-import static Verification.Transition.resumeWorkFromApprovedCode
-import static Verification.Transition.retryManualVerificationFromFailure
-import static Verification.Transition.start
-import static Verification.Transition.startManualVerification
-import static Verification.Transition.startVerification
 import static java.util.stream.Collectors.toList
 
 class Verification {
@@ -46,10 +27,11 @@ class Verification {
         resumeWorkFromApprovedCode(331),
         startManualVerification(311),
         approveManualVerification(51),
-        failManualVerification(61),
+        failManualVerification(431),
         failStagingDeploy(451),
         retryManualVerificationFromSuccess(441),
         retryManualVerificationFromFailure(421),
+        closeWithoutTesting(461),
         closeWithoutStaging(361),
         close(341)
         int id
@@ -75,6 +57,16 @@ class Verification {
 
         String state() {
             this == open ? "Started" : name()
+        }
+    }
+
+    enum IssueType {
+        story(20),
+        defect(11),
+        techtask(13)
+        int id
+        IssueType(int id) {
+            this.id = id
         }
     }
 
@@ -108,11 +100,11 @@ class Verification {
     }
 
     void execute(String issue) {
-//        String issue = 'TEST-1234'
         //cancelWaitForCodeReviewToFinishScenario(issue)
         println "execute issue is ${issue}"
         normalScenario(issue)
-       // waitForManuellVerificationScenario(issue);
+//        waitForManuellVerificationScenario(issue);
+//        normalScenarioTechtask(issue); // change first issuetype to tech.task in issueRequest(...)
     }
 
     void normalScenario(String issue) {
@@ -127,8 +119,28 @@ class Verification {
         waitUntilJiraStatusIs(scenario, manualVerification.state())
         String buildVersion = buildVersion(issue)
         println "Current build version is ${buildVersion}"
+        newMapping(issuesWithStatusRequest(scenario, manualVerificationOk.state(), manualVerificationOk, [issue]))  // Used in End - Jira.close() - closing self only
         newMapping(issueRequest(scenario, manualVerificationOk.state(), issue, manualVerificationOk, buildVersion))
         transitionIssue(issue, approveManualVerification)
+        waitForBuildToComplete(issue)
+    }
+
+    void normalScenarioTechtask(String issue) {
+        String scenario = "normal"
+        println "Scenario is ${scenario} and issue is ${issue}"
+        mappings(scenario, issue)
+        //scenario specific mappings
+        newMapping(issuesWithStatusRequest(scenario, closed.state(), manualVerificationOk))  // Used in End - Jira.close() - closing self only
+        newMapping(issueRequest(scenario, closed.state(), issue, closed, buildVersion))
+
+        startBuild(issue)
+        waitUntilJiraStatusIs(scenario, readyForVerification.state())
+        transitionIssue(issue, startVerification)
+        waitUntilJiraStatusIs(scenario, codeReview.state())
+        transitionIssue(issue, approveCode)
+        String buildVersion = buildVersion(issue)
+        println "Current build version is ${buildVersion}"
+
         waitForBuildToComplete(issue)
     }
 
@@ -145,6 +157,7 @@ class Verification {
         String buildVersion = buildVersion(issue)
         println "Current build version is ${buildVersion}"
         newMapping(issueRequest(scenario, manualVerificationOk.state(), issue, manualVerificationOk, buildVersion))
+        newMapping(issuesWithStatusRequest(scenario, manualVerificationOk.state(), manualVerificationOk, [issue]))  // Used in End - Jira.close() - closing self only
         //transitionIssue(issue, approveManualVerification)
         waitForBuildToComplete(issue)
     }
@@ -201,8 +214,6 @@ class Verification {
         newMapping(issueTransitionRequest(scenario, manualVerificationOk.state(), closed.state(), close))
         // Used in Staging/Wait for approval - Jira.waitUntilManualVerificationIsFinishedAndAssertSuccess()
         newMapping(issuesWithStatusRequest(scenario, manualVerificationOk.state(), manualVerification))
-        // Used in End - Jira.close() - closing self only
-        newMapping(issuesWithStatusRequest(scenario, manualVerificationOk.state(), manualVerificationOk, [issue]))
 
         newMapping(issueTransitionRequest(scenario, manualVerificationFailed.state(), manualVerification.state(), retryManualVerificationFromFailure))
 
@@ -331,7 +342,18 @@ class Verification {
     }
 
     // pipeline*.groovy is using this request (Jira.issueFields())
-    private static String issueRequest(String scenario, String scenarioState, String issue, Status status, String version = '2018-04-18-2200') {
+    /**
+     * See doc wiremock stubbing here: http://wiremock.org/docs/api/
+     *
+     * @param scenario: The name of the scenario that this stub mapping is part of
+     * @param scenarioState: The required state of the scenario in order for this stub to be matched.
+     * @param issue issue-id
+     * @param status returned status
+     * @param version default set
+     * @param issueType default story
+     * @return
+     */
+    private static String issueRequest(String scenario, String scenarioState, String issue, Status status, String version = '2018-04-18-2200', IssueType issueType = IssueType.story) {
         """
         {
             "scenarioName": "${scenario}",
@@ -342,7 +364,7 @@ class Verification {
             },
             "response": {
                 "status": 200,
-                "body": "{\\"fields\\": {\\"status\\": {\\"id\\": \\"${status.id}\\"}, \\"summary\\": \\"This is a test issue\\", \\"project\\": {\\"key\\": \\"TEST\\"}, \\"customfield_${CustomField.buildVersion.id}\\": \\"${version}\\", \\"fixVersions\\": [{\\"name\\": \\"Idporten\\"}] } }",
+                "body": "{\\"fields\\": {\\"status\\": {\\"id\\": \\"${status.id}\\"}, \\"summary\\": \\"This is a test issue\\", \\"project\\": {\\"key\\": \\"TEST\\"}, \\"issuetype\\": { \\"id\\": \\"${issueType.id}\\"}, \\"customfield_${CustomField.buildVersion.id}\\": \\"${version}\\", \\"fixVersions\\": [{\\"name\\": \\"Idporten\\"}] } }",
                 "headers": {
                   "Content-Type": "application/json"
                 }

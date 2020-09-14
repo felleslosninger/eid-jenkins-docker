@@ -109,6 +109,8 @@ services:
           - node.labels.jenkins-master == true
   nexus:
     image: sonatype/nexus3:3.20.1@sha256:6570855dfbc3eb094fe5cbbacec87aa8b91d16394dab627177e1deeebb5ac8ee
+    environment:
+      - NEXUS_SECURITY_RANDOMPASSWORD=false
     ports:
       - "8080:8081"
       - "8081:8082"

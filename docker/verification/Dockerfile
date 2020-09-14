@@ -1,5 +1,5 @@
 FROM groovy:2.5-jre8-alpine AS groovy
-FROM docker:19.03.6 as docker
+FROM docker:19.03.12 as docker
 FROM openjdk:8u131-jdk-alpine
 
 RUN apk add --no-cache bash openssh git curl jq
