@@ -24,6 +24,8 @@ services:
         target: ssh.git.difi.local
       - source: ssh.github.com
         target: ssh.github.com
+      - source: ssh.eid-build.github.com
+        target: ssh.eid-build.github.com
   verification:
     image: ${REGISTRY}/verification:${VERSION}
     volumes:
@@ -35,6 +37,8 @@ services:
         target: ssh.git.difi.local
       - source: ssh.github.com
         target: ssh.github.com
+      - source: ssh.eid-build.github.com
+        target: ssh.eid-build.github.com
     deploy:
       restart_policy:
         condition: none
@@ -48,5 +52,7 @@ secrets:
   ssh.git.difi.local:
     external: true
   ssh.github.com:
+    external: true
+  ssh.eid-build.github.com:
     external: true
 

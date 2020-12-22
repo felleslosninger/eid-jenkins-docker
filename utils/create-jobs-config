@@ -4,8 +4,8 @@ echo "
 jobs:
     verification1:
         repository: git@git:verification1
-        sshKey: ssh.github.com
+        sshKey: ssh.eid-build.github.com
     verification2:
         repository: git@git:verification2
-        sshKey: ssh.github.com
+        sshKey: ssh.eid-build.github.com
 " | docker config create pipeline-jobs -
