@@ -15,6 +15,6 @@ Map binding = [
 ]
 Path homeDir = Paths.get(System.getenv("JENKINS_HOME"))
 println "Creating Jira configuration..."
-File outputFile = new File(homeDir.toString(), 'org.thoughtslive.jenkins.plugins.jira.Config.xml')
+File outputFile = new File(homeDir.toString(), 'org.thoughtslive.jenkins.plugins.jira.JiraStepsConfig.xml')
 outputFile.delete()
 outputFile << new SimpleTemplateEngine().createTemplate(templateFile).make(binding).toString()

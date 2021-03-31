@@ -27,6 +27,16 @@ groupId() {
     [[ $artifactId == pipeline-stage-tags-metadata ]] && groupId=org.jenkinsci.plugins
     [[ $artifactId == pipeline-rest-api ]] && groupId=org.jenkins-ci.plugins.pipeline-stage-view
     [[ $artifactId == pipeline-stage-view ]] && groupId=org.jenkins-ci.plugins.pipeline-stage-view
+    [[ $artifactId == bootstrap4-api ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == checks-api ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == echarts-api  ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == okhttp-api  ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == plugin-util-api  ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == snakeyaml-api  ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == jquery3-api  ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == popper-api  ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == font-awesome-api  ]] && groupId=io.jenkins.plugins
+    [[ $artifactId == jjwt-api  ]] && groupId=io.jenkins.plugins
     echo -n ${groupId}
 }
 
