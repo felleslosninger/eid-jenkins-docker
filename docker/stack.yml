@@ -12,7 +12,7 @@ services:
       SLAVE_NAME: "{{.Service.Name}}-{{.Task.Slot}}"
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       placement:
         constraints:
           - node.labels.jenkins-slave == true
@@ -32,7 +32,7 @@ services:
       - source: pipeline-config
         target: /config.yaml
     environment:
-      JENKINS_SLAVES: jenkins-slave-1,jenkins-slave-2
+      JENKINS_SLAVES: jenkins-slave-1
       DOCKER_HOST: tcp://eid-jenkins02.dmz.local:2376
     deploy:
       placement:

@@ -2,7 +2,7 @@
 
 echo "
 jenkins:
-  url: http://jenkins
+  url: http://jenkins:8080
   adminAddress: Jenkins &lt;jenkins@example.com&gt;
 
 jira:

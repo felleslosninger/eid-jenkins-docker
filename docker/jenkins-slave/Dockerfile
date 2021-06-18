@@ -1,11 +1,12 @@
-FROM groovy:2.4.12-jre8-alpine AS groovy
-FROM openjdk:8u131-jdk-alpine
+FROM groovy:3.0.8-jre11 AS groovy
+FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine
+
 
 ARG DOCKER_VERSION=18.06.3-ce
 ARG DOCKER_SHA=346f9394393ee8db5f8bd1e229ee9d90e5b36931bdd754308b2ae68884dd6822
 # https://hub.docker.com/_/docker?tab=tags&page=1&name=-ce
 
-RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python jq
+RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff jq
 
 
 # Install Docker (client)

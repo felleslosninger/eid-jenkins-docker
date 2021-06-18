@@ -30,6 +30,25 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <dependency> 
+            <groupId>org.springframework.boot</groupId> 
+            <artifactId>spring-boot-starter-validation</artifactId> 
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
@@ -46,17 +65,6 @@
             <version>2.25.1</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.sun.activation</groupId>-->
-<!--            <artifactId>jakarta.activation</artifactId>-->
-<!--            <version>1.2.1</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--            <artifactId>jackson-databind</artifactId>-->
-<!--            <version>2.7.4</version>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -67,10 +75,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <release>11</release>  <!--or <release>10</release>-->
-<!--                    <compilerArgs>-->
-<!--                        <arg>&#45;&#45;add-modules</arg>-->
-<!--                    </compilerArgs>-->
+                    <release>11</release>  
                 </configuration>
                 <dependencies>
                     <dependency>

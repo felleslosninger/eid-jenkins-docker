@@ -1,13 +1,13 @@
 ARG PLUGINS_IMAGE
 FROM ${PLUGINS_IMAGE} AS plugins
-FROM groovy:2.5.7-jre8-alpine AS groovy
-FROM openjdk:8u131-jdk-alpine
+FROM groovy:3.0.8-jre11 AS groovy
+FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine
 
 ARG JENKINS_WAR_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war
-ARG JENKINS_VERSION=2.240
-ARG JENKINS_SHA=cd9ae88a2fd47fed888a7cc0a9a9b3aac16f5a13ee3e3b0258cf7db47790a0e5
+ARG JENKINS_VERSION=2.298
+ARG JENKINS_SHA=448bce07af6aa287892ea5abda5d0a4cdcff7b2255918a3accd00322077b5162
 
-RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff py-pip python jq
+RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff jq
 
 ENV JENKINS_HOME /var/jenkins_home
 
@@ -32,7 +32,6 @@ COPY --from=plugins /plugins /plugins
 
 EXPOSE 8080
 HEALTHCHECK --interval=10s --start-period=10s --retries=60 \
-    CMD curl -f -sS http://localhost:8080 || exit 1
-
+    CMD curl -f -sS http://localhost:8080/login || exit 1
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]

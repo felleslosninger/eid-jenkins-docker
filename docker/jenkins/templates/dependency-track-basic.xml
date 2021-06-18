@@ -1,7 +1,11 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<org.jenkinsci.plugins.DependencyTrack.DependencyTrackPublisher_-DescriptorImpl plugin="dependency-track@2.1.0">
-    <dependencyTrackUrl>http://dependency-track:8080</dependencyTrackUrl>
-    <dependencyTrackApiKey>${dependencyTrackApi}</dependencyTrackApiKey>
-    <dependencyTrackAutoCreateProjects>false</dependencyTrackAutoCreateProjects>
-    <dependencyTrackPollingTimeout>1</dependencyTrackPollingTimeout>
-</org.jenkinsci.plugins.DependencyTrack.DependencyTrackPublisher_-DescriptorImpl>
+<org.jenkinsci.plugins.DependencyTrack.DescriptorImpl plugin="dependency-track@3.1.1">
+  <dependencyTrackUrl>http://dependency-track:8080</dependencyTrackUrl>
+  <dependencyTrackFrontendUrl></dependencyTrackFrontendUrl>
+  <dependencyTrackApiKey>${dependencyTrackApi}</dependencyTrackApiKey>
+  <dependencyTrackAutoCreateProjects>false</dependencyTrackAutoCreateProjects>
+  <dependencyTrackPollingTimeout>5</dependencyTrackPollingTimeout>
+  <dependencyTrackPollingInterval>10</dependencyTrackPollingInterval>
+  <dependencyTrackConnectionTimeout>5</dependencyTrackConnectionTimeout>
+  <dependencyTrackReadTimeout>5</dependencyTrackReadTimeout>
+</org.jenkinsci.plugins.DependencyTrack.DescriptorImpl>

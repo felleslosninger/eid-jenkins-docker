@@ -1,4 +1,4 @@
-FROM openjdk:11.0.6-jre
+FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine
 
 ENV WIREMOCK_VERSION 2.15.0
 
