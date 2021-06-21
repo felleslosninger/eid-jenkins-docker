@@ -2,8 +2,7 @@
 
 [ -d /run/secrets ] && {
     for secretFile in /run/secrets/*; do
-        echo "${secretFile##*/}=$(cat ${secretFile})" >> /application.properties
+        echo "${secretFile##*/}=$(cat ${secretFile})" >> /opt/polling-agent/application.properties
     done
 }
-
-exec java -jar /polling-agent.jar --server.port=80
+java -jar /opt/polling-agent/polling-agent.jar 

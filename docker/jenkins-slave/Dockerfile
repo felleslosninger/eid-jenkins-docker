@@ -7,7 +7,9 @@ ARG DOCKER_SHA=346f9394393ee8db5f8bd1e229ee9d90e5b36931bdd754308b2ae68884dd6822
 # https://hub.docker.com/_/docker?tab=tags&page=1&name=-ce
 
 RUN apk add --no-cache coreutils git openssh-client curl zip unzip bash ttf-dejavu ca-certificates openssl groff jq
-
+# Install Groovy
+ENV GROOVY_HOME /opt/groovy
+COPY --from=groovy $GROOVY_HOME $GROOVY_HOME
 
 # Install Docker (client)
 RUN curl -fSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-$DOCKER_VERSION.tgz" -o docker.tgz \
@@ -26,6 +28,10 @@ ENV PATH=$GROOVY_HOME/bin:$PATH
 
 RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 
+RUN addgroup -S jenkins && adduser -S jenkins -G jenkins
+RUN chown jenkins:jenkins /etc/ssh/
+# Tell docker that all future commands should run as the appuser user
+USER jenkins
 COPY files/ /files/
 COPY entrypoint.sh /entrypoint.sh
 

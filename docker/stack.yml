@@ -110,7 +110,7 @@ services:
         constraints:
           - node.labels.jenkins-master == true
   nexus:
-    image: sonatype/nexus3:3.20.1@sha256:6570855dfbc3eb094fe5cbbacec87aa8b91d16394dab627177e1deeebb5ac8ee
+    image: sonatype/nexus3:3.31.0@sha256:57aa7251a5c9b3a46e048a44802235ebbd57258a57257473547501585a85b892
     environment:
       - NEXUS_SECURITY_RANDOMPASSWORD=false
     ports:
