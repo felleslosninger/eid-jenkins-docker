@@ -28,7 +28,7 @@ ENV PATH=$GROOVY_HOME/bin:$PATH
 
 RUN grape install 'org.yaml' 'snakeyaml' '1.19'
 
-RUN addgroup -S jenkins && adduser -S jenkins -G jenkins
+RUN addgroup -S jenkins -g 1001  && adduser -S jenkins -G jenkins -G ping  -u 1001
 RUN chown jenkins:jenkins /etc/ssh/
 # Tell docker that all future commands should run as the appuser user
 USER jenkins
