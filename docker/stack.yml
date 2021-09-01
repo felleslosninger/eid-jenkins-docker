@@ -20,6 +20,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins-workspaces:/workspaces
       - jenkins-ssh-settings:/etc/ssh
+    user: ${JENKINS_SLAVE_USER:-jenkins}
     networks:
       - pipeline
   jenkins:

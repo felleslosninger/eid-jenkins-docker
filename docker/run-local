@@ -93,6 +93,7 @@ mvn package -DskipTests || exit 1
 docker/build-images local || exit 1
 stackFile=docker/stack.yml
 localStackFile=docker/stack-local.yml
-REGISTRY=local VERSION=latest docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline || exit 1
+# For windows: the user for jenkins-slave must be root
+REGISTRY=local VERSION=latest JENKINS_SLAVE_USER=root docker stack deploy --prune --resolve-image never -c ${stackFile} pipeline || exit 1
 REGISTRY=local VERSION=latest docker stack deploy --resolve-image never -c ${localStackFile} pipeline || exit 1
 taskState || exit 1

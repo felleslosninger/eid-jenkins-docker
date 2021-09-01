@@ -6,8 +6,8 @@
             <retriever class="org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever">
                 <scm class="jenkins.plugins.git.GitSCMSource" plugin="git@3.6.4">
                     <id>fae79947-b1a2-48ba-abe9-c62ff782fb9f</id>
-                    <remote>git@github.com:difi/jenkins-pipeline</remote>
-                    <credentialsId>ssh.github.com</credentialsId>
+                    <remote>git@github.com:felleslosninger/eid-jenkins-pipeline</remote>
+                    <credentialsId>ssh.eid-build.github.com</credentialsId>
                     <traits>
                         <jenkins.plugins.git.traits.BranchDiscoveryTrait/>
                     </traits>
