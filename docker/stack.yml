@@ -42,8 +42,6 @@ services:
     secrets:
       - source: ssh.git.difi.local
         target: ssh.git.difi.local
-      - source: ssh.github.com
-        target: ssh.github.com
       - source: ssh.eid-build.github.com
         target: ssh.eid-build.github.com
       - source: artifactory_username
@@ -171,8 +169,6 @@ networks:
 
 secrets:
   ssh.git.difi.local:
-    external: true
-  ssh.github.com:
     external: true
   ssh.eid-build.github.com:
     external: true
